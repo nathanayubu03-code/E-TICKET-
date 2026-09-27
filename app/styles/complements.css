@@ -81,3 +81,16 @@
   .billet .tete .rangee .affiche { white-space: nowrap; }
   .billet .tete .rangee .badge { white-space: normal; text-align: right; }
 }
+
+/* Mes billets : styles repris du <style> de design/maquette/mes-billets.html */
+@layer components {
+  .mb-grille { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 24px; align-items: start; }
+  @media (max-width: 900px) { .mb-grille { grid-template-columns: 1fr; } .mb-grille aside { position: static !important; } }
+  .ligne-billet { display: flex; gap: 14px; padding: 10px; border: 2px solid var(--trait); border-radius: 16px; background: var(--surface); text-align: left; width: 100%; cursor: pointer; color: var(--encre); }
+  .ligne-billet[aria-pressed="true"] { border-color: var(--encre); box-shadow: 3px 3px 0 var(--ombre); }
+  .ligne-billet .mini { width: 64px; height: 96px; flex: none; border-radius: 10px; overflow: hidden; line-height: 0; }
+  .ligne-billet .mini svg { width: 100%; height: 100%; }
+  .onglets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 14px; background: var(--surface-2); }
+  .onglets button { min-height: 48px; border-radius: 10px; border: 2px solid transparent; background: transparent; font-weight: 700; cursor: pointer; color: var(--encre-douce); }
+  .onglets button[aria-selected="true"] { background: var(--surface); border-color: var(--encre); color: var(--encre); }
+}
