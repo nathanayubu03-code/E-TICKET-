@@ -16,13 +16,15 @@
     "db:migrate": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed-demo": "tsx prisma/seed-demo.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "test:pwa": "npm run build && playwright test -c playwright.pwa.config.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1141.0",
     "@node-rs/argon2": "^2.2.1",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
+    "@serwist/next": "^9.5.12",
     "@zxing/browser": "^0.2.1",
     "@zxing/library": "^0.23.0",
     "exceljs": "^4.4.0",
@@ -50,6 +52,7 @@
     "eslint-config-next": "^16.3.6",
     "postcss": "^8.5.28",
     "prisma": "^7.10.0",
+    "serwist": "^9.5.12",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",

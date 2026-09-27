@@ -669,7 +669,7 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 - [x] 11. Scanner (manifeste des empreintes SHA-256 obligatoire au démarrage, resynchronisation toutes les 60 s, vérification serveur en ligne avec passage VALIDE → UTILISE conditionnel, mode avion avec état orange « Inconnu, à vérifier », synchronisation idempotente et doublons signalés, BarcodeDetector ou @zxing/browser, saisie du numéro, lampe ; administration des contrôleurs avec suivi en direct)
 - [x] 12. SMS (interface SmsProvider, simulation journalisée et interdite en production, OTP masqués hors simulation, billets, payée sans place, réclamation refusée, alerte des abonnés à la première publication, liste d'attente prévenue par un administrateur, journal des SMS)
 - [x] 13. Tableau de bord, reversements, exports (ventes du jour et du mois, brut, commission, net, par opérateur et par catégorie, zéros sans vente ; reversements dus et enregistrés ; export Excel ; commandes : recherche, renvoi SMS, annulation, remboursement, payées sans place en priorité ; codes promo ; paramètres ; journal d'audit ; SMS envoyés)
-- [ ] 14. PWA
+- [x] 14. PWA (Serwist : manifestes public et scanner, icônes, service worker qui garde en cache les pages des billets et du scanner, API jamais en cache, page de secours hors ligne ; test sur build de production avec serveur réellement arrêté)
 - [ ] 15. Sécurité
 - [ ] 16. Traductions et pages légales
 
@@ -716,3 +716,4 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 - Tableau de bord : barres simples en HTML calculées sur les données réelles, pas de bibliothèque de graphiques ni de courbe décorative. Rien n'est affiché qui ne vienne de la base.
 - Paramètres : modifiables par le seul super-administrateur ; l'ADMIN les lit.
 - Export Excel : numéros complets pour l'équipe e-Ticket, masqués pour l'organisateur.
+- PWA : `context.setOffline` de Playwright ne coupe pas les requêtes du service worker ; le test hors ligne (`npm run test:pwa`) démarre et arrête lui-même `next start` pour obtenir une vraie coupure. Les pages préchargées par Next.js (liens visibles) restent disponibles hors ligne ; seule une page jamais chargée affiche la page de secours.
