@@ -140,7 +140,9 @@
     "listeAttenteTexte": "Laissez votre numéro : nous vous envoyons un SMS si des places se libèrent.",
     "listeAttenteOk": "C'est noté. Nous vous prévenons par SMS si des places se libèrent.",
     "plusAssez": "Il n'y a plus assez de places. Choisissez une autre quantité.",
-    "limiteNumero": "Ce numéro a déjà atteint la limite de {max} billets pour cet événement."
+    "limiteNumero": "Ce numéro a déjà atteint la limite de {max} billets pour cet événement.",
+    "listeAttenteConsentement": "J'accepte de recevoir un SMS d'e-Ticket RDC si des places se libèrent pour cet événement.",
+    "listeAttenteEnvoyer": "M'inscrire sur la liste d'attente"
   },
   "achat": {
     "etapeConnexion": "Étape 1 sur 4 · Connexion",
@@ -308,5 +310,22 @@
     "refuseTexte": "Ce QR code n'est pas un billet de cet événement.",
     "camera": "Autorisez la caméra pour scanner, ou saisissez le numéro du billet.",
     "porte": "Porte"
+  },
+  "aide": {
+    "titre": "Aide",
+    "payerTitre": "Payer avec Mobile Money",
+    "secretTitre": "Votre code secret reste secret",
+    "secretTexte": "Tapez votre code secret seulement dans le message de votre opérateur, sur votre téléphone. e-Ticket ne le demande jamais : ni par appel, ni par SMS, ni sur WhatsApp.",
+    "rienRecuTitre": "Rien reçu ?",
+    "rienRecu1": "Vérifiez que votre téléphone a du réseau.",
+    "rienRecu2": "Ouvrez le menu de votre opérateur pour voir la demande en attente.",
+    "rienRecu3": "Vérifiez votre solde : il faut au moins le montant affiché.",
+    "rienRecu4": "Si votre compte est débité, vos billets arrivent tout seuls par SMS dans les 15 minutes. Ne payez pas une deuxième fois.",
+    "agentTitre": "Payer chez un agent",
+    "agentTexte": "Choisissez « Payer chez un agent » au moment du paiement. Vous recevez un code de commande et le numéro marchand. Envoyez le montant exact, puis entrez la référence de transaction reçue par SMS. Vos places sont gardées 2 heures et vos billets arrivent par SMS dès qu'un agent a vérifié le paiement.",
+    "billetsTitre": "Vos billets",
+    "billetsTexte": "Vos billets s'ouvrent même sans internet une fois enregistrés sur votre téléphone. Vous les retrouvez dans « Mes billets » en vous connectant avec votre numéro, ou avec le lien reçu par SMS. À l'entrée, montez la luminosité et montrez l'écran.",
+    "remboursementTitre": "Remboursement",
+    "remboursementTexte": "Remboursement seulement si l'événement est annulé."
   }
 }

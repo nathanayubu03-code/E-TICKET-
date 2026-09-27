@@ -62,3 +62,17 @@
   .scan-deja { background: #F08A00; color: #14120E; }
   .signe-carre { width: 18px; height: 18px; border: 2px solid currentColor; display: inline-block; }
 }
+
+/* Filtres en liens (fonctionnent sans JavaScript) : même rendu que les boutons pressés de la maquette. */
+@layer components {
+  a.pastille, a.categorie { color: var(--encre); text-decoration: none; display: inline-flex; align-items: center; }
+  a.categorie { display: flex; }
+  .pastille[aria-current="true"] { background: var(--encre); border-color: var(--encre); color: var(--fond); }
+  .categorie[aria-current="true"] { border-color: var(--encre); box-shadow: 3px 3px 0 var(--ombre); }
+  .une .bandeau picture, .une .bandeau img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .ligne-clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+}
+
+@layer components {
+  .couverture svg { width: 100%; height: 100%; }
+}

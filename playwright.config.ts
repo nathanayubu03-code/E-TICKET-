@@ -1,6 +1,9 @@
 import { defineConfig } from '@playwright/test';
 
 const PORT = Number(process.env.E2E_PORT ?? 3100);
+const E2E_DB = process.env.E2E_DATABASE_URL ?? 'postgresql://eticket:eticket@localhost:5432/eticket_e2e';
+// Les tests écrivent directement dans la base e2e (création d'événements) : même URL que le serveur.
+process.env.DATABASE_URL = E2E_DB;
 
 export default defineConfig({
   timeout: 60_000,
@@ -8,6 +11,7 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   reporter: [['list']],
+  globalSetup: './tests/e2e/global-setup.ts',
   use: {
     baseURL: `http://localhost:${PORT}`,
     locale: 'fr-FR',
@@ -22,10 +26,10 @@ export default defineConfig({
     {
       // Serveur de développement : la simulation de paiement et de SMS est interdite en production.
       command: `npx next dev -p ${PORT}`,
-      url: `http://localhost:${PORT}`,
+      url: `http://localhost:${PORT}/api/sante`,
       reuseExistingServer: true,
       timeout: 180_000,
-      env: { DATABASE_URL: process.env.E2E_DATABASE_URL ?? 'postgresql://eticket:eticket@localhost:5432/eticket_test', NEXT_DIST_DIR: '.next-e2e' },
+      env: { DATABASE_URL: E2E_DB, NEXT_DIST_DIR: '.next-e2e', PAYMENT_PROVIDER: 'simulation', SMS_PROVIDER: 'simulation', APP_ENV: 'test', SIMULATION_WEBHOOK_SECRET: 'secret-webhook-simulation-e2e', CONTACT_ORGANISATEURS_EMAIL: '', CONTACT_ORGANISATEURS_TELEPHONE: '' },
     },
     {
       command: 'python3 -m http.server 3200 -d design/maquette',

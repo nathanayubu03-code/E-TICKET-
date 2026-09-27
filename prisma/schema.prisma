@@ -198,6 +198,8 @@ model Event {
   code              String              @unique // court, entre dans le QR
   slug              String              @unique
   titre             String
+  sousTitre         String? // ligne d'artistes ou d'équipes sous le titre
+  genre             String? // précision affichée après la catégorie : « Rumba », « Match amical »…
   description       String?
   statut            StatutEvenement     @default(BROUILLON)
   categorieId       String?

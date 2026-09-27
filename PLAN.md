@@ -659,7 +659,7 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 - [x] 1. Socle et thème
 - [x] 2. Module Kuba (parité exacte : 961 motifs, 960 SVG, 320 rendus inline, 160 signes, sur 20 identifiants et 8 phases)
 - [x] 3. Schéma et seeds (migration initiale, CHECK sur le stock, trigger d'audit ; seed de production idempotent ; seed [DEMO] protégé)
-- [ ] 4. Pages publiques et états vides
+- [x] 4. Pages publiques et états vides (accueil 0 / 1 / n événements, filtres dérivés des données, recherche, page événement, panier, liste d'attente, alertes SMS, aide, organisateurs ; 5 tests e2e)
 - [ ] 5. Administration des événements
 - [ ] 6. Connexion OTP
 - [ ] 7. Commande et réservation
@@ -684,6 +684,13 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 - Texte de l'aperçu du billet : « si c'est une vraie » devient « si c'est un vrai » (accord avec « billet »).
 - Pied de page : liens réels (Aide, Payer chez un agent, Alertes SMS, Conditions, Confidentialité). Le lien « Alertes SMS » est ajouté pour la désinscription, exigée par le consentement explicite. Les villes affichées viennent des événements publiés.
 - Placeholder du numéro : « XX XXX XX XX » au lieu d'un numéro d'exemple, pour n'afficher aucun numéro inventé.
+
+- Filtres de l'accueil en liens et recherche en formulaire GET, traités côté serveur : ils marchent sans JavaScript et n'alourdissent pas la page. La maquette filtrait en JavaScript ; le rendu est identique. Par défaut, « Toutes » les villes (la maquette partait de Kinshasa, ce qui masquerait les autres villes).
+- Page événement : le plan de quartier dessiné de la maquette est retiré (ce serait un faux plan). À la place, l'adresse et le lien « Ouvrir l'itinéraire » vers OpenStreetMap, à partir des coordonnées GPS ou de l'adresse saisies.
+- Billet d'aperçu de l'accueil : données de l'événement à la une, numéro neutre `ET-XXXX-XXXX`, étiquette « Exemple », QR qui ne contient que le mot EXEMPLE. Pas de titulaire ni de porte inventés.
+- Couverture sans affiche : géométrie Kuba calculée sur l'identifiant de l'événement, couleurs de la palette Kuba dont le fond est celui de la catégorie (Spectacles : palette ivoire, la plus proche).
+- Événement : champs `sousTitre` (ligne d'artistes) et `genre` ajoutés pour reproduire la maquette.
+- Captures : les pages de la maquette s'affichent avec la police de repli dans l'environnement de test (Google Fonts n'y est pas joignable depuis le navigateur) ; l'application auto-héberge ses polices et les affiche correctement. Les captures pleine page de 1280 px montrent le fond Kuba seulement sur la hauteur de l'écran, parce que le fond est fixe (`background-attachment: fixed`) ; ce n'est pas visible en navigation.
 
 ### Décisions techniques
 
