@@ -100,3 +100,10 @@
   .admin-contenu section + section { margin-top: 0; }
   .admin-contenu a.kpi-lien { text-decoration: none; color: inherit; font-weight: 400; }
 }
+
+@layer components {
+  /* Catégorie épuisée : la maquette baisse l'opacité (0,7), ce qui fait passer le badge « Épuisé » sous le
+     contraste AA exigé par la maquette elle-même. Même intention, avec la couleur « désactivé » des tokens. */
+  .categorie-billet.epuisee { opacity: 1; }
+  .categorie-billet.epuisee h3, .categorie-billet.epuisee .prix b { color: var(--desactive); }
+}

@@ -63,7 +63,11 @@ export async function proxy(req: NextRequest) {
   const entetes = new Headers(req.headers);
   entetes.set('x-nonce', nonce);
   entetes.set('Content-Security-Policy', csp);
-  return entetesSecurite(NextResponse.next({ request: { headers: entetes } }), csp);
+  const reponse = entetesSecurite(NextResponse.next({ request: { headers: entetes } }), csp);
+  // Motif des bandeaux « À la une » et événement : souvent l'élément le plus grand de l'écran (LCP).
+  // Sans préchargement, il n'est découvert que dans la CSS et chargé en basse priorité. Il pèse 2 ko.
+  if (!chemin.startsWith('/api/') && !chemin.startsWith('/admin')) reponse.headers.set('Link', '</motifs/motif-fond.svg>; rel=preload; as=image; fetchpriority=high');
+  return reponse;
 }
 
 export const config = {

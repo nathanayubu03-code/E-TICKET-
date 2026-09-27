@@ -15,8 +15,17 @@ async function demarrer() {
   throw new Error('Serveur non démarré');
 }
 function arreter() {
-  if (serveur?.pid) try { process.kill(-serveur.pid, 'SIGTERM'); } catch { /* déjà arrêté */ }
+  if (serveur?.pid) try { process.kill(-serveur.pid, 'SIGKILL'); } catch { /* déjà arrêté */ }
   serveur = null;
+}
+
+/** Attend que plus rien ne réponde sur le port : sinon la « coupure » pourrait encore passer par le serveur. */
+async function attendreArret() {
+  for (let i = 0; i < 40; i++) {
+    try { await fetch('http://localhost:3300/api/sante', { signal: AbortSignal.timeout(500) }); } catch { return; }
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  throw new Error('Le serveur répond encore');
 }
 
 test.afterAll(arreter);
@@ -42,12 +51,12 @@ test('PWA : manifeste, service worker, billets ouverts serveur coupé, page de s
 
   // Coupure totale : plus aucun serveur ne répond.
   arreter();
-  await new Promise((r) => setTimeout(r, 1500));
+  await attendreArret();
   await page.reload();
   await expect(page.locator('.ligne-billet')).toHaveCount(1);
   await expect(page.getByRole('img', { name: /QR code du billet ET-/ })).toBeVisible();
   await page.goto(`/b/${b.code}`);
   await expect(page.getByText(b.publicId).first()).toBeVisible();
-  await page.goto('/organisateurs?jamais=visite');
+  await page.goto('/evenements/page-jamais-liee-ni-visitee');
   await expect(page.getByRole('heading', { name: 'La connexion a coupé' })).toBeVisible();
 });

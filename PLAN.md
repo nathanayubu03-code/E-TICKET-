@@ -721,3 +721,36 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 ### Risque ouvert : lecture du QR par le repli ZXing
 
 Mesure demandée (docs/billet.md) : sur une image fixe, ZXing en JavaScript (repli du scanner quand BarcodeDetector manque) rate de 0 à 3 billets sur 25 selon le lancement, à toutes les densités, alors que la zone QR seule se lit toujours. Trois tentatives de correction (recadrage au centre, agrandissement, rendu `crispEdges`) n'ont pas supprimé ces échecs. Le test est une mesure avec un plancher de contrôle à 80 %, pas une garantie. À trancher par un essai terrain avant l'ouverture (voir docs/billet.md et docs/reste-a-faire.md).
+
+## Vérification finale (27/09/2026)
+
+| Contrôle | Résultat |
+|---|---|
+| `npm run lint` | aucun problème |
+| `npm run typecheck` | aucune erreur |
+| `npm test` (Vitest) | 75 tests, 10 fichiers, tous verts |
+| `npm run test:e2e` (Playwright, next dev) | 24 tests, tous verts |
+| `npm run test:pwa` (build de production, serveur arrêté) | vert, 5 passages sur 5 |
+| Test anti-contenu inventé | vert (aucun nom de démonstration, aucun tiret long) |
+
+### Lighthouse mobile (écran 360 px, densité 2, build de production, base avec 5 événements de test)
+
+Trois façons de mesurer, parce qu'elles ne disent pas la même chose :
+
+| Page | Profil | Performance | Accessibilité | Bonnes pratiques | FCP | LCP | CLS | TBT |
+|---|---|---|---|---|---|---|---|---|
+| Accueil | 3G lente, bridage réel (400 ms, 400 kbit/s, CPU ÷ 4) | **94** | **100** | 100 | 2,1 s | **2,1 s** | **0** | 190 ms |
+| Événement | 3G lente, bridage réel | **91** | **100** | 100 | 2,1 s | **2,1 s** | **0** | 290 ms |
+| Accueil | 3G lente, simulation Lantern | 72 | 100 | 100 | 2,4 s | 8,2 s | 0 | 70 ms |
+| Événement | 3G lente, simulation Lantern | 72 | 100 | 100 | 2,4 s | 8,1 s | 0 | 40 ms |
+| Accueil | mobile standard de Lighthouse (4G lente simulée) | 97 | 100 | 100 | 0,9 s | 2,5 s | 0 | 70 ms |
+| Événement | mobile standard de Lighthouse | 96 | 100 | 100 | 0,9 s | 2,7 s | 0 | 120 ms |
+
+JavaScript transféré (compressé) : **144 ko** sur l'accueil, 142 ko sur la page événement, sous le budget de 150 ko. Poids total : 270 ko et 254 ko.
+
+Lecture :
+
+- Avec un bridage réel en 3G lente, les deux pages tiennent toutes les cibles du prompt : performance ≥ 90, accessibilité ≥ 95, LCP < 2,5 s, CLS < 0,1, JavaScript < 150 ko.
+- En simulation Lantern aux mêmes valeurs, le LCP monte à 8 s. Le LCP réellement observé est confondu avec le premier affichage ; Lantern y ajoute le téléchargement de tout ce qui a été demandé avant, dont le JavaScript asynchrone (131 ko de socle Next.js et React) qui ne bloque pas l'affichage. À 400 kbit/s, ces octets seuls prennent plus de 2,5 s. Tant que le socle de Next.js pèse ce poids, ce mode de mesure ne peut pas descendre sous 2,5 s ; je le signale plutôt que de le masquer.
+- Ces mesures sont locales (serveur sur la même machine). Sur Vercel, depuis Kinshasa, la latence réelle s'ajoute : à refaire sur le domaine de production (voir `docs/reste-a-faire.md`).
+- Corrections faites pendant cette mesure : contraste du badge « Épuisé » (l'opacité de la maquette le faisait passer sous AA), préchargement du motif du bandeau par en-tête `Link`.
