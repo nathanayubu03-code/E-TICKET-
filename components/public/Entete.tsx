@@ -2,11 +2,13 @@ import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { estLangue, LANGUE_PAR_DEFAUT } from '@/i18n/config';
+import { sessionCourante } from '@/lib/auth/session';
 import { Logo } from './Logo';
 import { NavPrincipale } from './NavPrincipale';
 import { BandeauReseau, BasculeTheme, ChoixLangue } from './OutilsEntete';
 
-export async function Entete({ connecte = false, navigation = true }: { connecte?: boolean; navigation?: boolean }) {
+export async function Entete({ navigation = true }: { navigation?: boolean }) {
+  const connecte = Boolean(await sessionCourante());
   const t = await getTranslations('entete');
   const tr = await getTranslations('reseau');
   const locale = await getLocale();
