@@ -663,7 +663,7 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 - [x] 5. Administration des événements (connexion mot de passe + OTP, rôles vérifiés dans proxy.ts et en base, assistant en 8 étapes avec sauvegarde automatique, règle de publication avec liste des manques, duplication, archivage, organisateurs avec numéro de reversement chiffré, affiches recadrées 4:5 et 16:9 en WebP et AVIF ; e2e : création et publication en moins de 5 minutes)
 - [x] 6. Connexion OTP (acheteurs : numéro + code à 6 chiffres, collage et remplissage SMS, renvoi après 45 s, compte créé au premier passage, session 30 jours ; e2e)
 - [x] 7. Commande et réservation (décrément conditionnel du stock, verrou consultatif par numéro et événement pour la limite par personne, réservation de 10 min, expiration idempotente, codes promo, commandes gratuites ; test : 20 demandes simultanées sur 3 places donnent exactement 3 succès)
-- [ ] 8. Paiement
+- [x] 8. Paiement (interface PaymentProvider, SimulationProvider par webhook signé, idempotence double clic, webhook enregistré brut puis traité une seule fois, vérification planifiée 90 s puis 2 min pendant 15 min, PAYEE_SANS_PLACE, paiement chez un agent avec validation AGENT ; adaptateur réel en attente de l'agrégateur, voir docs/paiement.md)
 - [ ] 9. Billets et PDF
 - [ ] 10. Mes billets hors ligne
 - [ ] 11. Scanner
@@ -694,6 +694,9 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 
 - Administration : la maquette n'a pas d'écran d'administration en HTML ; les écrans reprennent ses variables, bordures et typographie, sans motif de fond (`app/styles/complements.css`).
 
+- Écran de paiement : le bouton « Ajouter au portefeuille » de la maquette est retiré (Apple Wallet et Google Wallet demandent des comptes et certificats que nous n'avons pas). Le bloc « Démonstration » est retiré. Le paiement chez un agent n'apparaît que si un numéro marchand est saisi dans Paramètres.
+- États « Paiement reçu », « Paiement refusé », « Temps écoulé » : l'annonce vocale (`role="status"` / `role="alert"`) est portée par le conteneur plutôt que par le titre, pour que le titre reste un titre pour les lecteurs d'écran.
+
 ### Décisions techniques
 
 - Les classes de la maquette sont reprises comme composants CSS (`@layer components`) plutôt que réécrites en utilitaires : c'est le moyen le plus sûr de garder chaque valeur identique. Tailwind sert à la mise en page des nouveaux écrans, avec des utilitaires qui pointent vers les mêmes variables.
@@ -705,3 +708,6 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 - Recadrage des affiches : choix de la zone (automatique « attention » de sharp, haut, centre, bas) par format, plutôt qu'un outil de recadrage libre à la souris, pour garder un JavaScript minimal dans l'administration. L'original est réencodé (métadonnées EXIF supprimées).
 - Jeton de rôles signé (HMAC) dans un cookie séparé : il permet au proxy de refuser tôt sans base de données ; chaque page et action serveur revérifie la session et les rôles en base.
 - Tests Vitest et Playwright : les bases `eticket_test` et `eticket_e2e` sont recréées à chaque lancement (`prisma migrate reset`). Prisma 7 demande un consentement explicite quand un agent lance cette commande ; les scripts de test le donnent pour ces deux bases locales uniquement.
+- Réservation : elle expire à 10 minutes même si un paiement est en cours, comme le demande le prompt ; une confirmation tardive retente la réservation (tout ou rien) et, faute de place, passe la commande en `PAYEE_SANS_PLACE`.
+- Confirmation : la preuve de paiement (paiement `REUSSI` ou réclamation `VALIDEE`) et le passage de la commande en `PAYEE` avec génération des billets sont faits dans la même transaction, avec verrou sur la commande.
+- Simulation : l'issue dépend de la fin du numéro (0000 refusé, 9999 sans réponse, sinon reçu en 4 s) et passe par un vrai webhook signé traité comme en production.

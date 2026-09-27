@@ -76,3 +76,8 @@
 @layer components {
   .couverture svg { width: 100%; height: 100%; }
 }
+
+@layer components {
+  .billet .tete .rangee .affiche { white-space: nowrap; }
+  .billet .tete .rangee .badge { white-space: normal; text-align: right; }
+}

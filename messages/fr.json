@@ -222,11 +222,12 @@
     "partageTexte": "J'ai mon billet pour {titre} ({date}) sur e-Ticket !",
     "voirTous": "Voir tous mes billets",
     "payeeSansPlace": "Votre paiement est bien reçu, mais les places ont été prises pendant l'attente. Vous serez remboursé : notre équipe vous contacte par SMS.",
-    "commandeIntrouvable": "Commande introuvable."
+    "commandeIntrouvable": "Commande introuvable.",
+    "reessayer": "Réessayer"
   },
   "agent": {
     "titre": "Payer chez un agent",
-    "etape1": "Envoyez exactement <b>{montant}</b> au numéro marchand {operateur} ci-dessous, chez un agent ou depuis votre téléphone.",
+    "etape1": "Envoyez exactement <b>{montant}</b> à l'un des numéros marchands ci-dessous, chez un agent ou depuis votre téléphone.",
     "etape2": "Vous recevez un SMS de votre opérateur avec une référence de transaction.",
     "etape3": "Entrez cette référence ici. Nous vérifions et vos billets arrivent par SMS.",
     "code": "Code de commande",
