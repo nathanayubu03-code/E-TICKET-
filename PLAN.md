@@ -662,7 +662,7 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 - [x] 4. Pages publiques et états vides (accueil 0 / 1 / n événements, filtres dérivés des données, recherche, page événement, panier, liste d'attente, alertes SMS, aide, organisateurs ; 5 tests e2e)
 - [x] 5. Administration des événements (connexion mot de passe + OTP, rôles vérifiés dans proxy.ts et en base, assistant en 8 étapes avec sauvegarde automatique, règle de publication avec liste des manques, duplication, archivage, organisateurs avec numéro de reversement chiffré, affiches recadrées 4:5 et 16:9 en WebP et AVIF ; e2e : création et publication en moins de 5 minutes)
 - [x] 6. Connexion OTP (acheteurs : numéro + code à 6 chiffres, collage et remplissage SMS, renvoi après 45 s, compte créé au premier passage, session 30 jours ; e2e)
-- [ ] 7. Commande et réservation
+- [x] 7. Commande et réservation (décrément conditionnel du stock, verrou consultatif par numéro et événement pour la limite par personne, réservation de 10 min, expiration idempotente, codes promo, commandes gratuites ; test : 20 demandes simultanées sur 3 places donnent exactement 3 succès)
 - [ ] 8. Paiement
 - [ ] 9. Billets et PDF
 - [ ] 10. Mes billets hors ligne
