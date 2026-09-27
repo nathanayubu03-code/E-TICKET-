@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Billet vivant</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,500..900&amp;family=Atkinson+Hyperlegible:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+@keyframes billet-arrive{0%{opacity:0;transform:translateY(40px) rotate(-3deg) scale(.94)}60%{opacity:1;transform:translateY(-6px) rotate(1deg) scale(1.01)}100%{opacity:1;transform:none}}
+.billet-arrive{animation:billet-arrive .7s cubic-bezier(.2,.8,.2,1) both}
+@media (prefers-reduced-motion: reduce){.billet-arrive{animation:none}}
+</style>
+</helmet>
+<div style="width: 344px; height: 720px; box-sizing: border-box; padding: 16px; background: {{t.bg}}; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; color: {{t.text}}">
+<article class="{{animClass}}" aria-label="Billet Nuit de la Rumba, VIP" style="position: relative; width: 312px; background: {{t.surface}}; border: 2px solid {{t.edge}}; border-radius: 20px; box-shadow: {{t.shadow}}; overflow: visible">
+<div style="padding: 18px 20px 20px; background: #C8102E; color: #FBF5E6; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<dc-import name="Logo" piste="a" taille="{{n28}}" mot="{{no}}" hint-size="28px,28px"></dc-import>
+<span style="padding: 4px 12px; background: #FFD21F; color: #14120E; border-radius: 999px; font-weight: 700; font-size: 14px">VIP · 1 personne</span>
+</div>
+<div style="font-family: 'Anybody', sans-serif; font-weight: 900; font-stretch: 72%; font-size: 36px; line-height: 0.95; letter-spacing: -0.01em; margin-top: 4px">Nuit de la Rumba</div>
+<div style="font-size: 15px; font-weight: 700">Kin Malebo Orchestra</div>
+<div style="display: flex; flex-direction: column; gap: 2px; font-size: 14px">
+<span>Sam. 14 nov. 2026 · portes 18:00</span>
+<span>Stade des Martyrs, Kinshasa</span>
+</div>
+</div>
+<div style="position: relative; height: 24px">
+<div style="position: absolute; left: -14px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: {{t.bg}}; border-right: 2px solid {{t.edge}}"></div>
+<div style="position: absolute; right: -14px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: {{t.bg}}; border-left: 2px solid {{t.edge}}"></div>
+<div style="position: absolute; left: 20px; right: 20px; top: 11px; border-top: 2px dashed {{t.line}}"></div>
+</div>
+<div style="display: flex; justify-content: center; padding: 0 22px">
+<div style="border-radius: 8px; overflow: hidden; line-height: 0">
+<dc-import name="Kuba" ticket-id="{{ticketId}}" phase="{{phase}}" cols="{{n11}}" rows="{{n11}}" cell="{{n24}}" hole="{{yes}}" live="{{yes}}" hint-size="264px,264px"></dc-import>
+</div>
+</div>
+<div style="padding: 14px 24px 0; display: flex; flex-direction: column; gap: 8px">
+<div role="progressbar" aria-label="Temps avant le prochain motif" aria-valuemin="0" aria-valuemax="30" aria-valuenow="{{elapsed}}" style="height: 6px; border-radius: 3px; background: {{t.surface2}}; overflow: hidden">
+<div style="width: {{pct}}%; height: 6px; background: {{t.text}}; transition: width 1s linear"></div>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px">
+<span style="color: {{t.muted}}">Motif vivant · change dans <b style="color: {{t.text}}">{{left}} s</b></span>
+<span style="display: inline-flex; align-items: center; gap: 8px; font-weight: 700">
+<span style="display: inline-block; width: 14px; height: 14px; background: {{signe.c}}; border: 2px solid {{t.edge}}; transform: rotate({{signe.r}}deg)"></span>{{signe.n}}
+</span>
+</div>
+</div>
+<div style="padding: 16px 24px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; font-size: 14px">
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="color: {{t.muted}}">Titulaire</span><b style="font-size: 16px">Grâce Mbuyi</b></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="color: {{t.muted}}">Entrée</span><b style="font-size: 16px">Porte B · Tribune</b></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="color: {{t.muted}}">Billet n°</span><b style="font-size: 16px; letter-spacing: 0.03em">{{ticketId}}</b></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><span style="color: {{t.muted}}">Prix payé</span><b style="font-size: 16px">150 000 CDF</b></div>
+</div>
+<div style="margin: 16px 20px 20px; padding: 10px 12px; border-radius: 12px; background: {{t.skyBg}}; color: {{t.skyText}}; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 700">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11 M7 10l5 5 5-5 M5 20h14"></path></svg>
+Enregistré sur ce téléphone · marche sans internet
+</div>
+</article>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"ticketId":{"editor":"text","default":"ET-7K4Q-19XZ"},"dark":{"editor":"boolean","default":false},"arrivee":{"editor":"boolean","default":false},"$preview":{"width":344,"height":720}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { now: Date.now() }; }
+  componentDidMount() { this.timer = setInterval(() => this.setState({ now: Date.now() }), 1000); }
+  componentWillUnmount() { clearInterval(this.timer); }
+  fnv(s) {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    return h >>> 0;
+  }
+  renderVals() {
+    const dark = this.props.dark ?? false;
+    const t = dark
+      ? { bg: '#0D0C0A', surface: '#1A1813', surface2: '#2E2A21', text: '#FBF5E6', muted: '#B9AE98', line: '#4A4436', edge: '#4A4436', shadow: 'none', skyBg: '#0F2A47', skyText: '#8CC4FF' }
+      : { bg: '#FBF5E6', surface: '#FFFDF7', surface2: '#F1E6CC', text: '#14120E', muted: '#5C5446', line: '#D9CAA6', edge: '#14120E', shadow: '5px 5px 0 #14120E', skyBg: '#DCEBFF', skyText: '#0050A6' };
+    const now = this.state.now;
+    const phase = Math.floor(now / 30000);
+    const elapsed = Math.floor(now / 1000) % 30;
+    // Signe du moment : identique pour tous les billets de l'événement pendant 30 s, affiché aussi sur le scanner
+    const signes = [
+      { n: 'Losange jaune', c: '#FFD21F', r: 45 }, { n: 'Losange bleu', c: '#1E8FFF', r: 45 }, { n: 'Losange rouge', c: '#C8102E', r: 45 }, { n: 'Losange blanc', c: '#FFFFFF', r: 45 },
+      { n: 'Carré jaune', c: '#FFD21F', r: 0 }, { n: 'Carré bleu', c: '#1E8FFF', r: 0 }, { n: 'Carré rouge', c: '#C8102E', r: 0 }, { n: 'Carré blanc', c: '#FFFFFF', r: 0 }
+    ];
+    return {
+      t: t,
+      ticketId: this.props.ticketId ?? 'ET-7K4Q-19XZ',
+      phase: phase,
+      elapsed: elapsed,
+      left: 30 - elapsed,
+      pct: Math.round(((elapsed + 1) / 30) * 100),
+      signe: signes[this.fnv('EVT-RUMBA-1411:' + phase) % 8],
+      animClass: (this.props.arrivee ?? false) ? 'billet-arrive' : '',
+      yes: true, no: false, n11: 11, n24: 24, n28: 28
+    };
+  }
+}
+</script>
+</body>
+</html>

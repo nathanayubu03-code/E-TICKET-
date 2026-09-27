@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Choix des billets</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,500..900&amp;family=Atkinson+Hyperlegible:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 360px; height: 1060px; position: relative; background: {{t.bg}}; color: {{t.text}}; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; overflow: hidden; display: flex; flex-direction: column">
+
+<header style="height: 64px; padding: 0 16px 0 4px; display: flex; align-items: center; gap: 4px">
+<a href="Evenement.dc.html" aria-label="Retour" style="width: 48px; height: 48px; color: {{t.text}}; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<h1 style="margin: 0; flex-grow: 1; font-family: 'Anybody', sans-serif; font-weight: 850; font-stretch: 80%; font-size: 24px">Vos billets</h1>
+<span style="font-size: 14px; font-weight: 700; color: {{t.muted}}">Étape 1 sur 3</span>
+</header>
+
+<div style="margin: 0 16px; padding: 12px 14px; border-radius: 14px; background: {{t.surface}}; border: 1.5px solid {{t.line}}; display: flex; flex-direction: column; gap: 2px">
+<b style="font-size: 16px">Nuit de la Rumba</b>
+<span style="font-size: 14px; color: {{t.muted}}">Sam. 14 nov. · 20:00 · Stade des Martyrs</span>
+</div>
+
+<div role="note" style="margin: 12px 16px 0; padding: 10px 14px; border-radius: 14px; background: {{t.skyBg}}; color: {{t.skyText}}; display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 700">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M12 11v6 M12 7.5v.5"></path></svg>
+4 billets maximum par personne
+</div>
+
+<div style="padding: 16px 16px 0; display: flex; flex-direction: column; gap: 12px">
+<sc-for list="{{cats}}" as="c" hint-placeholder-count="4">
+<div style="padding: 14px; border-radius: 16px; background: {{c.cardBg}}; border: 2px solid {{c.cardBorder}}; box-shadow: {{c.cardShadow}}; display: flex; flex-direction: column; gap: 10px; opacity: {{c.opacity}}">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-family: 'Anybody', sans-serif; font-weight: 850; font-stretch: 80%; font-size: 22px; line-height: 1.05">{{c.nom}}</span>
+<span style="font-size: 14px; color: {{t.muted}}">{{c.desc}}</span>
+</div>
+<span style="flex-shrink: 0; padding: 4px 10px; border-radius: 999px; background: {{c.badgeBg}}; color: {{c.badgeFg}}; font-size: 13px; font-weight: 700">{{c.badge}}</span>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+<div style="display: flex; flex-direction: column; line-height: 1.2"><b style="font-size: 18px">{{c.cdf}}</b><span style="font-size: 14px; color: {{t.muted}}">{{c.usd}}</span></div>
+<div style="display: flex; align-items: center; gap: 4px">
+<button onClick="{{c.moins}}" disabled="{{c.moinsOff}}" aria-label="Retirer un billet {{c.nom}}" style="width: 48px; height: 48px; border-radius: 12px; border: 2px solid {{c.moinsBorder}}; background: {{t.surface}}; color: {{c.moinsFg}}; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<output aria-live="polite" style="width: 40px; text-align: center; font-family: 'Anybody', sans-serif; font-weight: 900; font-size: 24px">{{c.n}}</output>
+<button onClick="{{c.plus}}" disabled="{{c.plusOff}}" aria-label="Ajouter un billet {{c.nom}}" style="width: 48px; height: 48px; border-radius: 12px; border: 2px solid {{c.plusBorder}}; background: {{c.plusBg}}; color: {{c.plusFg}}; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14 M5 12h14"></path></svg></button>
+</div>
+</div>
+</div>
+</sc-for>
+<span style="font-size: 13px; color: {{t.muted}}; text-align: center">Places restantes mises à jour il y a 1 min</span>
+</div>
+
+<div style="flex-grow: 1"></div>
+<div style="position: sticky; bottom: 0; padding: 12px 16px 16px; background: {{t.nav}}; border-top: 1.5px solid {{t.line}}; display: flex; flex-direction: column; gap: 10px">
+<sc-if value="{{atLimit}}" hint-placeholder-val="{{false}}">
+<div role="status" style="padding: 8px 12px; border-radius: 10px; background: {{t.warnBg}}; color: {{t.warnText}}; font-size: 14px; font-weight: 700">Limite atteinte : 4 billets par personne</div>
+</sc-if>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div aria-live="polite" style="display: flex; flex-direction: column; line-height: 1.15"><span style="font-size: 14px; color: {{t.muted}}">{{totalLabel}}</span><b style="font-size: 22px">{{totalCdf}}</b><span style="font-size: 14px; color: {{t.muted}}">{{totalUsd}}</span></div>
+<a href="Connexion.dc.html" aria-disabled="{{empty}}" style="flex-grow: 1; max-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: {{ctaBg}}; color: {{ctaFg}}; border: 2px solid {{ctaBorder}}; border-radius: 14px; box-shadow: {{ctaShadow}}; font-weight: 700; font-size: 18px; text-decoration: none">Continuer</a>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":360,"height":1060}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { q: { vip: 0, early: 0, std: 2, grad: 0 } }; }
+  renderVals() {
+    const dark = this.props.dark ?? false;
+    const L = { bg: '#FBF5E6', surface: '#FFFDF7', surface2: '#F1E6CC', text: '#14120E', muted: '#5C5446', line: '#D9CAA6', disabled: '#A89C84', shadow: '3px 3px 0 #14120E', btnBorder: '#14120E', skyText: '#0050A6', skyBg: '#DCEBFF', redText: '#B00E28', redBg: '#FBE0E3', warnText: '#8A4500', warnBg: '#FFE7C2', nav: '#FFFDF7' };
+    const D = { bg: '#0D0C0A', surface: '#1A1813', surface2: '#2E2A21', text: '#FBF5E6', muted: '#B9AE98', line: '#4A4436', disabled: '#6B6352', shadow: 'none', btnBorder: '#FFD21F', skyText: '#8CC4FF', skyBg: '#0F2A47', redText: '#FF7A86', redBg: '#3B0F15', warnText: '#FFB84D', warnBg: '#3A2608', nav: '#1A1813' };
+    const t = dark ? D : L;
+    const RATE = 2850, MAX = 4;
+    const fmt = (n) => n.toLocaleString('fr-FR').replace(/ | /g, ' ');
+    const defs = [
+      { k: 'vip', nom: 'VIP', desc: 'Devant la scène, boisson offerte', prix: 150000, reste: 12 },
+      { k: 'early', nom: 'Early Bird', desc: 'Tarif de lancement', prix: 25000, reste: 0 },
+      { k: 'std', nom: 'Standard', desc: 'Pelouse, debout', prix: 50000, reste: 860 },
+      { k: 'grad', nom: 'Gradins', desc: 'Tribune latérale, assis', prix: 15000, reste: 1450 }
+    ];
+    const q = this.state.q;
+    const total = defs.reduce((s, d) => s + q[d.k], 0);
+    const amount = defs.reduce((s, d) => s + q[d.k] * d.prix, 0);
+    const set = (k, v) => this.setState({ q: Object.assign({}, this.state.q, { [k]: v }) });
+    const cats = defs.map((d) => {
+      const n = q[d.k];
+      const soldOut = d.reste === 0;
+      const few = !soldOut && d.reste <= 20;
+      const moinsOff = n === 0;
+      const plusOff = soldOut || total >= MAX || n >= d.reste;
+      const selected = n > 0;
+      return {
+        nom: d.nom, desc: d.desc, n: n,
+        cdf: fmt(d.prix) + ' CDF', usd: '≈ ' + Math.round(d.prix / RATE) + ' USD',
+        badge: soldOut ? 'Épuisé' : few ? 'Plus que ' + d.reste + ' places' : 'Disponible',
+        badgeBg: soldOut ? t.surface2 : few ? t.redBg : t.surface2,
+        badgeFg: soldOut ? t.muted : few ? t.redText : t.muted,
+        cardBg: t.surface,
+        cardBorder: selected ? t.text : t.line,
+        cardShadow: selected ? t.shadow : 'none',
+        opacity: soldOut ? 0.7 : 1,
+        moinsOff: moinsOff, plusOff: plusOff,
+        moinsBorder: moinsOff ? t.line : t.text, moinsFg: moinsOff ? t.disabled : t.text,
+        plusBorder: plusOff ? t.line : t.btnBorder, plusBg: plusOff ? t.surface : '#FFD21F', plusFg: plusOff ? t.disabled : '#14120E',
+        moins: () => { if (!moinsOff) set(d.k, n - 1); },
+        plus: () => { if (!plusOff) set(d.k, n + 1); }
+      };
+    });
+    const empty = total === 0;
+    return {
+      t: t, cats: cats,
+      atLimit: total >= MAX,
+      empty: empty,
+      totalLabel: empty ? 'Aucun billet choisi' : total + (total > 1 ? ' billets' : ' billet'),
+      totalCdf: fmt(amount) + ' CDF',
+      totalUsd: '≈ ' + fmt(Math.round(amount / RATE)) + ' USD',
+      ctaBg: empty ? t.surface2 : '#FFD21F', ctaFg: empty ? t.disabled : '#14120E',
+      ctaBorder: empty ? t.line : t.btnBorder, ctaShadow: empty ? 'none' : t.shadow
+    };
+  }
+}
+</script>
+</body>
+</html>

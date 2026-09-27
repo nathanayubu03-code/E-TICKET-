@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Connexion par téléphone</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,500..900&amp;family=Atkinson+Hyperlegible:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 360px; height: 820px; position: relative; background: {{t.bg}}; color: {{t.text}}; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; overflow: hidden; display: flex; flex-direction: column">
+
+<header style="height: 64px; padding: 0 12px 0 4px; display: flex; align-items: center; justify-content: space-between">
+<a href="Billets.dc.html" aria-label="Retour" style="width: 48px; height: 48px; color: {{t.text}}; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<div role="group" aria-label="Langue" style="display: flex; padding: 3px; border-radius: 999px; background: {{t.surface2}}">
+<button aria-pressed="true" style="height: 42px; padding: 0 12px; border: none; border-radius: 999px; background: {{t.text}}; color: {{t.bg}}; font: 700 14px 'Atkinson Hyperlegible', sans-serif">Français</button>
+<button aria-pressed="false" style="height: 42px; padding: 0 10px; border: none; border-radius: 999px; background: transparent; color: {{t.text}}; font: 700 14px 'Atkinson Hyperlegible', sans-serif">Lingála</button>
+<button aria-pressed="false" style="height: 42px; padding: 0 10px; border: none; border-radius: 999px; background: transparent; color: {{t.text}}; font: 700 14px 'Atkinson Hyperlegible', sans-serif">Kiswahili</button>
+</div>
+</header>
+
+<div style="padding: 12px 16px 0; display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 900; font-stretch: 72%; font-size: 38px; line-height: 0.98">Votre numéro de téléphone</h1>
+<p style="margin: 0; font-size: 16px; line-height: 1.45; color: {{t.muted}}">Nous vous envoyons un code par SMS. Pas de mot de passe à retenir.</p>
+</div>
+
+<div style="padding: 20px 16px 0; display: flex; flex-direction: column; gap: 8px">
+<label for="tel" style="font-size: 15px; font-weight: 700">Numéro</label>
+<div style="display: flex; height: 56px; border: 2px solid {{t.text}}; border-radius: 14px; background: {{t.surface}}; overflow: hidden">
+<span style="display: flex; align-items: center; gap: 8px; padding: 0 12px; background: {{t.surface2}}; border-right: 2px solid {{t.text}}; font-size: 18px; font-weight: 700">
+<svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true"><rect width="22" height="16" rx="2" fill="#1E8FFF"></rect><path d="M0 14L18 0h4v2L4 16H0z" fill="#FFD21F"></path><path d="M0 15L19.5 0H22v0.6L2.8 16H0z" fill="#C8102E"></path><path d="M4.5 2l.9 1.8 2 .3-1.4 1.4.3 2-1.8-.9-1.8.9.3-2-1.4-1.4 2-.3z" fill="#FFD21F"></path></svg>
++243
+</span>
+<input id="tel" type="tel" inputmode="numeric" autocomplete="tel-national" value="97 123 45 67" aria-describedby="op" style="flex-grow: 1; min-width: 0; border: none; background: transparent; padding: 0 14px; font: 700 20px 'Atkinson Hyperlegible', sans-serif; letter-spacing: 0.04em; color: {{t.text}}; outline: none">
+</div>
+<div id="op" style="display: flex; align-items: center; gap: 8px; font-size: 15px">
+<span style="width: 18px; height: 18px; border-radius: 5px; background: #E40000"></span>
+<span><b>Airtel</b> détecté d'après le 97</span>
+</div>
+</div>
+
+<div style="margin: 20px 16px 0; border-top: 2px dashed {{t.line}}"></div>
+
+<div style="padding: 18px 16px 0; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<span style="font-size: 15px">Code envoyé au <b>+243 97 123 45 67</b></span>
+<a href="#tel" style="min-height: 48px; display: inline-flex; align-items: center; color: {{t.link}}; font-weight: 700; font-size: 15px">Modifier</a>
+</div>
+<fieldset style="margin: 0; padding: 0; border: none">
+<legend style="font-size: 15px; font-weight: 700; margin-bottom: 8px">Code à 6 chiffres</legend>
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px">
+<input aria-label="Chiffre 1" value="4" inputmode="numeric" maxlength="1" style="height: 60px; min-width: 0; box-sizing: border-box; text-align: center; border: 2px solid {{t.text}}; border-radius: 12px; background: {{t.surface}}; color: {{t.text}}; font: 900 28px 'Anybody', sans-serif">
+<input aria-label="Chiffre 2" value="8" inputmode="numeric" maxlength="1" style="height: 60px; min-width: 0; box-sizing: border-box; text-align: center; border: 2px solid {{t.text}}; border-radius: 12px; background: {{t.surface}}; color: {{t.text}}; font: 900 28px 'Anybody', sans-serif">
+<input aria-label="Chiffre 3" value="2" inputmode="numeric" maxlength="1" style="height: 60px; min-width: 0; box-sizing: border-box; text-align: center; border: 2px solid {{t.text}}; border-radius: 12px; background: {{t.surface}}; color: {{t.text}}; font: 900 28px 'Anybody', sans-serif">
+<input aria-label="Chiffre 4" value="" inputmode="numeric" maxlength="1" style="height: 60px; min-width: 0; box-sizing: border-box; text-align: center; border: 3px solid {{t.focus}}; box-shadow: 0 0 0 3px {{t.focusRing}}; border-radius: 12px; background: {{t.surface}}; color: {{t.text}}; font: 900 28px 'Anybody', sans-serif">
+<input aria-label="Chiffre 5" value="" inputmode="numeric" maxlength="1" style="height: 60px; min-width: 0; box-sizing: border-box; text-align: center; border: 2px solid {{t.inputBorder}}; border-radius: 12px; background: {{t.surface}}; color: {{t.text}}; font: 900 28px 'Anybody', sans-serif">
+<input aria-label="Chiffre 6" value="" inputmode="numeric" maxlength="1" style="height: 60px; min-width: 0; box-sizing: border-box; text-align: center; border: 2px solid {{t.inputBorder}}; border-radius: 12px; background: {{t.surface}}; color: {{t.text}}; font: 900 28px 'Anybody', sans-serif">
+</div>
+</fieldset>
+<p style="margin: 0; font-size: 14px; color: {{t.muted}}">Le code se remplit tout seul si votre téléphone le permet.</p>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 15px">
+<span style="color: {{t.muted}}">Rien reçu ?</span>
+<button disabled="{{yes}}" style="min-height: 48px; padding: 0 4px; border: none; background: transparent; color: {{t.muted}}; font: 700 15px 'Atkinson Hyperlegible', sans-serif">Renvoyer dans 0:42</button>
+</div>
+</div>
+
+<div style="flex-grow: 1"></div>
+<div style="padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 10px">
+<button disabled="{{yes}}" style="height: 56px; border-radius: 14px; border: 2px solid {{t.line}}; background: {{t.surface2}}; color: {{t.disabled}}; font: 700 18px 'Atkinson Hyperlegible', sans-serif">Valider le code</button>
+<p style="margin: 0; font-size: 13px; line-height: 1.4; color: {{t.muted}}; text-align: center">En continuant, vous acceptez les <a href="#" style="color: {{t.link}}; font-weight: 700">conditions d'utilisation</a>.</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":360,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.props.dark ?? false;
+    const L = { bg: '#FBF5E6', surface: '#FFFDF7', surface2: '#F1E6CC', text: '#14120E', muted: '#5C5446', line: '#D9CAA6', inputBorder: '#8A7F6A', disabled: '#7A705E', focus: '#0050A6', focusRing: '#BFDDFF', link: '#0050A6' };
+    const D = { bg: '#0D0C0A', surface: '#1A1813', surface2: '#2E2A21', text: '#FBF5E6', muted: '#B9AE98', line: '#4A4436', inputBorder: '#8A7F6A', disabled: '#8A7F6A', focus: '#FFD21F', focusRing: '#4A3D08', link: '#8CC4FF' };
+    return { t: dark ? D : L, yes: true };
+  }
+}
+</script>
+</body>
+</html>

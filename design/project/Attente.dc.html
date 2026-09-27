@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Attente de validation Mobile Money</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,500..900&amp;family=Atkinson+Hyperlegible:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+@keyframes attente-barre{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}
+@keyframes attente-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@media (prefers-reduced-motion: reduce){.anim{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 360px; height: 1300px; position: relative; background: {{t.bg}}; color: {{t.text}}; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; overflow: hidden; display: flex; flex-direction: column">
+
+<header style="height: 56px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1.5px solid {{t.line}}">
+<span style="display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700"><span style="width: 18px; height: 18px; border-radius: 5px; background: #E40000"></span>Airtel Money · 100 000 CDF</span>
+<span style="font-size: 13px; color: {{t.muted}}">Réf. ET-4F7K92</span>
+</header>
+
+<sc-if value="{{isAttente}}" hint-placeholder-val="{{true}}">
+<div style="padding: 20px 16px 0; display: flex; flex-direction: column; align-items: center; gap: 12px">
+<div role="timer" aria-live="off" aria-label="Temps restant {{mmss}}" style="position: relative; width: 176px; height: 176px">
+<svg width="176" height="176" viewBox="0 0 176 176" aria-hidden="true">
+<circle cx="88" cy="88" r="76" fill="none" stroke="{{t.surface2}}" stroke-width="14"></circle>
+<circle cx="88" cy="88" r="76" fill="none" stroke="{{t.ring}}" stroke-width="14" stroke-linecap="round" stroke-dasharray="477.5" stroke-dashoffset="{{dash}}" transform="rotate(-90 88 88)" style="transition: stroke-dashoffset 1s linear"></circle>
+</svg>
+<div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1">
+<span style="font-family: 'Anybody', sans-serif; font-weight: 900; font-stretch: 80%; font-size: 52px">{{mmss}}</span>
+<span style="font-size: 14px; color: {{t.muted}}; margin-top: 4px">pour valider</span>
+</div>
+</div>
+<h1 style="margin: 0; text-align: center; font-family: 'Anybody', sans-serif; font-weight: 900; font-stretch: 72%; font-size: 36px; line-height: 0.98">Validez sur votre téléphone</h1>
+</div>
+
+<div style="padding: 18px 16px 0">
+<span style="font-size: 14px; font-weight: 700; color: {{t.muted}}">Ce message va s'afficher :</span>
+<div class="anim" style="margin-top: 8px; padding: 14px 16px; border-radius: 16px; background: #14120E; color: #FBF5E6; border: 2px solid {{t.bubbleEdge}}; font-family: ui-monospace, 'Roboto Mono', monospace; font-size: 15px; line-height: 1.45; animation: attente-pulse 3s ease-in-out infinite">
+Airtel Money<br>Payer 100000 CDF à E-TICKET RDC ?<br>Entrez votre code secret :<br><span style="display: inline-block; width: 90px; border-bottom: 2px solid #FFD21F">&#160;</span>
+</div>
+</div>
+
+<ol style="margin: 16px 16px 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 16px; line-height: 1.35">
+<li style="display: flex; gap: 12px; align-items: flex-start"><span style="width: 30px; height: 30px; flex-shrink: 0; border-radius: 50%; background: #FFD21F; color: #14120E; display: flex; align-items: center; justify-content: center; font-weight: 700">1</span><span>Attendez le message Airtel Money sur ce téléphone.</span></li>
+<li style="display: flex; gap: 12px; align-items: flex-start"><span style="width: 30px; height: 30px; flex-shrink: 0; border-radius: 50%; background: #FFD21F; color: #14120E; display: flex; align-items: center; justify-content: center; font-weight: 700">2</span><span>Vérifiez le montant : <b>100 000 CDF</b>.</span></li>
+<li style="display: flex; gap: 12px; align-items: flex-start"><span style="width: 30px; height: 30px; flex-shrink: 0; border-radius: 50%; background: #FFD21F; color: #14120E; display: flex; align-items: center; justify-content: center; font-weight: 700">3</span><span>Tapez votre code secret <b>dans ce message</b>, puis validez.</span></li>
+</ol>
+</sc-if>
+
+<sc-if value="{{isRecu}}" hint-placeholder-val="{{false}}">
+<div style="padding: 40px 16px 0; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center">
+<span style="width: 120px; height: 120px; border-radius: 50%; background: {{t.okFill}}; color: {{t.okOn}}; display: flex; align-items: center; justify-content: center"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+<h1 role="status" style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 900; font-stretch: 72%; font-size: 40px; line-height: 0.98">Paiement reçu</h1>
+<p style="margin: 0; font-size: 17px; line-height: 1.45">Airtel Money a confirmé <b>100 000 CDF</b>. Nous préparons vos 2 billets.</p>
+<div style="width: 100%; height: 8px; border-radius: 4px; background: {{t.surface2}}; overflow: hidden"><div class="anim" style="width: 40%; height: 8px; border-radius: 4px; background: {{t.ring}}; animation: attente-barre 1.4s ease-in-out infinite"></div></div>
+<span style="font-size: 15px; color: {{t.muted}}">Ne fermez pas l'application.</span>
+</div>
+<div style="margin: 24px 16px 0; padding: 14px 16px; border-radius: 16px; background: {{t.surface}}; border: 1.5px solid {{t.line}}; display: flex; flex-direction: column; gap: 8px; font-size: 15px">
+<div style="display: flex; justify-content: space-between"><span style="color: {{t.muted}}">Montant</span><b>100 000 CDF</b></div>
+<div style="display: flex; justify-content: space-between"><span style="color: {{t.muted}}">Opérateur</span><b>Airtel Money</b></div>
+<div style="display: flex; justify-content: space-between"><span style="color: {{t.muted}}">Transaction</span><b>AM261127.1942.K4</b></div>
+<div style="display: flex; justify-content: space-between"><span style="color: {{t.muted}}">Heure</span><b>19:42</b></div>
+</div>
+</sc-if>
+
+<sc-if value="{{isEchec}}" hint-placeholder-val="{{false}}">
+<div style="padding: 40px 16px 0; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center">
+<span style="width: 120px; height: 120px; border-radius: 50%; background: #C8102E; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12 M18 6L6 18"></path></svg></span>
+<h1 role="alert" style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 900; font-stretch: 72%; font-size: 40px; line-height: 0.98">Paiement refusé</h1>
+<p style="margin: 0; font-size: 17px; line-height: 1.45">Airtel Money a refusé la demande. Le solde est peut-être insuffisant, ou le code secret incorrect.</p>
+<p style="margin: 0; padding: 12px 14px; border-radius: 14px; background: {{t.okBg}}; color: {{t.okText}}; font-size: 16px; font-weight: 700; width: 100%; box-sizing: border-box">Aucun montant n'a été débité.</p>
+</div>
+</sc-if>
+
+<sc-if value="{{isDelai}}" hint-placeholder-val="{{false}}">
+<div style="padding: 40px 16px 0; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center">
+<span style="width: 120px; height: 120px; border-radius: 50%; background: #FFD21F; color: #14120E; border: 3px solid #14120E; box-sizing: border-box; display: flex; align-items: center; justify-content: center"><svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M12 7v5l3 2"></path></svg></span>
+<h1 role="alert" style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 900; font-stretch: 72%; font-size: 40px; line-height: 0.98">Temps écoulé</h1>
+<p style="margin: 0; font-size: 17px; line-height: 1.45">La demande a expiré après 2 minutes.</p>
+<div style="padding: 14px; border-radius: 14px; background: {{t.warnBg}}; color: {{t.text}}; font-size: 16px; line-height: 1.45; text-align: left; width: 100%; box-sizing: border-box">
+<b>Vous avez validé quand même ?</b> Si votre compte est débité, vos billets arrivent tout seuls par SMS dans les 15 minutes. <b>Ne payez pas une deuxième fois.</b>
+</div>
+</div>
+</sc-if>
+
+<div role="note" style="margin: 20px 16px 0; padding: 14px; border-radius: 16px; background: #FFD21F; color: #14120E; border: 2px solid #14120E; display: flex; gap: 12px; align-items: flex-start">
+<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z M12 8v5 M12 16v.5"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 4px; font-size: 15px; line-height: 1.4">
+<b style="font-size: 17px">Votre code secret reste secret</b>
+<span>Tapez-le seulement dans le message Airtel Money. e-Ticket ne le demande jamais : ni par appel, ni par SMS, ni sur WhatsApp.</span>
+</div>
+</div>
+
+<sc-if value="{{isAttente}}" hint-placeholder-val="{{true}}">
+<details open style="margin: 16px 16px 0; border-radius: 16px; background: {{t.surface}}; border: 1.5px solid {{t.line}}">
+<summary style="min-height: 52px; padding: 0 16px; display: flex; align-items: center; font-size: 17px; font-weight: 700; cursor: pointer">Rien reçu ?</summary>
+<ul style="margin: 0; padding: 0 16px 14px; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 15px; line-height: 1.4">
+<li>Vérifiez que ce téléphone a du réseau.</li>
+<li>Ouvrez le menu Airtel Money (<b>*501#</b>) pour voir la demande en attente.</li>
+<li>Vérifiez votre solde : il faut au moins <b>100 000 CDF</b>.</li>
+</ul>
+</details>
+</sc-if>
+
+<div style="flex-grow: 1"></div>
+<div style="padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<sc-if value="{{isAttente}}" hint-placeholder-val="{{true}}">
+<button onClick="{{relancer}}" disabled="{{renvoiOff}}" style="height: 56px; border-radius: 14px; border: 2px solid {{renvoiBorder}}; background: {{t.surface}}; color: {{renvoiFg}}; font: 700 17px 'Atkinson Hyperlegible', sans-serif">{{renvoiLabel}}</button>
+<a href="Paiement.dc.html" style="height: 52px; display: flex; align-items: center; justify-content: center; color: {{t.link}}; font-weight: 700; font-size: 16px">Changer de moyen de paiement</a>
+</sc-if>
+<sc-if value="{{isEchec}}" hint-placeholder-val="{{false}}">
+<button onClick="{{relancer}}" style="height: 56px; border-radius: 14px; border: 2px solid {{t.btnBorder}}; background: #FFD21F; color: #14120E; box-shadow: {{t.shadow}}; font: 700 18px 'Atkinson Hyperlegible', sans-serif">Réessayer</button>
+<a href="Paiement.dc.html" style="height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 14px; border: 2px solid {{t.text}}; color: {{t.text}}; font-weight: 700; font-size: 17px; text-decoration: none">Choisir un autre opérateur</a>
+</sc-if>
+<sc-if value="{{isDelai}}" hint-placeholder-val="{{false}}">
+<button onClick="{{relancer}}" style="height: 56px; border-radius: 14px; border: 2px solid {{t.btnBorder}}; background: #FFD21F; color: #14120E; box-shadow: {{t.shadow}}; font: 700 18px 'Atkinson Hyperlegible', sans-serif">Relancer la demande</button>
+<button style="height: 56px; border-radius: 14px; border: 2px solid {{t.text}}; background: transparent; color: {{t.text}}; font: 700 17px 'Atkinson Hyperlegible', sans-serif">Vérifier mon paiement</button>
+</sc-if>
+<sc-if value="{{isRecu}}" hint-placeholder-val="{{false}}">
+<a href="Confirmation.dc.html" style="height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 14px; border: 2px solid {{t.btnBorder}}; background: #FFD21F; color: #14120E; box-shadow: {{t.shadow}}; font-weight: 700; font-size: 18px; text-decoration: none">Voir mes billets</a>
+</sc-if>
+<sc-if value="{{notRecu}}" hint-placeholder-val="{{true}}">
+<a href="#" style="padding: 14px 16px; border-radius: 16px; border: 2px dashed {{t.inputBorder}}; color: {{t.text}}; text-decoration: none; display: flex; align-items: center; gap: 12px">
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M4 21a8 8 0 0 1 16 0"></path></svg>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px"><b style="font-size: 16px">Payer avec un agent</b><span style="font-size: 14px; color: {{t.muted}}">Donnez le code <b style="color: {{t.text}}">ET-4F7K92</b> à un agent Mobile Money.</span></span>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>
+</a>
+</sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"etat":{"editor":"enum","options":["attente","recu","echec","delai"],"default":"attente"},"$preview":{"width":360,"height":1300}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { start: Date.now(), now: Date.now() }; }
+  componentDidMount() { this.timer = setInterval(() => this.setState({ now: Date.now() }), 1000); }
+  componentWillUnmount() { clearInterval(this.timer); }
+  renderVals() {
+    const dark = this.props.dark ?? false;
+    const L = { bg: '#FBF5E6', surface: '#FFFDF7', surface2: '#F1E6CC', text: '#14120E', muted: '#5C5446', line: '#D9CAA6', inputBorder: '#8A7F6A', disabled: '#7A705E', shadow: '3px 3px 0 #14120E', btnBorder: '#14120E', link: '#0050A6', ring: '#0050A6', bubbleEdge: '#14120E', okFill: '#0B7A3E', okOn: '#FFFFFF', okText: '#0B6B37', okBg: '#DDF3E4', warnBg: '#FFE7C2' };
+    const D = { bg: '#0D0C0A', surface: '#1A1813', surface2: '#2E2A21', text: '#FBF5E6', muted: '#B9AE98', line: '#4A4436', inputBorder: '#8A7F6A', disabled: '#8A7F6A', shadow: 'none', btnBorder: '#FFD21F', link: '#8CC4FF', ring: '#FFD21F', bubbleEdge: '#4A4436', okFill: '#34C26E', okOn: '#14120E', okText: '#5BE08F', okBg: '#0E2E1B', warnBg: '#3A2608' };
+    const t = dark ? D : L;
+    const TOTAL = 120;
+    const elapsed = Math.floor((this.state.now - this.state.start) / 1000);
+    const left = Math.max(0, TOTAL - elapsed);
+    let etat = this.props.etat ?? 'attente';
+    if (etat === 'attente' && left === 0) etat = 'delai';
+    const renvoiIn = Math.max(0, 30 - elapsed);
+    const pad = (n) => (n < 10 ? '0' : '') + n;
+    return {
+      t: t,
+      isAttente: etat === 'attente', isRecu: etat === 'recu', isEchec: etat === 'echec', isDelai: etat === 'delai',
+      notRecu: etat !== 'recu',
+      mmss: Math.floor(left / 60) + ':' + pad(left % 60),
+      dash: Math.round(477.5 * (1 - left / TOTAL) * 10) / 10,
+      renvoiOff: renvoiIn > 0,
+      renvoiLabel: renvoiIn > 0 ? 'Renvoyer la demande dans 0:' + pad(renvoiIn) : 'Renvoyer la demande',
+      renvoiBorder: renvoiIn > 0 ? t.line : t.text,
+      renvoiFg: renvoiIn > 0 ? t.disabled : t.text,
+      relancer: () => this.setState({ start: Date.now(), now: Date.now() })
+    };
+  }
+}
+</script>
+</body>
+</html>

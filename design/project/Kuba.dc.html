@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Motif Kuba</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+@keyframes kuba-souffle{0%,100%{opacity:1}50%{opacity:.5}}
+@media (prefers-reduced-motion: reduce){.kuba-g{animation:none !important}}
+</style>
+</helmet>
+<div style="width: {{w}}px; height: {{h}}px; line-height: 0">
+<svg width="{{w}}" height="{{h}}" viewBox="{{vb}}" role="img" aria-label="{{label}}">
+<rect x="0" y="0" width="{{vw}}" height="{{vh}}" fill="{{ground}}"></rect>
+<path class="kuba-g" d="{{p0}}" fill="{{c0}}" fill-rule="evenodd" style="animation: {{a0}}"></path>
+<path class="kuba-g" d="{{p1}}" fill="{{c1}}" fill-rule="evenodd" style="animation: {{a1}}"></path>
+<path class="kuba-g" d="{{p2}}" fill="{{c2}}" fill-rule="evenodd" style="animation: {{a2}}"></path>
+<rect x="{{qx}}" y="{{qx}}" width="{{qs}}" height="{{qs}}" fill="{{qrBg}}"></rect>
+<path d="{{qr}}" fill="#000000"></path>
+</svg>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"ticketId":{"editor":"text","default":"ET-7K4Q-19XZ"},"cols":{"editor":"int","default":11,"min":2,"max":60},"rows":{"editor":"int","default":11,"min":1,"max":60},"cell":{"editor":"int","default":24,"min":6,"max":64},"hole":{"editor":"boolean","default":true},"live":{"editor":"boolean","default":true},"phase":{"editor":null},"$preview":{"width":264,"height":264}}'>
+class Component extends DCLogic {
+  // FNV-1a 32 bits : même fonction côté app, côté scanner et dans src/kuba/kuba.js
+  fnv(s) {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    return h >>> 0;
+  }
+  motifs() {
+    return [
+      [[[12,2],[22,12],[12,22],[2,12]]],
+      [[[12,1],[23,12],[12,23],[1,12]],[[12,6],[18,12],[12,18],[6,12]],[[12,9.5],[14.5,12],[12,14.5],[9.5,12]]],
+      [[[0,15],[6,7],[12,15],[18,7],[24,15],[24,21],[18,13],[12,21],[6,13],[0,21]]],
+      [[[0,16],[8,16],[8,24],[0,24]],[[8,8],[16,8],[16,16],[8,16]],[[16,0],[24,0],[24,8],[16,8]]],
+      [[[9,2],[15,2],[15,9],[22,9],[22,15],[15,15],[15,22],[9,22],[9,15],[2,15],[2,9],[9,9]]],
+      [[[2,2],[22,2],[12,12]],[[2,22],[22,22],[12,12]]],
+      [[[3,3],[9,3],[9,9],[3,9]],[[15,3],[21,3],[21,9],[15,9]],[[3,15],[9,15],[9,21],[3,21]],[[15,15],[21,15],[21,21],[15,21]]],
+      [[[0,4],[24,4],[24,9],[0,9]],[[0,15],[24,15],[24,20],[0,20]]]
+    ];
+  }
+  palettes() {
+    return [
+      { ground: '#14120E', c: ['#FFD21F', '#3FA2FF', '#FF4D5E'] },
+      { ground: '#FFD21F', c: ['#14120E', '#C8102E', '#0059B8'] },
+      { ground: '#1E8FFF', c: ['#14120E', '#FFD21F', '#FBF5E6'] },
+      { ground: '#C8102E', c: ['#FFD21F', '#FBF5E6', '#14120E'] },
+      { ground: '#FBF5E6', c: ['#C8102E', '#0059B8', '#14120E'] }
+    ];
+  }
+  pattern(id, cols, rows, hole, phase) {
+    const seed = this.fnv(id);
+    const pal = this.palettes()[seed % 5];
+    const rotation = ((seed >>> 3) & 1) === 1 && cols === rows;
+    const allowed = rotation ? [0,1,2,3,4,5,6,7] : [0,1,4,5,6,7];
+    const M = this.motifs();
+    const paths = ['', '', ''];
+    const nx = cols - 1, ny = rows - 1;
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        if (hole && x >= 2 && x <= cols - 3 && y >= 2 && y <= rows - 3) continue;
+        const cands = rotation
+          ? [[x, y, 0], [nx - y, x, 1], [nx - x, ny - y, 2], [y, ny - x, 3]]
+          : [[x, y, 0], [nx - x, y, 0], [x, ny - y, 0], [nx - x, ny - y, 0]];
+        let best = cands[0];
+        for (const c of cands) { if (c[1] * 64 + c[0] < best[1] * 64 + best[0]) best = c; }
+        const h = this.fnv(id + '#' + (best[1] * 64 + best[0]));
+        if ((h >>> 9) % 6 === 0) continue;
+        const motif = allowed[h % allowed.length];
+        const spin = ((h >>> 7) & 1) ? phase : 0;
+        const rot = (((h >>> 5) % 4) + (rotation ? (4 - best[2]) : 0) + spin) % 4;
+        const color = (((h >>> 3) % 3) + phase) % 3;
+        for (const poly of M[motif]) {
+          let d = '';
+          poly.forEach((pt, i) => {
+            let px = pt[0], py = pt[1];
+            for (let r = 0; r < rot; r++) { const t = px; px = 24 - py; py = t; }
+            d += (i === 0 ? 'M' : 'L') + (px + x * 24) + ' ' + (py + y * 24);
+          });
+          paths[color] += d + 'Z';
+        }
+      }
+    }
+    return { ground: pal.ground, c: pal.c, paths };
+  }
+  qrPath(id, size, offset) {
+    const n = 25, m = size / 33, o = offset + 4 * m;
+    const dark = [];
+    for (let i = 0; i < n; i++) { dark.push(new Array(n).fill(false)); }
+    const finder = (fx, fy) => {
+      for (let y = 0; y < 7; y++) for (let x = 0; x < 7; x++) {
+        const ring = x === 0 || y === 0 || x === 6 || y === 6;
+        const core = x >= 2 && x <= 4 && y >= 2 && y <= 4;
+        dark[fy + y][fx + x] = ring || core;
+      }
+    };
+    const reserved = (x, y) => (x < 8 && y < 8) || (x > n - 9 && y < 8) || (x < 8 && y > n - 9) || x === 6 || y === 6 || (x >= 16 && x <= 20 && y >= 16 && y <= 20);
+    let s = this.fnv('qr:' + id);
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      if (reserved(x, y)) continue;
+      s = Math.imul(s ^ (s >>> 13), 0x5bd1e995) >>> 0;
+      dark[y][x] = (s & 3) < 2;
+    }
+    finder(0, 0); finder(n - 7, 0); finder(0, n - 7);
+    for (let i = 8; i < n - 8; i++) { dark[6][i] = i % 2 === 0; dark[i][6] = i % 2 === 0; }
+    for (let y = 16; y <= 20; y++) for (let x = 16; x <= 20; x++) {
+      dark[y][x] = x === 16 || x === 20 || y === 16 || y === 20 || (x === 18 && y === 18);
+    }
+    let d = '';
+    const r = (v) => Math.round(v * 100) / 100;
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      if (dark[y][x]) d += 'M' + r(o + x * m) + ' ' + r(o + y * m) + 'h' + r(m + 0.05) + 'v' + r(m + 0.05) + 'h-' + r(m + 0.05) + 'Z';
+    }
+    return d;
+  }
+  renderVals() {
+    const p = this.props;
+    const id = p.ticketId ?? 'ET-7K4Q-19XZ';
+    const cols = p.cols ?? 11, rows = p.rows ?? 11, cell = p.cell ?? 24;
+    const hole = (p.hole ?? true) && cols >= 7 && rows >= 7;
+    const live = p.live ?? true;
+    const phase = p.phase ?? Math.floor(Date.now() / 30000);
+    const g = this.pattern(id, cols, rows, hole, phase);
+    const qs = (cols - 4) * 24;
+    const anim = (delay) => live ? 'kuba-souffle 9s ease-in-out ' + delay + 's infinite' : 'none';
+    return {
+      w: cols * cell, h: rows * cell, vw: cols * 24, vh: rows * 24,
+      vb: '0 0 ' + cols * 24 + ' ' + rows * 24,
+      ground: g.ground, c0: g.c[0], c1: g.c[1], c2: g.c[2],
+      p0: g.paths[0], p1: g.paths[1], p2: g.paths[2],
+      a0: anim(0), a1: anim(-3), a2: anim(-6),
+      qx: hole ? 48 : 0, qs: hole ? qs : 0,
+      qrBg: hole ? '#FFFFFF' : 'transparent',
+      qr: hole ? this.qrPath(id, qs, 48) : '',
+      label: hole ? 'QR code du billet ' + id + ' entouré de son motif vivant' : 'Motif Kuba'
+    };
+  }
+}
+</script>
+</body>
+</html>

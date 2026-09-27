@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Logo e-Ticket</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,500..900&amp;family=Atkinson+Hyperlegible:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="display: inline-flex; align-items: center; gap: {{gap}}px; color: {{ink}}; font-family: 'Anybody', sans-serif">
+<sc-if value="{{isA}}" hint-placeholder-val="{{true}}">
+<svg width="{{taille}}" height="{{taille}}" viewBox="0 0 48 48" aria-hidden="true">
+<rect width="48" height="48" rx="12" fill="#FFD21F"></rect>
+<path d="M10 24H38V17H32V11H16V17H10V31H16V37H36" fill="none" stroke="#14120E" stroke-width="4.5" stroke-linejoin="miter" stroke-linecap="square"></path>
+<path d="M40 28l3 3-3 3-3-3z" fill="#C8102E"></path>
+</svg>
+</sc-if>
+<sc-if value="{{isB}}" hint-placeholder-val="{{false}}">
+<svg width="{{taille}}" height="{{taille}}" viewBox="0 0 48 48" aria-hidden="true">
+<rect width="48" height="48" rx="12" fill="#14120E"></rect>
+<path d="M9 9H39a3 3 0 0 1 3 3V19a5 5 0 0 0 0 10V36a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3V29a5 5 0 0 0 0-10V12a3 3 0 0 1 3-3Z" fill="#C8102E"></path>
+<path d="M13 24H32.5A8.5 8.5 0 1 0 30 30" fill="none" stroke="#FBF5E6" stroke-width="4.2" stroke-linecap="round"></path>
+</svg>
+</sc-if>
+<sc-if value="{{isC}}" hint-placeholder-val="{{false}}">
+<svg width="{{taille}}" height="{{taille}}" viewBox="0 0 48 48" aria-hidden="true">
+<rect width="48" height="48" rx="12" fill="#1E8FFF"></rect>
+<path d="M24 12.5L35.5 22H12.5Z" fill="#FFD21F"></path>
+<path d="M7 24H41L24 7L7 24L24 41L32 33" fill="none" stroke="#14120E" stroke-width="4.5" stroke-linejoin="miter" stroke-linecap="square"></path>
+<path d="M38 32l3 3-3 3-3-3z" fill="#C8102E"></path>
+</svg>
+</sc-if>
+<sc-if value="{{mot}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; align-items: flex-start; gap: 6px">
+<span style="font-size: {{fs}}px; line-height: 1; font-weight: 850; font-stretch: 78%; letter-spacing: -0.01em">e-Ticket</span>
+<sc-if value="{{rdc}}" hint-placeholder-val="{{true}}">
+<span style="display: inline-block; margin-top: 2px; padding: 2px 5px 1px; background: #C8102E; color: #FBF5E6; border-radius: 4px; font-size: {{fsTag}}px; line-height: 1.1; font-weight: 800; font-stretch: 100%; letter-spacing: 0.06em; transform: rotate(-4deg)">RDC</span>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"piste":{"editor":"enum","options":["a","b","c"],"default":"a"},"taille":{"editor":"int","default":48,"min":16,"max":256},"mot":{"editor":"boolean","default":true},"rdc":{"editor":"boolean","default":true},"dark":{"editor":"boolean","default":false},"$preview":{"width":320,"height":80}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const piste = p.piste ?? 'a';
+    const taille = p.taille ?? 48;
+    return {
+      isA: piste === 'a', isB: piste === 'b', isC: piste === 'c',
+      taille: taille,
+      mot: p.mot ?? true,
+      rdc: p.rdc ?? true,
+      gap: Math.round(taille * 0.22),
+      fs: Math.round(taille * 0.72),
+      fsTag: Math.max(9, Math.round(taille * 0.24)),
+      ink: (p.dark ?? false) ? '#FBF5E6' : '#14120E'
+    };
+  }
+}
+</script>
+</body>
+</html>

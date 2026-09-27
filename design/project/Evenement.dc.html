@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Page événement</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,500..900&amp;family=Atkinson+Hyperlegible:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 360px; height: 1500px; position: relative; background: {{t.bg}}; color: {{t.text}}; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; overflow: hidden; display: flex; flex-direction: column">
+
+<div style="position: relative; height: 248px; flex-shrink: 0; overflow: hidden; line-height: 0; background: #C8102E">
+<dc-import name="Kuba" ticket-id="EVT-RUMBA-1411" cols="{{n15}}" rows="{{n11}}" cell="{{n24}}" hole="{{no}}" live="{{no}}" phase="{{n0}}" hint-size="360px,264px"></dc-import>
+<div style="position: absolute; left: 0; right: 0; bottom: 0; height: 96px; background: #C8102E"></div>
+<div style="position: absolute; left: 16px; right: 16px; bottom: 18px; line-height: 1.1; color: #FBF5E6">
+<div style="font-family: 'Anybody', sans-serif; font-weight: 900; font-stretch: 68%; font-size: 52px; line-height: 0.9; letter-spacing: -0.01em">Nuit de la Rumba</div>
+</div>
+<div style="position: absolute; left: 8px; right: 8px; top: 8px; display: flex; justify-content: space-between">
+<a href="Accueil.dc.html" aria-label="Retour" style="width: 48px; height: 48px; border-radius: 50%; background: #14120E; color: #FBF5E6; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ic.back}}"></path></svg></a>
+<button aria-label="Partager" style="width: 48px; height: 48px; border-radius: 50%; border: none; background: #14120E; color: #FBF5E6; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="{{ic.share}}"></path></svg></button>
+</div>
+<span style="position: absolute; right: 18px; top: 84px; width: 80px; height: 80px; background: #FFD21F; color: #14120E; border: 2px solid #14120E; border-radius: 50%; transform: rotate(8deg); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; font-family: 'Anybody', sans-serif; font-weight: 900; font-stretch: 80%"><span style="font-size: 32px">14</span><span style="font-size: 14px">NOV.</span></span>
+</div>
+
+<div style="padding: 16px 16px 0; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 14px; font-weight: 700; color: {{t.muted}}">Concert · Rumba congolaise</span>
+<span style="font-size: 18px; font-weight: 700">Kin Malebo Orchestra et invités</span>
+</div>
+
+<div style="padding: 16px 16px 0; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; gap: 12px; align-items: center">
+<span style="width: 48px; height: 48px; flex-shrink: 0; border-radius: 12px; background: {{t.surface2}}; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="{{ic.cal}}"></path></svg></span>
+<div style="display: flex; flex-direction: column"><b style="font-size: 16px">Samedi 14 novembre 2026</b><span style="font-size: 14px; color: {{t.muted}}">Portes 18:00 · Début 20:00</span></div>
+</div>
+<div style="display: flex; gap: 12px; align-items: center">
+<span style="width: 48px; height: 48px; flex-shrink: 0; border-radius: 12px; background: {{t.surface2}}; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="{{ic.pin}}"></path></svg></span>
+<div style="display: flex; flex-direction: column"><b style="font-size: 16px">Stade des Martyrs</b><span style="font-size: 14px; color: {{t.muted}}">Kinshasa, commune de Kinshasa</span></div>
+</div>
+</div>
+
+<div style="margin: 14px 16px 0; border-radius: 16px; overflow: hidden; border: 1.5px solid {{t.line}}; background: {{t.surface}}">
+<svg width="326" height="132" viewBox="0 0 326 132" role="img" aria-label="Plan du quartier autour du Stade des Martyrs" style="display: block">
+<rect width="326" height="132" fill="{{map.ground}}"></rect>
+<path d="M0 18 C 80 6, 160 34, 326 12 L326 0 L0 0 Z" fill="{{map.water}}"></path>
+<path d="M0 70 H326 M0 112 H326 M60 0 V132 M150 20 V132 M250 0 V132 M0 132 L120 30 M200 132 L326 50" stroke="{{map.road}}" stroke-width="7" fill="none"></path>
+<path d="M0 70 H326 M150 20 V132" stroke="{{map.main}}" stroke-width="9" fill="none"></path>
+<rect x="176" y="80" width="56" height="30" rx="15" fill="{{map.park}}"></rect>
+<path d="M204 40c-7 0-12 5-12 12 0 9 12 22 12 22s12-13 12-22c0-7-5-12-12-12z" fill="#C8102E" stroke="#14120E" stroke-width="2"></path>
+<circle cx="204" cy="52" r="4.5" fill="#FBF5E6"></circle>
+</svg>
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 4px 4px 12px">
+<span style="font-size: 14px; color: {{t.muted}}">Plan simplifié</span>
+<a href="#" style="min-height: 48px; padding: 0 12px; display: inline-flex; align-items: center; color: {{t.link}}; font-weight: 700; font-size: 15px">Ouvrir l'itinéraire</a>
+</div>
+</div>
+
+<div style="margin: 16px 16px 0; padding: 12px; border-radius: 16px; background: {{t.surface}}; border: 1.5px solid {{t.line}}; display: flex; align-items: center; gap: 12px">
+<span style="width: 48px; height: 48px; flex-shrink: 0; border-radius: 12px; background: #1E8FFF; color: #14120E; display: flex; align-items: center; justify-content: center; font-family: 'Anybody', sans-serif; font-weight: 900; font-size: 20px">KP</span>
+<div style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 13px; color: {{t.muted}}">Organisé par</span><b style="font-size: 16px">Kin Productions</b></div>
+<span style="padding: 4px 10px; border-radius: 999px; background: {{t.skyBg}}; color: {{t.skyText}}; font-size: 13px; font-weight: 700">Vérifié</span>
+</div>
+
+<section aria-label="Programme" style="padding: 24px 16px 0">
+<h2 style="margin: 0 0 12px; font-family: 'Anybody', sans-serif; font-weight: 850; font-stretch: 80%; font-size: 24px">Programme</h2>
+<ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+<sc-for list="{{prog}}" as="p" hint-placeholder-count="4">
+<li style="display: flex; gap: 14px">
+<b style="width: 52px; flex-shrink: 0; font-size: 16px; padding-top: 1px">{{p.h}}</b>
+<div style="display: flex; flex-direction: column; align-items: center; width: 14px; flex-shrink: 0">
+<span style="width: 12px; height: 12px; margin-top: 4px; background: {{p.dot}}; border: 2px solid {{t.text}}; transform: rotate(45deg)"></span>
+<span style="flex-grow: 1; width: 2px; background: {{t.line}}; min-height: 28px"></span>
+</div>
+<div style="padding-bottom: 16px; display: flex; flex-direction: column"><b style="font-size: 16px">{{p.titre}}</b><span style="font-size: 14px; color: {{t.muted}}">{{p.sous}}</span></div>
+</li>
+</sc-for>
+</ol>
+</section>
+
+<section aria-label="À savoir" style="padding: 8px 16px 24px">
+<h2 style="margin: 0 0 12px; font-family: 'Anybody', sans-serif; font-weight: 850; font-stretch: 80%; font-size: 24px">À savoir</h2>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 15px; line-height: 1.4">
+<li style="display: flex; gap: 10px"><span style="width: 8px; height: 8px; margin-top: 7px; flex-shrink: 0; background: #C8102E; transform: rotate(45deg)"></span>1 billet = 1 entrée. Gardez votre téléphone chargé.</li>
+<li style="display: flex; gap: 10px"><span style="width: 8px; height: 8px; margin-top: 7px; flex-shrink: 0; background: #C8102E; transform: rotate(45deg)"></span>Le billet s'ouvre même sans internet.</li>
+<li style="display: flex; gap: 10px"><span style="width: 8px; height: 8px; margin-top: 7px; flex-shrink: 0; background: #C8102E; transform: rotate(45deg)"></span>Remboursement seulement si l'événement est annulé.</li>
+</ul>
+</section>
+
+<div style="flex-grow: 1"></div>
+<div style="position: sticky; bottom: 0; padding: 12px 16px 16px; background: {{t.nav}}; border-top: 1.5px solid {{t.line}}; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; line-height: 1.15"><span style="font-size: 13px; color: {{t.muted}}">Dès</span><b style="font-size: 20px">25 000 CDF</b><span style="font-size: 14px; color: {{t.muted}}">≈ 9 USD</span></div>
+<a href="Billets.dc.html" style="flex-grow: 1; max-width: 190px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: #FFD21F; color: #14120E; border: 2px solid {{t.btnBorder}}; border-radius: 14px; box-shadow: {{t.shadow}}; font-weight: 700; font-size: 18px; text-decoration: none">Acheter</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":360,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.props.dark ?? false;
+    const L = { bg: '#FBF5E6', surface: '#FFFDF7', surface2: '#F1E6CC', text: '#14120E', muted: '#5C5446', line: '#D9CAA6', shadow: '3px 3px 0 #14120E', btnBorder: '#14120E', link: '#0050A6', skyText: '#0050A6', skyBg: '#DCEBFF', nav: '#FFFDF7' };
+    const D = { bg: '#0D0C0A', surface: '#1A1813', surface2: '#2E2A21', text: '#FBF5E6', muted: '#B9AE98', line: '#4A4436', shadow: 'none', btnBorder: '#FFD21F', link: '#8CC4FF', skyText: '#8CC4FF', skyBg: '#0F2A47', nav: '#1A1813' };
+    const t = dark ? D : L;
+    const map = dark
+      ? { ground: '#1F1C16', water: '#15324F', road: '#2E2A21', main: '#4A4436', park: '#1E3322' }
+      : { ground: '#F1E6CC', water: '#BFDDFF', road: '#FFFDF7', main: '#FFFFFF', park: '#CFE6C7' };
+    const ic = {
+      back: 'M15 5l-7 7 7 7',
+      share: 'M18 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M18 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M8.6 13.5l6.8 4 M15.4 6.5l-6.8 4',
+      cal: 'M4 6h16v14H4z M4 10h16 M8 3v4 M16 3v4',
+      pin: 'M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z M12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z'
+    };
+    const prog = [
+      { h: '18:00', titre: 'Ouverture des portes', sous: 'Portes A, B et C', dot: '#FFD21F' },
+      { h: '19:30', titre: 'Première partie', sous: 'DJ Mama Kasa', dot: '#1E8FFF' },
+      { h: '21:00', titre: 'Kin Malebo Orchestra', sous: 'Concert, 2 h 30', dot: '#C8102E' },
+      { h: '23:30', titre: 'Fin du concert', sous: 'Navettes vers Gombe et Limete', dot: '#FFD21F' }
+    ];
+    return { t: t, map: map, ic: ic, prog: prog, no: false, n0: 0, n11: 11, n15: 15, n24: 24 };
+  }
+}
+</script>
+</body>
+</html>

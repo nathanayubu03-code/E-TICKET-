@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Design tokens e-Ticket</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,500..900&amp;family=Atkinson+Hyperlegible:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;font-family:'Atkinson Hyperlegible',system-ui,sans-serif;background:#FBF5E6;color:#14120E}</style>
+</helmet>
+<div style="width: 1280px; height: 1560px; box-sizing: border-box; padding: 48px 56px; background: #FBF5E6; display: flex; flex-direction: column; gap: 36px">
+
+<div style="display: flex; justify-content: space-between; align-items: flex-end">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 14px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #C8102E">Design tokens · Tailwind</div>
+<h1 style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 900; font-stretch: 72%; font-size: 64px; line-height: 0.95">Couleurs, texte, rythme</h1>
+</div>
+<code style="padding: 10px 14px; border-radius: 10px; background: #14120E; color: #FFD21F; font-size: 14px">tokens/theme.css · tokens/tailwind.config.cjs</code>
+</div>
+
+<section style="display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 850; font-stretch: 80%; font-size: 28px">Palette de marque</h2>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{brand}}" as="c" hint-placeholder-count="14">
+<div style="border-radius: 14px; overflow: hidden; border: 2px solid #14120E; background: #FFFDF7">
+<div style="height: 76px; background: {{c.hex}}; color: {{c.on}}; padding: 8px 10px; box-sizing: border-box; display: flex; align-items: flex-end; font-weight: 700; font-size: 15px">Aa {{c.ratio}}</div>
+<div style="padding: 8px 10px; display: flex; flex-direction: column; gap: 2px">
+<b style="font-size: 14px">{{c.name}}</b>
+<span style="font-size: 13px; color: #5C5446">{{c.hex}}</span>
+<span style="font-size: 12px; color: #5C5446">{{c.role}}</span>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px">
+<section style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 850; font-stretch: 80%; font-size: 28px">Tokens sémantiques</h2>
+<div style="border: 2px solid #14120E; border-radius: 14px; overflow: hidden; background: #FFFDF7">
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 10px 14px; background: #14120E; color: #FBF5E6; font-size: 13px; font-weight: 700">
+<span style="grid-column: span 2">Classe Tailwind</span><span>Clair</span><span>Sombre</span>
+</div>
+<sc-for list="{{sem}}" as="s" hint-placeholder-count="12">
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: center; padding: 7px 14px; border-top: 1px solid #E3D6B8; font-size: 14px">
+<code style="grid-column: span 2; font-size: 13px">{{s.cls}}</code>
+<span style="display: flex; align-items: center; gap: 8px"><span style="width: 20px; height: 20px; border-radius: 5px; background: {{s.l}}; border: 1px solid #14120E"></span>{{s.l}}</span>
+<span style="display: flex; align-items: center; gap: 8px"><span style="width: 20px; height: 20px; border-radius: 5px; background: {{s.d}}; border: 1px solid #14120E"></span>{{s.d}}</span>
+</div>
+</sc-for>
+</div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{ops}}" as="o" hint-placeholder-count="4">
+<div style="height: 64px; border-radius: 12px; background: {{o.hex}}; color: {{o.on}}; padding: 8px 10px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; font-size: 13px"><b>{{o.name}}</b><code style="font-size: 11px">{{o.cls}}</code></div>
+</sc-for>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 850; font-stretch: 80%; font-size: 28px">Typographie</h2>
+<div style="padding: 18px; border: 2px solid #14120E; border-radius: 14px; background: #FFFDF7; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #5C5446"><span><b style="color: #14120E">font-affiche</b> · Anybody 850–900, largeur 70–80 %</span><span>titres, montants, chiffres</span></div>
+<sc-for list="{{affiche}}" as="a" hint-placeholder-count="4">
+<div style="display: flex; align-items: baseline; gap: 16px; border-top: 1px solid #E3D6B8; padding-top: 8px">
+<code style="width: 150px; flex-shrink: 0; font-size: 12px; color: #5C5446">{{a.cls}}</code>
+<span style="font-family: 'Anybody', sans-serif; font-weight: 900; font-stretch: 72%; font-size: {{a.px}}px; line-height: 1; white-space: nowrap; overflow: hidden">{{a.sample}}</span>
+</div>
+</sc-for>
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #5C5446; margin-top: 8px"><span><b style="color: #14120E">font-texte</b> · Atkinson Hyperlegible 400 / 700</span><span>lisible au soleil, chiffres distincts</span></div>
+<sc-for list="{{texte}}" as="x" hint-placeholder-count="5">
+<div style="display: flex; align-items: baseline; gap: 16px; border-top: 1px solid #E3D6B8; padding-top: 8px">
+<code style="width: 150px; flex-shrink: 0; font-size: 12px; color: #5C5446">{{x.cls}}</code>
+<span style="font-size: {{x.px}}px; line-height: 1.35; font-weight: {{x.w}}">{{x.sample}}</span>
+</div>
+</sc-for>
+</div>
+</section>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px">
+<section style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 850; font-stretch: 80%; font-size: 28px">Espacements</h2>
+<div style="padding: 16px; border: 2px solid #14120E; border-radius: 14px; background: #FFFDF7; display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{space}}" as="s" hint-placeholder-count="9">
+<div style="display: flex; align-items: center; gap: 12px; font-size: 13px"><code style="width: 72px">{{s.k}}</code><span style="width: {{s.px}}px; height: 14px; background: #1E8FFF; border: 1.5px solid #14120E"></span><span style="color: #5C5446">{{s.px}} px</span></div>
+</sc-for>
+<div style="margin-top: 6px; padding: 10px 12px; border-radius: 10px; background: #FFD21F; font-size: 14px"><b>min-h-tap / min-w-tap = 48 px</b> sur tout élément touchable.</div>
+</div>
+</section>
+<section style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 850; font-stretch: 80%; font-size: 28px">Rayons</h2>
+<div style="padding: 16px; border: 2px solid #14120E; border-radius: 14px; background: #FFFDF7; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px">
+<sc-for list="{{radius}}" as="r" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; gap: 6px; align-items: center; font-size: 13px"><span style="width: 72px; height: 56px; background: #F1E6CC; border: 2px solid #14120E; border-radius: {{r.px}}px"></span><code>{{r.k}}</code><span style="color: #5C5446">{{r.label}}</span></div>
+</sc-for>
+</div>
+</section>
+<section style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 850; font-stretch: 80%; font-size: 28px">Ombres</h2>
+<div style="padding: 20px 16px; border: 2px solid #14120E; border-radius: 14px; background: #FFFDF7; display: flex; flex-direction: column; gap: 18px; font-size: 13px">
+<div style="display: flex; align-items: center; gap: 16px"><span style="width: 96px; height: 48px; flex-shrink: 0; background: #FFD21F; border: 2px solid #14120E; border-radius: 12px; box-shadow: 3px 3px 0 #14120E"></span><span><code>shadow-affiche-sm</code><br><span style="color: #5C5446">3 px 3 px 0, boutons</span></span></div>
+<div style="display: flex; align-items: center; gap: 16px"><span style="width: 96px; height: 48px; flex-shrink: 0; background: #FFFDF7; border: 2px solid #14120E; border-radius: 12px; box-shadow: 5px 5px 0 #14120E"></span><span><code>shadow-affiche</code><br><span style="color: #5C5446">5 px 5 px 0, billet, carte à la une</span></span></div>
+<div style="display: flex; align-items: center; gap: 16px"><span style="width: 96px; height: 48px; flex-shrink: 0; background: #FFFDF7; border: 3px solid #0050A6; border-radius: 12px; box-shadow: 0 0 0 3px #BFDDFF"></span><span><code>ring-focus</code><br><span style="color: #5C5446">focus clavier et champ actif</span></span></div>
+<span style="color: #5C5446; line-height: 1.4">Ombres dures sans flou : rien à calculer pour le GPU d'un Android d'entrée de gamme. En mode sombre, elles disparaissent au profit d'un trait.</span>
+</div>
+</section>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1560}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const brand = [
+      { name: 'ciel-500', hex: '#1E8FFF', on: '#14120E', ratio: '5,7:1', role: 'aplats, catégories' },
+      { name: 'ciel-700', hex: '#0050A6', on: '#FFFFFF', ratio: '7,8:1', role: 'liens, focus (clair)' },
+      { name: 'ciel-300', hex: '#8CC4FF', on: '#14120E', ratio: '10,2:1', role: 'liens (sombre)' },
+      { name: 'braise-600', hex: '#C8102E', on: '#FFFFFF', ratio: '5,8:1', role: 'rouge drapeau, refus' },
+      { name: 'braise-700', hex: '#B00E28', on: '#FFFFFF', ratio: '7,1:1', role: 'texte rouge (clair)' },
+      { name: 'braise-300', hex: '#FF7A86', on: '#14120E', ratio: '7,5:1', role: 'texte rouge (sombre)' },
+      { name: 'soleil-400', hex: '#FFD21F', on: '#14120E', ratio: '12,9:1', role: 'action principale' },
+      { name: 'nuit-950', hex: '#0D0C0A', on: '#FBF5E6', ratio: '18:1', role: 'fond sombre' },
+      { name: 'nuit-900', hex: '#14120E', on: '#FBF5E6', ratio: '17,2:1', role: 'encre, contours' },
+      { name: 'ivoire-50', hex: '#FBF5E6', on: '#14120E', ratio: '17,2:1', role: 'fond clair' },
+      { name: 'ivoire-200', hex: '#F1E6CC', on: '#14120E', ratio: '15,1:1', role: 'surface 2' },
+      { name: 'sable-400', hex: '#D9CAA6', on: '#14120E', ratio: '11,5:1', role: 'traits' },
+      { name: 'succes-700', hex: '#0B7A3E', on: '#FFFFFF', ratio: '5,4:1', role: 'succès seulement' },
+      { name: 'alerte-500', hex: '#F08A00', on: '#14120E', ratio: '7,4:1', role: 'déjà scanné, délai' }
+    ];
+    const sem = [
+      { cls: 'bg-fond', l: '#FBF5E6', d: '#0D0C0A' },
+      { cls: 'bg-surface', l: '#FFFDF7', d: '#1A1813' },
+      { cls: 'bg-surface-2', l: '#F1E6CC', d: '#2E2A21' },
+      { cls: 'text-encre', l: '#14120E', d: '#FBF5E6' },
+      { cls: 'text-encre-douce', l: '#5C5446', d: '#B9AE98' },
+      { cls: 'border-trait', l: '#D9CAA6', d: '#4A4436' },
+      { cls: 'border-champ', l: '#8A7F6A', d: '#8A7F6A' },
+      { cls: 'text-lien', l: '#0050A6', d: '#8CC4FF' },
+      { cls: 'bg-action', l: '#FFD21F', d: '#FFD21F' },
+      { cls: 'text-danger / bg-danger-doux', l: '#B00E28', d: '#FF7A86' },
+      { cls: 'text-succes / bg-succes-doux', l: '#0B6B37', d: '#5BE08F' },
+      { cls: 'text-info / bg-info-doux', l: '#0050A6', d: '#8CC4FF' }
+    ];
+    const ops = [
+      { name: 'Airtel Money', hex: '#E40000', on: '#FFFFFF', cls: 'bg-op-airtel' },
+      { name: 'M-Pesa', hex: '#007A3D', on: '#FFFFFF', cls: 'bg-op-mpesa' },
+      { name: 'Orange Money', hex: '#FF7900', on: '#14120E', cls: 'bg-op-orange' },
+      { name: 'Afrimoney', hex: '#5A2D82', on: '#FFFFFF', cls: 'bg-op-afrimoney' }
+    ];
+    const affiche = [
+      { cls: 'text-affiche-2xl · 52', px: 52, sample: 'Nuit de la Rumba' },
+      { cls: 'text-affiche-xl · 40', px: 40, sample: 'Validez sur votre téléphone' },
+      { cls: 'text-affiche-lg · 32', px: 32, sample: '100 000 CDF' },
+      { cls: 'text-affiche-md · 24', px: 24, sample: 'Programme' }
+    ];
+    const texte = [
+      { cls: 'text-titre · 20', px: 20, w: 700, sample: 'Samedi 14 novembre 2026' },
+      { cls: 'text-corps-lg · 17', px: 17, w: 400, sample: 'Tapez votre code secret dans le message.' },
+      { cls: 'text-corps · 16', px: 16, w: 400, sample: 'Le billet s’ouvre même sans internet.' },
+      { cls: 'text-petit · 14', px: 14, w: 400, sample: 'Porte B · Tribune · 0O 1l 5S 8B' },
+      { cls: 'text-micro · 13', px: 13, w: 700, sample: 'PLUS QUE 12 PLACES' }
+    ];
+    const space = [['1', 4], ['2', 8], ['3', 12], ['4', 16], ['5', 20], ['6', 24], ['8', 32], ['10', 40], ['12', 48]].map((s) => ({ k: 'p-' + s[0], px: s[1] }));
+    const radius = [
+      { k: 'rounded-xs', px: 6, label: '6 · puces' }, { k: 'rounded-sm', px: 10, label: '10 · onglets' },
+      { k: 'rounded-md', px: 14, label: '14 · boutons, champs' }, { k: 'rounded-lg', px: 16, label: '16 · cartes' },
+      { k: 'rounded-billet', px: 20, label: '20 · billet' }, { k: 'rounded-full', px: 999, label: 'pastilles' }
+    ];
+    return { brand: brand, sem: sem, ops: ops, affiche: affiche, texte: texte, space: space, radius: radius };
+  }
+}
+</script>
+</body>
+</html>

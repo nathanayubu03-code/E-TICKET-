@@ -1,0 +1,83 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-09-27T09:21:38Z"},
+  "title": "e-Ticket RDC",
+  "launch": {"view": "canvas", "page": "ecrans"},
+  "pages": [
+    {"id": "marque", "name": "Marque"},
+    {"id": "ecrans", "name": "Écrans mobile"},
+    {"id": "composants", "name": "Composants"},
+    {"id": "organisateur", "name": "Organisateur"}
+  ],
+  "boards": {
+    "Main.dc.html": {"x": 0, "y": 0, "w": 1280, "h": 1120, "title": "Logo · trois pistes", "page": "marque"},
+    "Tokens.dc.html": {"x": 1360, "y": 0, "w": 1280, "h": 1560, "title": "Design tokens", "page": "marque"},
+    "Motifs.dc.html": {"x": 2720, "y": 0, "w": 1280, "h": 1560, "title": "Système de motifs Kuba", "page": "marque", "is_interactive": true},
+
+    "Accueil.dc.html": {"x": 0, "y": 0, "w": 360, "h": 1580, "title": "1 · Accueil", "page": "ecrans"},
+    "Evenement.dc.html": {"x": 440, "y": 0, "w": 360, "h": 1500, "title": "2 · Événement", "page": "ecrans"},
+    "Billets.dc.html": {"x": 880, "y": 0, "w": 360, "h": 1060, "title": "3 · Choix des billets", "page": "ecrans", "is_interactive": true},
+    "Connexion.dc.html": {"x": 1320, "y": 0, "w": 360, "h": 820, "title": "4 · Connexion OTP", "page": "ecrans"},
+    "Paiement.dc.html": {"x": 1760, "y": 0, "w": 360, "h": 1060, "title": "5 · Paiement", "page": "ecrans"},
+    "Attente.dc.html": {"x": 2200, "y": 0, "w": 360, "h": 1300, "title": "6a · Attente · en attente", "page": "ecrans", "is_interactive": true},
+    "AttenteRecu.dc.html": {"x": 2640, "y": 0, "w": 360, "h": 1300, "title": "6b · Attente · reçu", "page": "ecrans"},
+    "AttenteEchec.dc.html": {"x": 3080, "y": 0, "w": 360, "h": 1300, "title": "6c · Attente · échec", "page": "ecrans"},
+    "AttenteDelai.dc.html": {"x": 3520, "y": 0, "w": 360, "h": 1300, "title": "6d · Attente · délai dépassé", "page": "ecrans"},
+    "Confirmation.dc.html": {"x": 3960, "y": 0, "w": 360, "h": 1220, "title": "7 · Confirmation", "page": "ecrans", "is_interactive": true},
+    "MesBillets.dc.html": {"x": 4400, "y": 0, "w": 360, "h": 1100, "title": "8 · Mes billets", "page": "ecrans"},
+    "Etats.dc.html": {"x": 4840, "y": 0, "w": 1160, "h": 820, "title": "États · vide, chargement, réseau", "page": "ecrans"},
+
+    "AccueilSombre.dc.html": {"x": 0, "y": 1940, "w": 360, "h": 1580, "title": "1 · Accueil · sombre", "page": "ecrans"},
+    "EvenementSombre.dc.html": {"x": 440, "y": 1940, "w": 360, "h": 1500, "title": "2 · Événement · sombre", "page": "ecrans"},
+    "BilletsSombre.dc.html": {"x": 880, "y": 1940, "w": 360, "h": 1060, "title": "3 · Choix des billets · sombre", "page": "ecrans", "is_interactive": true},
+    "ConnexionSombre.dc.html": {"x": 1320, "y": 1940, "w": 360, "h": 820, "title": "4 · Connexion OTP · sombre", "page": "ecrans"},
+    "PaiementSombre.dc.html": {"x": 1760, "y": 1940, "w": 360, "h": 1060, "title": "5 · Paiement · sombre", "page": "ecrans"},
+    "AttenteSombre.dc.html": {"x": 2200, "y": 1940, "w": 360, "h": 1300, "title": "6a · Attente · sombre", "page": "ecrans", "is_interactive": true},
+    "AttenteRecuSombre.dc.html": {"x": 2640, "y": 1940, "w": 360, "h": 1300, "title": "6b · Reçu · sombre", "page": "ecrans"},
+    "AttenteEchecSombre.dc.html": {"x": 3080, "y": 1940, "w": 360, "h": 1300, "title": "6c · Échec · sombre", "page": "ecrans"},
+    "AttenteDelaiSombre.dc.html": {"x": 3520, "y": 1940, "w": 360, "h": 1300, "title": "6d · Délai dépassé · sombre", "page": "ecrans"},
+    "ConfirmationSombre.dc.html": {"x": 3960, "y": 1940, "w": 360, "h": 1220, "title": "7 · Confirmation · sombre", "page": "ecrans", "is_interactive": true},
+    "MesBilletsSombre.dc.html": {"x": 4400, "y": 1940, "w": 360, "h": 1100, "title": "8 · Mes billets · sombre", "page": "ecrans"},
+    "EtatsSombre.dc.html": {"x": 4840, "y": 1940, "w": 1160, "h": 820, "title": "États · sombre", "page": "ecrans"},
+
+    "Scanner.dc.html": {"x": 0, "y": 3880, "w": 360, "h": 800, "title": "9a · Scanner · prêt", "page": "ecrans"},
+    "ScannerValide.dc.html": {"x": 440, "y": 3880, "w": 360, "h": 800, "title": "9b · Scanner · valide", "page": "ecrans"},
+    "ScannerRefuse.dc.html": {"x": 880, "y": 3880, "w": 360, "h": 800, "title": "9c · Scanner · refusé", "page": "ecrans"},
+    "ScannerDeja.dc.html": {"x": 1320, "y": 3880, "w": 360, "h": 800, "title": "9d · Scanner · déjà scanné", "page": "ecrans"},
+    "ScannerSombre.dc.html": {"x": 1880, "y": 3880, "w": 360, "h": 800, "title": "9a · Prêt · nuit", "page": "ecrans"},
+    "ScannerValideSombre.dc.html": {"x": 2320, "y": 3880, "w": 360, "h": 800, "title": "9b · Valide · nuit", "page": "ecrans"},
+    "ScannerRefuseSombre.dc.html": {"x": 2760, "y": 3880, "w": 360, "h": 800, "title": "9c · Refusé · nuit", "page": "ecrans"},
+    "ScannerDejaSombre.dc.html": {"x": 3200, "y": 3880, "w": 360, "h": 800, "title": "9d · Déjà scanné · nuit", "page": "ecrans"},
+
+    "Composants.dc.html": {"x": 0, "y": 0, "w": 1280, "h": 2140, "title": "Bibliothèque · clair", "page": "composants"},
+    "ComposantsSombre.dc.html": {"x": 1360, "y": 0, "w": 1280, "h": 2140, "title": "Bibliothèque · sombre", "page": "composants"},
+    "Billet.dc.html": {"x": 2720, "y": 0, "w": 344, "h": 720, "title": "Billet vivant", "page": "composants", "is_interactive": true},
+    "BilletSombre.dc.html": {"x": 3144, "y": 0, "w": 344, "h": 720, "title": "Billet vivant · sombre", "page": "composants", "is_interactive": true},
+    "Kuba.dc.html": {"x": 3568, "y": 0, "w": 264, "h": 264, "title": "Moteur de motif Kuba", "page": "composants"},
+    "Logo.dc.html": {"x": 3568, "y": 344, "w": 320, "h": 80, "title": "Logo (composant)", "page": "composants"},
+
+    "Dashboard.dc.html": {"x": 0, "y": 0, "w": 1280, "h": 1080, "title": "10 · Tableau de bord · clair", "page": "organisateur"},
+    "DashboardSombre.dc.html": {"x": 1360, "y": 0, "w": 1280, "h": 1080, "title": "10 · Tableau de bord · sombre", "page": "organisateur"}
+  },
+  "order": [
+    "Main.dc.html", "Tokens.dc.html", "Motifs.dc.html",
+    "Accueil.dc.html", "Evenement.dc.html", "Billets.dc.html", "Connexion.dc.html", "Paiement.dc.html",
+    "Attente.dc.html", "AttenteRecu.dc.html", "AttenteEchec.dc.html", "AttenteDelai.dc.html",
+    "Confirmation.dc.html", "MesBillets.dc.html", "Etats.dc.html",
+    "AccueilSombre.dc.html", "EvenementSombre.dc.html", "BilletsSombre.dc.html", "ConnexionSombre.dc.html", "PaiementSombre.dc.html",
+    "AttenteSombre.dc.html", "AttenteRecuSombre.dc.html", "AttenteEchecSombre.dc.html", "AttenteDelaiSombre.dc.html",
+    "ConfirmationSombre.dc.html", "MesBilletsSombre.dc.html", "EtatsSombre.dc.html",
+    "Scanner.dc.html", "ScannerValide.dc.html", "ScannerRefuse.dc.html", "ScannerDeja.dc.html",
+    "ScannerSombre.dc.html", "ScannerValideSombre.dc.html", "ScannerRefuseSombre.dc.html", "ScannerDejaSombre.dc.html",
+    "Composants.dc.html", "ComposantsSombre.dc.html", "Billet.dc.html", "BilletSombre.dc.html", "Kuba.dc.html", "Logo.dc.html",
+    "Dashboard.dc.html", "DashboardSombre.dc.html"
+  ],
+  "notes": {
+    "tEcransClair": {"x": 0, "y": -300, "text": "Parcours d'achat · mode clair (360 px)", "kind": "title1", "maxW": 6000, "page": "ecrans"},
+    "tEcransSombre": {"x": 0, "y": 1640, "text": "Parcours d'achat · mode sombre", "kind": "title1", "maxW": 6000, "page": "ecrans"},
+    "tScanner": {"x": 0, "y": 3580, "text": "Scanner du contrôleur · jour et nuit", "kind": "title1", "maxW": 3560, "page": "ecrans"},
+    "tMarque": {"x": 0, "y": -300, "text": "Identité e-Ticket", "kind": "title1", "maxW": 4000, "page": "marque"},
+    "tComposants": {"x": 0, "y": -300, "text": "Bibliothèque de composants", "kind": "title1", "maxW": 3900, "page": "composants"}
+  },
+  "designSystems": []
+}

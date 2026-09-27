@@ -1,0 +1,176 @@
+/*
+ * e-Ticket RDC · design tokens pour Tailwind CSS v4
+ * Usage : @import "tailwindcss"; @import "./tokens/theme.css";
+ * Mode sombre : classe .dark sur <html> (ou retirer le bloc .dark et garder la media query).
+ */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Palette de marque (valeurs brutes) */
+  --color-ciel-300: #8CC4FF;
+  --color-ciel-500: #1E8FFF;
+  --color-ciel-700: #0050A6;
+  --color-braise-300: #FF7A86;
+  --color-braise-600: #C8102E;
+  --color-braise-700: #B00E28;
+  --color-soleil-400: #FFD21F;
+  --color-nuit-950: #0D0C0A;
+  --color-nuit-900: #14120E;
+  --color-nuit-800: #1A1813;
+  --color-nuit-700: #2E2A21;
+  --color-nuit-600: #4A4436;
+  --color-ivoire-50: #FBF5E6;
+  --color-ivoire-25: #FFFDF7;
+  --color-ivoire-200: #F1E6CC;
+  --color-sable-400: #D9CAA6;
+  --color-taupe-600: #5C5446;
+  --color-taupe-300: #B9AE98;
+  --color-succes-700: #0B7A3E;
+  --color-succes-400: #34C26E;
+  --color-alerte-500: #F08A00;
+
+  /* Opérateurs Mobile Money : uniquement sur leurs cartes et pastilles */
+  --color-op-airtel: #E40000;
+  --color-op-mpesa: #007A3D;
+  --color-op-orange: #FF7900;
+  --color-op-afrimoney: #5A2D82;
+
+  /* Tokens sémantiques : pointent vers des variables qui changent avec le thème */
+  --color-fond: var(--et-fond);
+  --color-surface: var(--et-surface);
+  --color-surface-2: var(--et-surface-2);
+  --color-encre: var(--et-encre);
+  --color-encre-douce: var(--et-encre-douce);
+  --color-trait: var(--et-trait);
+  --color-champ: var(--et-champ);
+  --color-lien: var(--et-lien);
+  --color-focus: var(--et-focus);
+  --color-action: #FFD21F;
+  --color-sur-action: #14120E;
+  --color-contour-action: var(--et-contour-action);
+  --color-danger: var(--et-danger);
+  --color-danger-doux: var(--et-danger-doux);
+  --color-succes: var(--et-succes);
+  --color-succes-doux: var(--et-succes-doux);
+  --color-succes-plein: var(--et-succes-plein);
+  --color-sur-succes-plein: var(--et-sur-succes-plein);
+  --color-info: var(--et-info);
+  --color-info-doux: var(--et-info-doux);
+  --color-attention: var(--et-attention);
+  --color-attention-doux: var(--et-attention-doux);
+  --color-desactive: var(--et-desactive);
+
+  /* Typographie */
+  --font-affiche: "Anybody", "Arial Narrow", sans-serif;
+  --font-texte: "Atkinson Hyperlegible", system-ui, sans-serif;
+
+  --text-affiche-2xl: 52px;
+  --text-affiche-2xl--line-height: 0.9;
+  --text-affiche-xl: 40px;
+  --text-affiche-xl--line-height: 0.95;
+  --text-affiche-lg: 32px;
+  --text-affiche-lg--line-height: 1;
+  --text-affiche-md: 24px;
+  --text-affiche-md--line-height: 1.1;
+  --text-titre: 20px;
+  --text-titre--line-height: 1.3;
+  --text-corps-lg: 17px;
+  --text-corps-lg--line-height: 1.45;
+  --text-corps: 16px;
+  --text-corps--line-height: 1.5;
+  --text-petit: 14px;
+  --text-petit--line-height: 1.4;
+  --text-micro: 13px;
+  --text-micro--line-height: 1.3;
+
+  /* Espacement : base 4 px, Tailwind v4 calcule p-1 = 4px, p-2 = 8px… */
+  --spacing: 4px;
+  --spacing-tap: 48px;
+
+  /* Rayons */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 16px;
+  --radius-billet: 20px;
+
+  /* Ombres dures, sans flou */
+  --shadow-affiche-sm: 3px 3px 0 var(--et-ombre);
+  --shadow-affiche: 5px 5px 0 var(--et-ombre);
+
+  /* Animations */
+  --animate-kuba-souffle: kuba-souffle 9s ease-in-out infinite;
+  --animate-billet-arrive: billet-arrive 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-squelette: squelette 1.6s ease-in-out infinite;
+
+  @keyframes kuba-souffle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  @keyframes billet-arrive {
+    0% { opacity: 0; transform: translateY(40px) rotate(-3deg) scale(0.94); }
+    60% { opacity: 1; transform: translateY(-6px) rotate(1deg) scale(1.01); }
+    100% { opacity: 1; transform: none; }
+  }
+  @keyframes squelette {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
+  }
+}
+
+:root {
+  --et-fond: #FBF5E6;
+  --et-surface: #FFFDF7;
+  --et-surface-2: #F1E6CC;
+  --et-encre: #14120E;
+  --et-encre-douce: #5C5446;
+  --et-trait: #D9CAA6;
+  --et-champ: #8A7F6A;
+  --et-lien: #0050A6;
+  --et-focus: #0050A6;
+  --et-contour-action: #14120E;
+  --et-ombre: #14120E;
+  --et-danger: #B00E28;
+  --et-danger-doux: #FBE0E3;
+  --et-succes: #0B6B37;
+  --et-succes-doux: #DDF3E4;
+  --et-succes-plein: #0B7A3E;
+  --et-sur-succes-plein: #FFFFFF;
+  --et-info: #0050A6;
+  --et-info-doux: #DCEBFF;
+  --et-attention: #8A4500;
+  --et-attention-doux: #FFE7C2;
+  --et-desactive: #7A705E;
+  color-scheme: light;
+}
+
+.dark {
+  --et-fond: #0D0C0A;
+  --et-surface: #1A1813;
+  --et-surface-2: #2E2A21;
+  --et-encre: #FBF5E6;
+  --et-encre-douce: #B9AE98;
+  --et-trait: #4A4436;
+  --et-champ: #8A7F6A;
+  --et-lien: #8CC4FF;
+  --et-focus: #FFD21F;
+  --et-contour-action: #FFD21F;
+  --et-ombre: transparent;
+  --et-danger: #FF7A86;
+  --et-danger-doux: #3B0F15;
+  --et-succes: #5BE08F;
+  --et-succes-doux: #0E2E1B;
+  --et-succes-plein: #34C26E;
+  --et-sur-succes-plein: #14120E;
+  --et-info: #8CC4FF;
+  --et-info-doux: #0F2A47;
+  --et-attention: #FFB84D;
+  --et-attention-doux: #3A2608;
+  --et-desactive: #8A7F6A;
+  color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-kuba-souffle, .animate-billet-arrive, .animate-squelette { animation: none; }
+}

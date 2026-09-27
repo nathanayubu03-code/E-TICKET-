@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Système de motifs Kuba</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,500..900&amp;family=Atkinson+Hyperlegible:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;font-family:'Atkinson Hyperlegible',system-ui,sans-serif;background:#FBF5E6;color:#14120E}</style>
+</helmet>
+<div style="width: 1280px; height: 1560px; box-sizing: border-box; background: #FBF5E6; display: flex; flex-direction: column; overflow: hidden">
+<div style="height: 72px; overflow: hidden; flex-shrink: 0; line-height: 0">
+<dc-import name="Kuba" ticket-id="TRAME-MARQUE" cols="{{n54}}" rows="{{n3}}" cell="{{n24}}" hole="{{no}}" live="{{yes}}" phase="{{phase}}" hint-size="1296px,72px"></dc-import>
+</div>
+<div style="padding: 40px 56px 0; display: flex; justify-content: space-between; align-items: flex-end; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="font-size: 14px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #C8102E">Système de motifs</div>
+<h1 style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 900; font-stretch: 72%; font-size: 64px; line-height: 0.95">Un motif Kuba par billet, qui change toutes les 30 s</h1>
+</div>
+</div>
+
+<div style="padding: 32px 56px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px">
+<section style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 850; font-stretch: 80%; font-size: 26px">1 · Huit motifs, une case de 24 unités</h2>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{motifs}}" as="m" hint-placeholder-count="8">
+<div style="padding: 10px; border: 2px solid #14120E; border-radius: 14px; background: #FFFDF7; display: flex; flex-direction: column; align-items: center; gap: 6px">
+<svg width="72" height="72" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#14120E"></rect><path d="{{m.d}}" fill="#FFD21F" fill-rule="evenodd"></path></svg>
+<b style="font-size: 14px">{{m.n}}</b>
+<span style="font-size: 12px; color: #5C5446">{{m.sym}}</span>
+</div>
+</sc-for>
+</div>
+</section>
+<section style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 850; font-stretch: 80%; font-size: 26px">2 · Cinq palettes, contrastes fixés</h2>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{pals}}" as="p" hint-placeholder-count="5">
+<div style="display: flex; align-items: center; gap: 12px">
+<code style="width: 32px; font-size: 14px">P{{$index}}</code>
+<span style="width: 120px; height: 44px; border-radius: 10px; border: 2px solid #14120E; background: {{p.ground}}; display: flex; align-items: center; justify-content: center; gap: 8px">
+<span style="width: 18px; height: 18px; background: {{p.c0}}; transform: rotate(45deg)"></span>
+<span style="width: 18px; height: 18px; background: {{p.c1}}; transform: rotate(45deg)"></span>
+<span style="width: 18px; height: 18px; background: {{p.c2}}; transform: rotate(45deg)"></span>
+</span>
+<span style="font-size: 14px; color: #5C5446">{{p.label}}</span>
+</div>
+</sc-for>
+</div>
+</section>
+</div>
+
+<section style="padding: 32px 56px 0; display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 850; font-stretch: 80%; font-size: 26px">3 · Du numéro de billet au motif</h2>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+<sc-for list="{{steps}}" as="s" hint-placeholder-count="4">
+<div style="position: relative; padding: 16px; border: 2px solid #14120E; border-radius: 16px; background: {{s.bg}}; color: {{s.fg}}; box-shadow: 4px 4px 0 #14120E; display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'Anybody', sans-serif; font-weight: 900; font-size: 32px; line-height: 1">{{s.k}}</span>
+<b style="font-size: 17px">{{s.t}}</b>
+<span style="font-size: 14px; line-height: 1.45">{{s.d}}</span>
+<code style="margin-top: auto; padding: 6px 8px; border-radius: 8px; background: rgba(0,0,0,0.12); font-size: 12px; line-height: 1.4">{{s.code}}</code>
+</div>
+</sc-for>
+</div>
+</section>
+
+<div style="padding: 32px 56px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px">
+<section style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 850; font-stretch: 80%; font-size: 26px">4 · Un billet, un motif</h2>
+<div style="display: flex; gap: 16px">
+<sc-for list="{{uniques}}" as="u" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 8px; align-items: center">
+<div style="border-radius: 10px; overflow: hidden; border: 2px solid #14120E; line-height: 0">
+<dc-import name="Kuba" ticket-id="{{u}}" cols="{{n11}}" rows="{{n11}}" cell="{{n16}}" hole="{{yes}}" live="{{yes}}" phase="{{phase}}" hint-size="176px,176px"></dc-import>
+</div>
+<code style="font-size: 13px">{{u}}</code>
+</div>
+</sc-for>
+</div>
+</section>
+<section style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 850; font-stretch: 80%; font-size: 26px">5 · Même billet, phases successives</h2>
+<div style="display: flex; gap: 12px">
+<sc-for list="{{phases}}" as="f" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 8px; align-items: center">
+<div style="border-radius: 10px; overflow: hidden; border: 2px solid #14120E; line-height: 0">
+<dc-import name="Kuba" ticket-id="ET-7K4Q-19XZ" cols="{{n11}}" rows="{{n11}}" cell="{{n12}}" hole="{{yes}}" live="{{no}}" phase="{{f.p}}" hint-size="132px,132px"></dc-import>
+</div>
+<code style="font-size: 13px">{{f.h}}</code>
+</div>
+</sc-for>
+</div>
+</section>
+</div>
+
+<div style="padding: 32px 56px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px">
+<section style="padding: 20px; border: 2px solid #14120E; border-radius: 18px; background: #FFFDF7; display: flex; gap: 20px; align-items: center">
+<div style="border-radius: 10px; overflow: hidden; line-height: 0; flex-shrink: 0">
+<dc-import name="Kuba" ticket-id="{{essai}}" cols="{{n11}}" rows="{{n11}}" cell="{{n16}}" hole="{{yes}}" live="{{yes}}" phase="{{phase}}" hint-size="176px,176px"></dc-import>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px; flex-grow: 1">
+<label for="essai" style="font-family: 'Anybody', sans-serif; font-weight: 850; font-stretch: 80%; font-size: 24px">Essayez un numéro</label>
+<input id="essai" value="{{essai}}" onChange="{{onEssai}}" style="height: 52px; padding: 0 14px; border: 2px solid #14120E; border-radius: 12px; background: #FBF5E6; font: 700 18px ui-monospace, monospace; letter-spacing: 0.04em">
+<span style="font-size: 14px; color: #5C5446; line-height: 1.4">Chaque caractère change la graine, donc toute la composition.</span>
+</div>
+</section>
+<section style="padding: 20px; border-radius: 18px; background: #14120E; color: #FBF5E6; display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-family: 'Anybody', sans-serif; font-weight: 850; font-stretch: 80%; font-size: 24px; color: #FFD21F">Ce que vérifie le contrôleur</h2>
+<ol style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; line-height: 1.45">
+<li>Le motif respire lentement. Une capture d'écran reste figée.</li>
+<li>Le signe du moment (losange ou carré, 4 couleurs) est le même sur le billet et sur le scanner.</li>
+<li>Après le scan, le scanner affiche le motif attendu pour ce billet à cette phase. Les deux doivent être identiques.</li>
+</ol>
+<span style="font-size: 13px; color: #B9AE98; line-height: 1.4">Le motif est un contrôle visuel. La preuve reste la signature du QR code, vérifiée hors ligne par le scanner.</span>
+</section>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1560}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { now: Date.now(), essai: 'ET-A1B2-C3D4' }; }
+  componentDidMount() { this.timer = setInterval(() => this.setState({ now: Date.now() }), 5000); }
+  componentWillUnmount() { clearInterval(this.timer); }
+  renderVals() {
+    const phase = Math.floor(this.state.now / 30000);
+    const hhmmss = (p) => {
+      const d = new Date(p * 30000);
+      const z = (n) => (n < 10 ? '0' : '') + n;
+      return z(d.getHours()) + ':' + z(d.getMinutes()) + ':' + z(d.getSeconds());
+    };
+    const motifs = [
+      { n: 'Losange', sym: 'symétrique', d: 'M12 2L22 12L12 22L2 12Z' },
+      { n: 'Losange emboîté', sym: 'symétrique', d: 'M12 1L23 12L12 23L1 12Z M12 6L18 12L12 18L6 12Z M12 9.5L14.5 12L12 14.5L9.5 12Z' },
+      { n: 'Ligne brisée', sym: 'orientée', d: 'M0 15L6 7L12 15L18 7L24 15L24 21L18 13L12 21L6 13L0 21Z' },
+      { n: 'Escalier', sym: 'orientée', d: 'M0 16H8V24H0Z M8 8H16V16H8Z M16 0H24V8H16Z' },
+      { n: 'Croix', sym: 'symétrique', d: 'M9 2H15V9H22V15H15V22H9V15H2V9H9Z' },
+      { n: 'Sablier', sym: 'symétrique', d: 'M2 2H22L12 12Z M2 22H22L12 12Z' },
+      { n: 'Grille de points', sym: 'symétrique', d: 'M3 3H9V9H3Z M15 3H21V9H15Z M3 15H9V21H3Z M15 15H21V21H15Z' },
+      { n: 'Bandes', sym: 'symétrique', d: 'M0 4H24V9H0Z M0 15H24V20H0Z' }
+    ];
+    const pals = [
+      { ground: '#14120E', c0: '#FFD21F', c1: '#3FA2FF', c2: '#FF4D5E', label: 'Nuit : jaune, ciel, braise' },
+      { ground: '#FFD21F', c0: '#14120E', c1: '#C8102E', c2: '#0050A6', label: 'Soleil : encre, rouge, bleu profond' },
+      { ground: '#1E8FFF', c0: '#14120E', c1: '#FFD21F', c2: '#FBF5E6', label: 'Ciel : encre, jaune, ivoire' },
+      { ground: '#C8102E', c0: '#FFD21F', c1: '#FBF5E6', c2: '#14120E', label: 'Braise : jaune, ivoire, encre' },
+      { ground: '#FBF5E6', c0: '#C8102E', c1: '#0050A6', c2: '#14120E', label: 'Ivoire : rouge, bleu, encre' }
+    ];
+    const steps = [
+      { k: '01', t: 'Graine', d: 'Le numéro du billet passe dans FNV-1a (32 bits). Même numéro, même graine, partout.', code: 'seed = fnv1a("ET-7K4Q-19XZ")', bg: '#FFFDF7', fg: '#14120E' },
+      { k: '02', t: 'Génome', d: 'La graine fixe la palette (seed % 5) et la symétrie : miroir ou rotation d’un quart de tour.', code: 'pal = seed % 5 · rot = (seed >>> 3) & 1', bg: '#FFD21F', fg: '#14120E' },
+      { k: '03', t: 'Cases', d: 'Grille 11 × 11 autour du QR. Chaque case canonique tire motif, couleur, orientation. 1 case sur 6 reste vide.', code: 'h = fnv1a(id + "#" + cle)', bg: '#1E8FFF', fg: '#14120E' },
+      { k: '04', t: 'Phase', d: 'Toutes les 30 s, la moitié des cases tourne d’un quart et les couleurs glissent d’un rang.', code: 'phase = floor(heure / 30 s)', bg: '#C8102E', fg: '#FFFFFF' }
+    ];
+    const phases = [0, 1, 2, 3].map((i) => ({ p: phase + i, h: hhmmss(phase + i) }));
+    return {
+      phase: phase, motifs: motifs, pals: pals, steps: steps, phases: phases,
+      uniques: ['ET-7K4Q-19XZ', 'ET-7K4Q-19XY', 'ET-2BX9-LM04'],
+      essai: this.state.essai,
+      onEssai: (e) => this.setState({ essai: (e.target.value || '').slice(0, 24) }),
+      yes: true, no: false, n3: 3, n11: 11, n12: 12, n16: 16, n24: 24, n54: 54
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "e-ticket-rdc-design",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Identité visuelle, design tokens et moteur de motif Kuba d'e-Ticket RDC",
+  "scripts": {
+    "test": "node --test \"src/**/*.test.mjs\""
+  }
+}
