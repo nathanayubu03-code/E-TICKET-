@@ -657,7 +657,7 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 ### Étapes
 
 - [x] 1. Socle et thème
-- [ ] 2. Module Kuba
+- [x] 2. Module Kuba (parité exacte : 961 motifs, 960 SVG, 320 rendus inline, 160 signes, sur 20 identifiants et 8 phases)
 - [ ] 3. Schéma et seeds
 - [ ] 4. Pages publiques et états vides
 - [ ] 5. Administration des événements
