@@ -664,7 +664,7 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 - [x] 6. Connexion OTP (acheteurs : numéro + code à 6 chiffres, collage et remplissage SMS, renvoi après 45 s, compte créé au premier passage, session 30 jours ; e2e)
 - [x] 7. Commande et réservation (décrément conditionnel du stock, verrou consultatif par numéro et événement pour la limite par personne, réservation de 10 min, expiration idempotente, codes promo, commandes gratuites ; test : 20 demandes simultanées sur 3 places donnent exactement 3 succès)
 - [x] 8. Paiement (interface PaymentProvider, SimulationProvider par webhook signé, idempotence double clic, webhook enregistré brut puis traité une seule fois, vérification planifiée 90 s puis 2 min pendant 15 min, PAYEE_SANS_PLACE, paiement chez un agent avec validation AGENT ; adaptateur réel en attente de l'agrégateur, voir docs/paiement.md)
-- [ ] 9. Billets et PDF
+- [x] 9. Billets et PDF (code 128 bits base32 + identifiant ET-XXXX-XXXX, QR alphanumérique version 2 dans la zone de la grille 11 × 11, lisibilité mesurée dans docs/billet.md, PDF A6 de moins de 30 ko, page du lien SMS)
 - [ ] 10. Mes billets hors ligne
 - [ ] 11. Scanner
 - [ ] 12. SMS

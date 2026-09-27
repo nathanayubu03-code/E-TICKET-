@@ -1,0 +1,42 @@
+{
+  "date": "2026-09-27",
+  "contenu": "33 caractères alphanumériques",
+  "mesures": [
+    {
+      "dpr": 1,
+      "largeurMotifCss": 280,
+      "zoneQrCss": 178,
+      "moduleCss": 5.4,
+      "modulePixelsPhysiques": 5.4,
+      "decodeNet": true,
+      "decodeDegrade": false
+    },
+    {
+      "dpr": 1.5,
+      "largeurMotifCss": 280,
+      "zoneQrCss": 178,
+      "moduleCss": 5.4,
+      "modulePixelsPhysiques": 8.1,
+      "decodeNet": true,
+      "decodeDegrade": true
+    },
+    {
+      "dpr": 2,
+      "largeurMotifCss": 280,
+      "zoneQrCss": 178,
+      "moduleCss": 5.4,
+      "modulePixelsPhysiques": 10.8,
+      "decodeNet": true,
+      "decodeDegrade": true
+    },
+    {
+      "dpr": 3,
+      "largeurMotifCss": 280,
+      "zoneQrCss": 178,
+      "moduleCss": 5.4,
+      "modulePixelsPhysiques": 16.2,
+      "decodeNet": true,
+      "decodeDegrade": true
+    }
+  ]
+}
