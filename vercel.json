@@ -1,7 +1,13 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build",
+  "regions": [
+    "fra1"
+  ],
+  "buildCommand": "npm run vercel-build",
   "crons": [
-    { "path": "/api/cron/verifier-paiements", "schedule": "*/2 * * * *" }
+    {
+      "path": "/api/cron/verifier-paiements",
+      "schedule": "*/2 * * * *"
+    }
   ]
 }

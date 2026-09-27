@@ -56,6 +56,9 @@ export function verifierDemarrage(env: Env): void {
   if (env.SMS_PROVIDER === 'simulation') {
     throw new Error('Démarrage refusé : SMS_PROVIDER=simulation est interdit en production.');
   }
+  if (env.STORAGE_DRIVER === 'local' && process.env.VERCEL) {
+    console.warn('Attention : STORAGE_DRIVER=local sur Vercel. Le disque y est éphémère ; utilisez STORAGE_DRIVER=s3 (Cloudflare R2) pour les affiches.');
+  }
   if (env.STORAGE_DRIVER === 's3' && !(env.S3_ENDPOINT && env.S3_BUCKET && env.S3_ACCESS_KEY_ID && env.S3_SECRET_ACCESS_KEY)) {
     throw new Error('Démarrage refusé : STORAGE_DRIVER=s3 demande S3_ENDPOINT, S3_BUCKET, S3_ACCESS_KEY_ID et S3_SECRET_ACCESS_KEY.');
   }
