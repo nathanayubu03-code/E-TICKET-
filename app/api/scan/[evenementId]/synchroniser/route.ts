@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { appareilAutorise, synchroniser } from '@/lib/scan';
+import { memeOrigine } from '@/lib/requete';
 import { autoriserScanner, refus } from '@/lib/scan-api';
 
 export const dynamic = 'force-dynamic';
@@ -13,6 +14,7 @@ const schema = z.object({
 });
 
 export async function POST(req: Request, { params }: { params: Promise<{ evenementId: string }> }) {
+  if (!memeOrigine(req)) return Response.json({ erreur: 'origine' }, { status: 403 });
   const { evenementId } = await params;
   const s = await autoriserScanner(evenementId);
   if (!s) return refus();

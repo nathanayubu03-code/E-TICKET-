@@ -90,3 +90,13 @@ describe('base de données', () => {
     expect((await db.city.findUnique({ where: { nom: 'Kinshasa' } }))?.fuseau).toBe('Africa/Kinshasa');
   });
 });
+
+describe('origine des requêtes', () => {
+  it('accepte le même hôte, refuse une autre origine', async () => {
+    const { memeOrigine } = await import('@/lib/requete');
+    const req = (h: Record<string, string>) => new Request('https://e-ticket.example/api/x', { method: 'POST', headers: h });
+    expect(memeOrigine(req({ origin: 'https://e-ticket.example', host: 'e-ticket.example' }))).toBe(true);
+    expect(memeOrigine(req({ origin: 'https://autre.example', host: 'e-ticket.example' }))).toBe(false);
+    expect(memeOrigine(req({ host: 'e-ticket.example', 'sec-fetch-site': 'cross-site' }))).toBe(false);
+  });
+});

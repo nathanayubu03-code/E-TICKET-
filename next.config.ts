@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   devIndicators: false,
+  // Affiches jusqu'à 8 Mo ; l'origine des actions serveur est contrôlée par Next.js (même hôte uniquement).
+  experimental: { serverActions: { bodySizeLimit: '9mb' } },
   serverExternalPackages: ['@node-rs/argon2', 'sharp', 'exceljs', 'pdf-lib'],
 };
 

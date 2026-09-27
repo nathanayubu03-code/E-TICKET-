@@ -8,7 +8,7 @@ import { exigerRole } from '@/lib/auth/session';
 import { db } from '@/lib/db';
 import { parametre } from '@/lib/parametres';
 import { masquerTelephone } from '@/lib/telephone';
-import { archiverOrganisateur, creerAccesOrganisateur, enregistrerOrganisateur } from '../actions';
+import { archiverOrganisateur, creerAccesOrganisateur, enregistrerOrganisateur, voirNumeroReversement } from '../actions';
 
 export default async function FicheOrganisateur({ params }: { params: Promise<{ id: string }> }) {
   await exigerRole(ROLES_EDITION);
@@ -24,6 +24,12 @@ export default async function FicheOrganisateur({ params }: { params: Promise<{ 
           <ChampsOrganisateur tauxGlobal={await parametre('commission_bps')} v={{ nom: o.nom, contactNom: o.contactNom ?? '', telephone: o.telephone ?? '', email: o.email ?? '', reversementOperateur: o.reversementOperateur ?? '', reversementFin: o.reversementNumeroFin, commission: o.commissionBps === null ? '' : String(o.commissionBps / 100), verifie: o.verifie }} />
         </FormAuto>
       </section>
+      {o.reversementNumeroFin ? (
+        <section className="admin-panneau pile" aria-label="Numéro de reversement">
+          <p>Numéro de reversement enregistré (se termine par {o.reversementNumeroFin}). Chaque affichage est inscrit au journal d&apos;audit.</p>
+          <BoutonAction libelle="Afficher le numéro complet" action={voirNumeroReversement.bind(null, o.id)} />
+        </section>
+      ) : null}
       <section className="admin-panneau pile" aria-labelledby="t-acces">
         <h2 id="t-acces" className="titre-section" style={{ fontSize: 26 }}>Accès de l&apos;organisateur</h2>
         <p className="doux">Lecture seule au lancement : ventes et reversements de ses événements. Connexion par mot de passe et code SMS.</p>

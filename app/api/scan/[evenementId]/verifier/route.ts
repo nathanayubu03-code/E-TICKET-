@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { estIdentifiantBillet, lireContenuQR } from '@/lib/billets/contenu';
 import { appareilAutorise, verifierEnLigne } from '@/lib/scan';
+import { memeOrigine } from '@/lib/requete';
 import { autoriserScanner, refus } from '@/lib/scan-api';
 
 export const dynamic = 'force-dynamic';
@@ -8,6 +9,7 @@ export const dynamic = 'force-dynamic';
 const schema = z.object({ scanClientId: z.string().min(8).max(64), brut: z.string().max(200), appareilId: z.string().min(10).max(40), porte: z.string().max(60).nullable(), scanneLe: z.iso.datetime() });
 
 export async function POST(req: Request, { params }: { params: Promise<{ evenementId: string }> }) {
+  if (!memeOrigine(req)) return Response.json({ erreur: 'origine' }, { status: 403 });
   const { evenementId } = await params;
   const s = await autoriserScanner(evenementId);
   if (!s) return refus();

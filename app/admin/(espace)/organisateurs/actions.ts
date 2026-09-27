@@ -7,7 +7,7 @@ import { auditer } from '@/lib/audit';
 import { hacherMotDePasse, motDePasseFort } from '@/lib/auth/motdepasse';
 import { ROLES_EDITION } from '@/lib/auth/roles';
 import { exigerRole } from '@/lib/auth/session';
-import { chiffrer } from '@/lib/chiffrement';
+import { chiffrer, dechiffrer } from '@/lib/chiffrement';
 import { db } from '@/lib/db';
 import { BORNES_COMMISSION_BPS } from '@/lib/referentiel';
 import { slugifier } from '@/lib/slug';
@@ -87,4 +87,13 @@ export async function archiverOrganisateur(id: string) {
   await db.organizer.update({ where: { id }, data: { archiveLe: new Date() } });
   await auditer({ acteur: s.user, action: 'organisateur.archiver', entite: 'Organizer', entiteId: id });
   redirect('/admin/organisateurs');
+}
+
+/** Affiche le numéro de reversement déchiffré ; chaque consultation est inscrite au journal d'audit. */
+export async function voirNumeroReversement(id: string): Promise<{ ok: boolean; message: string }> {
+  const s = await exigerRole(ROLES_EDITION);
+  const o = await db.organizer.findUniqueOrThrow({ where: { id }, select: { reversementNumeroChiffre: true } });
+  if (!o.reversementNumeroChiffre) return { ok: false, message: 'Aucun numéro enregistré.' };
+  await auditer({ acteur: s.user, action: 'organisateur.voir_numero', entite: 'Organizer', entiteId: id });
+  return { ok: true, message: dechiffrer(o.reversementNumeroChiffre) };
 }
