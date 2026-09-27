@@ -94,3 +94,9 @@
   .onglets button { min-height: 48px; border-radius: 10px; border: 2px solid transparent; background: transparent; font-weight: 700; cursor: pointer; color: var(--encre-douce); }
   .onglets button[aria-selected="true"] { background: var(--surface); border-color: var(--encre); color: var(--encre); }
 }
+
+@layer components {
+  /* L'administration espace ses blocs par piles : pas de marge héritée de « section + section ». */
+  .admin-contenu section + section { margin-top: 0; }
+  .admin-contenu a.kpi-lien { text-decoration: none; color: inherit; font-weight: 400; }
+}

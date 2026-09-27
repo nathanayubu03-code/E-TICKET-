@@ -81,3 +81,25 @@ test('publication refusée : la liste de ce qui manque s’affiche', async ({ pa
   await expect(page.getByText('Un organisateur')).toBeVisible();
   await expect(page.getByText('Au moins une catégorie de billet avec un prix et un quota')).toBeVisible();
 });
+
+test('tableau de bord sans vente : zéros lisibles, aucun graphique fictif', async ({ page }) => {
+  await viderEvenements();
+  await connecterAdmin(page);
+  await page.goto('/admin');
+  await expect(page.getByText('Aucune vente pour le moment.').first()).toBeVisible();
+  await expect(page.locator('.kpi b').first()).toHaveText('0');
+  await expect(page.getByText('0 CDF').first()).toBeVisible();
+  await expect(page.locator('.admin-contenu svg, .admin-contenu canvas')).toHaveCount(0);
+});
+
+test('taux indicatif saisi par le super-administrateur : USD affiché sur la page événement', async ({ page }) => {
+  await viderEvenements();
+  const { creerEvenement } = await import('./aide');
+  const e = await creerEvenement({ titre: 'Avec taux', types: [{ nom: 'Standard', prix: 28500, quota: 10 }] });
+  await connecterAdmin(page, '/admin/parametres');
+  await page.getByLabel('CDF pour 1 USD').fill('2850');
+  await page.getByRole('button', { name: 'Enregistrer le taux' }).click();
+  await expect(page.getByText('1 USD = 2850 CDF')).toBeVisible();
+  await page.goto(`/evenements/${e.slug}`);
+  await expect(page.getByText('≈ 10 USD')).toBeVisible();
+});

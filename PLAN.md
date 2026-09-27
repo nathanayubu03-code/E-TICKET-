@@ -668,7 +668,7 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 - [x] 10. Mes billets hors ligne (billets serveur et billets du téléphone fusionnés, IndexedDB avec décalage d'horloge, onglets à venir / passés, état vide ; lisibles sans session ; le chargement de la page sans réseau vient avec la PWA à l'étape 14)
 - [x] 11. Scanner (manifeste des empreintes SHA-256 obligatoire au démarrage, resynchronisation toutes les 60 s, vérification serveur en ligne avec passage VALIDE → UTILISE conditionnel, mode avion avec état orange « Inconnu, à vérifier », synchronisation idempotente et doublons signalés, BarcodeDetector ou @zxing/browser, saisie du numéro, lampe ; administration des contrôleurs avec suivi en direct)
 - [x] 12. SMS (interface SmsProvider, simulation journalisée et interdite en production, OTP masqués hors simulation, billets, payée sans place, réclamation refusée, alerte des abonnés à la première publication, liste d'attente prévenue par un administrateur, journal des SMS)
-- [ ] 13. Tableau de bord, reversements, exports
+- [x] 13. Tableau de bord, reversements, exports (ventes du jour et du mois, brut, commission, net, par opérateur et par catégorie, zéros sans vente ; reversements dus et enregistrés ; export Excel ; commandes : recherche, renvoi SMS, annulation, remboursement, payées sans place en priorité ; codes promo ; paramètres ; journal d'audit ; SMS envoyés)
 - [ ] 14. PWA
 - [ ] 15. Sécurité
 - [ ] 16. Traductions et pages légales
@@ -713,3 +713,6 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 - Simulation : l'issue dépend de la fin du numéro (0000 refusé, 9999 sans réponse, sinon reçu en 4 s) et passe par un vrai webhook signé traité comme en production.
 - Scanner : le motif attendu affiché sur l'écran vert est calculé à partir de l'identifiant lisible du billet (le manifeste associe chaque empreinte à son identifiant et à sa catégorie, qui sont publics). Le code secret du billet n'est jamais téléchargé par le scanner.
 - Scanner : anti-rebond de 4 secondes sur la caméra (le même QR lu en boucle ne compte qu'une fois), pas sur la saisie manuelle.
+- Tableau de bord : barres simples en HTML calculées sur les données réelles, pas de bibliothèque de graphiques ni de courbe décorative. Rien n'est affiché qui ne vienne de la base.
+- Paramètres : modifiables par le seul super-administrateur ; l'ADMIN les lit.
+- Export Excel : numéros complets pour l'équipe e-Ticket, masqués pour l'organisateur.
