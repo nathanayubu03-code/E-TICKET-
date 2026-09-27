@@ -7,7 +7,7 @@ import { creerEvenement, viderEvenements } from '../e2e/aide';
 let serveur: ChildProcess | null = null;
 
 async function demarrer() {
-  serveur = spawn('npx', ['next', 'start', '-p', '3300'], { env: { ...process.env, DATABASE_URL: process.env.DATABASE_URL, PAYMENT_PROVIDER: 'non_configure', SMS_PROVIDER: 'non_configure', APP_ENV: 'production' }, stdio: 'ignore', detached: true });
+  serveur = spawn('npx', ['next', 'start', '-p', '3300'], { env: { ...process.env, DATABASE_URL: process.env.DATABASE_URL, PAYMENT_PROVIDER: 'non_configure', SMS_PROVIDER: 'non_configure', APP_ENV: 'production', NEXT_PUBLIC_SITE_URL: 'https://billets.exemple.cd' }, stdio: 'ignore', detached: true });
   for (let i = 0; i < 60; i++) {
     try { if ((await fetch('http://localhost:3300/api/sante')).ok) return; } catch { /* pas encore prêt */ }
     await new Promise((r) => setTimeout(r, 500));

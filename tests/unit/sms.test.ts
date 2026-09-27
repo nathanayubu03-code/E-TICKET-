@@ -1,4 +1,6 @@
-import { afterAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { envoyerOtp, verifierOtp } from '@/lib/auth/otp';
+import { viderCacheEnv } from '@/lib/env';
 import { db } from '@/lib/db';
 import { envoyerSms, remplacerFournisseurSms } from '@/lib/sms';
 import { alerterNouvelEvenement, prevenirListeAttente } from '@/lib/sms/diffusion';
@@ -44,5 +46,29 @@ describe('SMS', () => {
     await db.waitlistEntry.createMany({ data: [{ evenementId: e.id, telephone: '+243971000020', consentementLe: new Date() }, { evenementId: e.id, telephone: '+243971000021', consentementLe: new Date() }] });
     expect(await prevenirListeAttente(e.id, admin)).toBe(2);
     expect(await prevenirListeAttente(e.id, admin)).toBe(0);
+  });
+});
+
+describe('code OTP affiché en version de test', () => {
+  beforeEach(async () => { await viderBase(); remplacerFournisseurSms(null); });
+  afterEach(() => { process.env.APP_ENV = 'development'; viderCacheEnv(); });
+  afterAll(async () => { await db.$disconnect(); });
+
+  it('staging renvoie le code à afficher, et ce code est le bon', async () => {
+    process.env.APP_ENV = 'staging'; viderCacheEnv();
+    const r = await envoyerOtp('+243971000030', 'CONNEXION', '10.0.0.1');
+    expect(r.ok).toBe(true);
+    const code = (r as { codeTest?: string }).codeTest;
+    expect(code).toMatch(/^\d{6}$/);
+    expect((await verifierOtp('+243971000030', 'CONNEXION', code!)).ok).toBe(true);
+  });
+
+  it('development et production ne renvoient jamais le code', async () => {
+    for (const [i, app] of (['development', 'production'] as const).entries()) {
+      process.env.APP_ENV = app; viderCacheEnv();
+      const r = await envoyerOtp(`+24397100004${i}`, 'CONNEXION', '10.0.0.2');
+      expect(r.ok).toBe(true);
+      expect(r).not.toHaveProperty('codeTest');
+    }
   });
 });

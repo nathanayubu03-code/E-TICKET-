@@ -9,7 +9,7 @@ import { db } from '@/lib/db';
 import { ipClient } from '@/lib/requete';
 import { normaliserTelephone } from '@/lib/telephone';
 
-export type ReponseCode = { ok: true; renvoiDans: number } | { ok: false; message: string; renvoiDans?: number };
+export type ReponseCode = { ok: true; renvoiDans: number; codeTest?: string } | { ok: false; message: string; renvoiDans?: number };
 
 export async function demanderCode(saisie: string, piege = ''): Promise<ReponseCode> {
   const t = await getTranslations();

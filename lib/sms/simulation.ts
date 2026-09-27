@@ -5,7 +5,7 @@ import type { SmsProvider } from './fournisseur';
 export class SimulationSmsProvider implements SmsProvider {
   readonly nom = 'simulation';
   async envoyer(telephone: string, texte: string) {
-    if (process.env.NODE_ENV !== 'test' && process.env.APP_ENV !== 'test') console.info(`[SMS simulé] ${telephone} : ${texte}`);
+    if (process.env.NODE_ENV !== 'test') console.info(`[SMS simulé] ${telephone} : ${texte}`);
     return { reference: `sim-${Date.now().toString(36)}` };
   }
 }

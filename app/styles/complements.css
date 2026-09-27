@@ -107,3 +107,29 @@
   .categorie-billet.epuisee { opacity: 1; }
   .categorie-billet.epuisee h3, .categorie-billet.epuisee .prix b { color: var(--desactive); }
 }
+
+/* Version de test (APP_ENV=staging) : bandeau rouge fixe en haut de chaque page, codes SMS affichés. */
+@layer components {
+  :root { --h-test: 0px; }
+  html[data-app-env="staging"] { --h-test: 52px; }
+  @media (min-width: 720px) { html[data-app-env="staging"] { --h-test: 36px; } }
+  .bandeau-test {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000; min-height: var(--h-test);
+    display: flex; align-items: center; justify-content: center; padding: 6px 16px; text-align: center;
+    background: #C8102E; color: #FFFFFF; font-weight: 700; font-size: 14px; line-height: 1.3;
+    border-bottom: 2px solid #14120E;
+  }
+  html[data-app-env="staging"] body { padding-top: var(--h-test); }
+  html[data-app-env="staging"] .entete { top: var(--h-test); }
+  html[data-app-env="staging"] .panier, html[data-app-env="staging"] .mb-grille aside { top: calc(92px + var(--h-test)) !important; }
+  html[data-app-env="staging"] .scan-ecran { min-height: calc(100dvh - var(--h-test)); }
+  html[data-app-env="staging"] .scan-resultat { top: var(--h-test); }
+  .code-test { padding: 10px 14px; border-radius: 12px; border: 2px dashed #C8102E; background: var(--danger-doux); color: var(--danger); font-size: 16px; }
+  .code-test b { font-family: var(--affiche); font-weight: 900; font-size: 24px; letter-spacing: 0.12em; margin-left: 6px; }
+}
+
+/* Accueil vide en 360 px : la colonne unique de .heros (1fr) prenait la largeur minimale du formulaire
+   d'alerte SMS et débordait de 52 px. minmax(0, 1fr) la tient dans l'écran. */
+@layer components {
+  @media (max-width: 900px) { .heros { grid-template-columns: minmax(0, 1fr); } }
+}

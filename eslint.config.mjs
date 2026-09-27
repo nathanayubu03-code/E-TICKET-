@@ -5,7 +5,7 @@ const config = [
   ...nextVitals,
   ...nextTs,
   {
-    ignores: ['node_modules/**', '.next/**', '.next-e2e/**', 'generated/**', 'design/**', 'outils/**', 'tokens/**', 'public/sw.js', 'public/swe-worker-*.js', 'playwright-report/**', 'test-results/**', 'docs/**'],
+    ignores: ['node_modules/**', '.next/**', '.next-e2e/**', '.next-staging/**', 'generated/**', 'design/**', 'outils/**', 'tokens/**', 'public/sw.js', 'public/swe-worker-*.js', 'playwright-report/**', 'test-results/**', 'docs/**'],
   },
 ];
 export default config;

@@ -133,4 +133,13 @@ describe('paiement Mobile Money', () => {
     expect(await refuserReclamation(r2.id, agent, 'Introuvable')).toBe(true);
     expect(await db.smsLog.count({ where: { gabarit: 'reclamation_refusee' } })).toBe(1);
   });
+  it('simulation : la vérification planifiée retrouve l’issue quand le webhook se perd (staging sur Vercel)', async () => {
+    const sim = new SimulationProvider();
+    const cmd = { paiementId: 'p1', codeCommande: 'C1', montantCdf: 1000, cleIdempotence: 'c:1' };
+    const ref = async (tel: string) => (await sim.initier(cmd, tel, 'AIRTEL')).referenceOperateur;
+    expect((await sim.verifierStatut(await ref('+243971230001'))).statut).toBe('REUSSI');
+    expect((await sim.verifierStatut(await ref('+243971230000'))).statut).toBe('ECHOUE');
+    expect((await sim.verifierStatut(await ref('+243971239999'))).statut).toBe('EN_ATTENTE');
+    expect((await sim.verifierStatut(null)).statut).toBe('EN_ATTENTE');
+  });
 });

@@ -7,7 +7,7 @@ import { formaterChiffres } from '@/lib/telephone';
 import { ecart } from '@/lib/style';
 
 export interface TextesConnexion {
-  label: string; placeholder: string; detecte: string; inconnu: string; recevoirCode: string; codeEnvoye: string; modifier: string;
+  label: string; placeholder: string; detecte: string; inconnu: string; recevoirCode: string; codeEnvoye: string; modifier: string; codeTest: string;
   codeLegend: string; chiffre: string; autoRemplissage: string; rienRecu: string; renvoyerDans: string; renvoyer: string; validerCode: string;
 }
 
@@ -20,6 +20,7 @@ export function ConnexionOtp({ textes, telephoneInitial = '', onConnecte }: { te
   const [cases, setCases] = useState<string[]>(['', '', '', '', '', '']);
   const [reste, setReste] = useState(0);
   const [erreur, setErreur] = useState<string | null>(null);
+  const [codeTest, setCodeTest] = useState<string | null>(null);
   const [enCours, demarrer] = useTransition();
   const refs = useRef<(HTMLInputElement | null)[]>([]);
   const piege = useRef<HTMLInputElement>(null);
@@ -35,6 +36,7 @@ export function ConnexionOtp({ textes, telephoneInitial = '', onConnecte }: { te
     const r = await demanderCode(chiffres, piege.current?.value ?? '');
     if (!r.ok) { setErreur(r.message); if (r.renvoiDans) setReste(r.renvoiDans); return; }
     setCodeEnvoye(true);
+    setCodeTest(r.codeTest ?? null);
     setReste(r.renvoiDans);
     setTimeout(() => refs.current[0]?.focus(), 50);
   });
@@ -91,6 +93,7 @@ export function ConnexionOtp({ textes, telephoneInitial = '', onConnecte }: { te
               />
             ))}
           </fieldset>
+          {codeTest ? <p className="code-test" role="status">{remplir(textes.codeTest, { code: '' })}<b>{codeTest}</b></p> : null}
           <p className="doux" style={{ fontSize: 14 }}>{textes.autoRemplissage}</p>
           <div className="rangee entre">
             <span className="doux">{textes.rienRecu}</span>

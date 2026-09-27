@@ -17,6 +17,7 @@ export function FormConnexionAdmin({ suite }: { suite: string }) {
       <div className="champ">
         <label htmlFor="code">Code reçu par SMS</label>
         <input id="code" name="code" className="champ-texte" inputMode="numeric" autoComplete="one-time-code" maxLength={6} required autoFocus />
+        {etat1.codeTest ? <p className="code-test" role="status">Code de test : <b>{etat1.codeTest}</b></p> : null}
       </div>
       {message ? <p className="note note-danger" role="alert">{message}</p> : null}
       <button className="btn btn-principal btn-grand" type="submit" disabled={enCours2}>Valider le code</button>

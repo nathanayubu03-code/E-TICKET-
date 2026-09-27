@@ -25,6 +25,11 @@ test('base vide : accueil propre, sans À la une ni chiffre inventé', async ({ 
   await expect(page.getByRole('link', { name: 'Créer mon événement' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: "M'alerter" })).toBeVisible();
   await sansContenuInvente(page);
+  // APP_ENV=development : pas de bandeau de version de test.
+  await expect(page.getByText('Version de test', { exact: false })).toHaveCount(0);
+  // 360 px : aucun défilement horizontal (le formulaire d'alerte élargissait la colonne).
+  await page.setViewportSize({ width: 360, height: 740 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(360);
   expect(erreurs).toEqual([]);
 });
 

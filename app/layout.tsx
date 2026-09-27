@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { Anybody, Atkinson_Hyperlegible } from 'next/font/google';
 import { cookies } from 'next/headers';
-import { getLocale } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
+import { environnementApp, lireEnv } from '@/lib/env';
 import './globals.css';
 
 const anybody = Anybody({ subsets: ['latin'], axes: ['wdth'], variable: '--font-anybody', display: 'swap' });
@@ -24,9 +25,14 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const theme = (await cookies()).get('et-theme')?.value;
   const locale = await getLocale();
+  const staging = environnementApp(lireEnv()) === 'staging';
+  const t = await getTranslations('commun');
   return (
-    <html lang={locale} data-theme={theme === 'dark' || theme === 'light' ? theme : undefined} className={`${anybody.variable} ${atkinson.variable}`}>
-      <body>{children}</body>
+    <html lang={locale} data-theme={theme === 'dark' || theme === 'light' ? theme : undefined} data-app-env={staging ? 'staging' : undefined} className={`${anybody.variable} ${atkinson.variable}`}>
+      <body>
+        {staging ? <div className="bandeau-test" role="note">{t('bandeauTest')}</div> : null}
+        {children}
+      </body>
     </html>
   );
 }

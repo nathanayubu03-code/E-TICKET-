@@ -14,7 +14,7 @@ export default defineConfig({
     globalSetup: ['tests/unit/global-setup.ts'],
     env: {
       DATABASE_URL: TEST_DB,
-      APP_ENV: 'test',
+      APP_ENV: 'development',
       SESSION_SECRET: 'test-secret-de-session-assez-long-pour-les-tests',
       ENCRYPTION_KEY: Buffer.alloc(32, 7).toString('base64'),
       CRON_SECRET: 'test-cron-secret-assez-long-123',

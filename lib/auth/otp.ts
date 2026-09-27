@@ -1,6 +1,6 @@
 import { createHmac, randomInt, timingSafeEqual } from 'node:crypto';
 import { db, type ObjetOtp } from '@/lib/db';
-import { env } from '@/lib/env';
+import { env, estStaging } from '@/lib/env';
 import { limiter } from '@/lib/limites';
 import { envoyerSms } from '@/lib/sms';
 
@@ -10,7 +10,8 @@ export const OTP_RENVOI_S = 45;
 
 const hacher = (telephone: string, code: string) => createHmac('sha256', env().SESSION_SECRET).update(`otp:${telephone}:${code}`).digest('hex');
 
-export type ResultatEnvoiOtp = { ok: true; renvoiDans: number } | { ok: false; raison: 'trop_tot' | 'trop_de_demandes' | 'sms_indisponible'; renvoiDans?: number };
+// codeTest : renvoyé seulement en staging (version de test), pour l'afficher sous le champ. Jamais en production.
+export type ResultatEnvoiOtp = { ok: true; renvoiDans: number; codeTest?: string } | { ok: false; raison: 'trop_tot' | 'trop_de_demandes' | 'sms_indisponible'; renvoiDans?: number };
 
 /** Envoie un code à 6 chiffres. Renvoi possible après 45 s, 5 codes par heure et par numéro. */
 export async function envoyerOtp(telephone: string, objet: ObjetOtp, ip: string): Promise<ResultatEnvoiOtp> {
@@ -27,7 +28,7 @@ export async function envoyerOtp(telephone: string, objet: ObjetOtp, ip: string)
   await db.otpCode.create({ data: { telephone, objet, codeHash: hacher(telephone, code), expireLe: new Date(Date.now() + OTP_DUREE_MS) } });
   const envoye = await envoyerSms(telephone, 'otp', `e-Ticket RDC : votre code est ${code}. Il expire dans 5 minutes. Ne le donnez à personne.`, { masquer: true });
   if (!envoye) return { ok: false, raison: 'sms_indisponible' };
-  return { ok: true, renvoiDans: OTP_RENVOI_S };
+  return { ok: true, renvoiDans: OTP_RENVOI_S, ...(estStaging() ? { codeTest: code } : {}) };
 }
 
 export type ResultatVerification = { ok: true } | { ok: false; raison: 'faux'; restants: number } | { ok: false; raison: 'expire' };

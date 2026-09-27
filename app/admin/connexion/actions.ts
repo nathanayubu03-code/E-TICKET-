@@ -13,7 +13,7 @@ import { limiter } from '@/lib/limites';
 import { ipClient } from '@/lib/requete';
 import { normaliserTelephone } from '@/lib/telephone';
 
-export interface EtatConnexion { etape: 'identifiants' | 'code'; message?: string }
+export interface EtatConnexion { etape: 'identifiants' | 'code'; message?: string; codeTest?: string }
 
 const MESSAGE_GENERIQUE = 'Numéro ou mot de passe incorrect.';
 
@@ -36,7 +36,7 @@ export async function validerIdentifiants(_e: EtatConnexion, formData: FormData)
     return { etape: 'identifiants', message: envoi.raison === 'sms_indisponible' ? "Le SMS n'a pas pu être envoyé. Vérifiez la configuration du fournisseur SMS." : 'Trop de codes demandés. Réessayez plus tard.' };
   }
   await poserAttente(user.id);
-  return { etape: 'code' };
+  return { etape: 'code', ...(envoi.ok && envoi.codeTest ? { codeTest: envoi.codeTest } : {}) };
 }
 
 export async function validerCodeAdmin(_e: EtatConnexion, formData: FormData): Promise<EtatConnexion> {

@@ -75,9 +75,10 @@ Toutes sont décrites dans `.env.example`. Les principales :
 |---|---|
 | `DATABASE_URL`, `DIRECT_URL` | PostgreSQL (poolée pour l'application, directe pour les migrations) |
 | `SESSION_SECRET`, `ENCRYPTION_KEY`, `CRON_SECRET` | Secrets, validés au démarrage |
-| `PAYMENT_PROVIDER`, `SMS_PROVIDER` | `simulation` (développement, **refusé en production**), `non_configure`, ou un fournisseur réel |
+| `APP_ENV` | `development`, `staging` (version de test en ligne : bandeau rouge, codes SMS affichés à l'écran) ou `production` |
+| `PAYMENT_PROVIDER`, `SMS_PROVIDER` | `simulation` (development et staging, **refusé en production**), `non_configure`, ou un fournisseur réel |
 | `STORAGE_DRIVER`, `S3_*` | Affiches : disque local ou Cloudflare R2 |
-| `NEXT_PUBLIC_SITE_URL` | Adresse publique, pour les liens envoyés par SMS |
+| `NEXT_PUBLIC_SITE_URL` | Adresse publique, pour les liens envoyés par SMS ; obligatoire en production, hors `vercel.app` |
 | `CONTACT_ORGANISATEURS_EMAIL`, `CONTACT_ORGANISATEURS_TELEPHONE`, `CONTACT_EMAIL`, `EDITEUR_*` | Contacts et mentions ; vides, les blocs ne s'affichent pas |
 | `SUPERADMIN_*` | Utilisées seulement par le seed de production |
 
@@ -99,7 +100,7 @@ Avec `PAYMENT_PROVIDER=simulation`, la réponse de l'opérateur dépend de la fi
 npm run lint         # ESLint
 npm run typecheck    # TypeScript
 npm test             # Vitest (base eticket_test recréée à chaque lancement)
-npm run test:e2e     # Playwright sur next dev, port 3100, base eticket_e2e recréée
+npm run test:e2e     # Playwright sur next dev, port 3100 (development) et 3101 (staging), base eticket_e2e recréée
 npm run test:pwa     # build de production puis test hors ligne réel (serveur arrêté)
 ```
 
@@ -111,4 +112,4 @@ Playwright est figé en 1.56.1 pour correspondre au Chromium préinstallé de l'
 
 ## Mise en ligne
 
-Voir `docs/deploiement.md`. Avant d'ouvrir la vente, lire `docs/reste-a-faire.md` : l'adaptateur de paiement réel et le fournisseur SMS manquent encore.
+Voir `docs/deploiement.md`, section 9 pour une version de test. Avant d'ouvrir la vente, lire `docs/reste-a-faire.md` : l'adaptateur de paiement réel et le fournisseur SMS manquent encore.

@@ -29,7 +29,8 @@
 ## Paiement, SMS, stockage
 
 - Fournisseurs derrière une interface (`lib/paiement`, `lib/sms`, `lib/stockage`), choisis par variable d'environnement.
-- La simulation est interdite en production : `lib/env.ts` (`verifierDemarrage`) refuse de démarrer. Ne contourne jamais cette règle.
+- `APP_ENV` : `development`, `staging` ou `production` (vide sur un serveur de production : production). La simulation est autorisée en development et en staging, interdite en production : `lib/env.ts` (`verifierDemarrage`) refuse de démarrer, et exige aussi en production un `NEXT_PUBLIC_SITE_URL` hors `vercel.app`. Ne contourne jamais ces règles.
+- En staging seulement : bandeau rouge fixe dans `app/layout.tsx`, code OTP renvoyé par `envoyerOtp` (`codeTest`) et affiché sous le champ. Jamais en production.
 - Les billets ne sont générés que sur confirmation vérifiée côté serveur (webhook signé ou `verifierStatut`), jamais sur un retour navigateur.
 - Réservation atomique : décrément conditionnel de `TicketType.restant` par `updateMany`, jamais lecture puis écriture.
 

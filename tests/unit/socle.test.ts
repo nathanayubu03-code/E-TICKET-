@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { db } from '@/lib/db';
-import { lireEnv, verifierDemarrage } from '@/lib/env';
+import { environnementApp, lireEnv, verifierDemarrage } from '@/lib/env';
 import { operateurDuNumero } from '@/lib/operateurs';
 import { formaterChiffres, masquerTelephone, normaliserTelephone } from '@/lib/telephone';
 import { fusionner } from '@/i18n/fusion';
@@ -45,6 +45,41 @@ describe('démarrage', () => {
   });
   it('accepte la simulation en développement', () => {
     expect(() => verifierDemarrage(lireEnv({ ...base, NODE_ENV: 'development', PAYMENT_PROVIDER: 'simulation', SMS_PROVIDER: 'simulation' }))).not.toThrow();
+  });
+  const demarrer = (e: Record<string, string>) => () => verifierDemarrage(lireEnv({ ...base, ...e }));
+  const simulation = { PAYMENT_PROVIDER: 'simulation', SMS_PROVIDER: 'simulation' };
+  it('APP_ENV : trois valeurs, production par défaut sur un serveur de production', () => {
+    expect(environnementApp(lireEnv({ ...base, APP_ENV: 'staging', NODE_ENV: 'production' }))).toBe('staging');
+    expect(environnementApp(lireEnv({ ...base, NODE_ENV: 'production' }))).toBe('production');
+    expect(environnementApp(lireEnv({ ...base, NODE_ENV: 'development' }))).toBe('development');
+    expect(() => lireEnv({ ...base, APP_ENV: 'preview' })).toThrow(/APP_ENV/);
+  });
+  it('staging accepte la simulation, même sur un serveur de production et une adresse vercel.app', () => {
+    expect(demarrer({ ...simulation, NODE_ENV: 'production', APP_ENV: 'staging' })).not.toThrow();
+    expect(demarrer({ ...simulation, NODE_ENV: 'production', APP_ENV: 'staging', NEXT_PUBLIC_SITE_URL: 'https://eticket-test.vercel.app' })).not.toThrow();
+  });
+  it('production refuse chaque simulation, même avec une adresse valide', () => {
+    const ok = { NODE_ENV: 'production', APP_ENV: 'production', NEXT_PUBLIC_SITE_URL: 'https://billets.exemple.cd' };
+    expect(demarrer({ ...ok, PAYMENT_PROVIDER: 'simulation' })).toThrow(/PAYMENT_PROVIDER=simulation/);
+    expect(demarrer({ ...ok, SMS_PROVIDER: 'simulation' })).toThrow(/SMS_PROVIDER=simulation/);
+  });
+  it('production exige NEXT_PUBLIC_SITE_URL, valide et hors vercel.app', () => {
+    const prod = { NODE_ENV: 'production', APP_ENV: 'production' };
+    expect(demarrer(prod)).toThrow(/NEXT_PUBLIC_SITE_URL est obligatoire/);
+    expect(demarrer({ ...prod, NEXT_PUBLIC_SITE_URL: '   ' })).toThrow(/NEXT_PUBLIC_SITE_URL est obligatoire/);
+    expect(demarrer({ ...prod, NEXT_PUBLIC_SITE_URL: 'pas une url' })).toThrow(/URL valide/);
+    expect(demarrer({ ...prod, NEXT_PUBLIC_SITE_URL: 'https://eticket.vercel.app' })).toThrow(/vercel\.app/);
+    expect(demarrer({ ...prod, NEXT_PUBLIC_SITE_URL: 'https://eticket-git-main-equipe.VERCEL.app/' })).toThrow(/vercel\.app/);
+    expect(demarrer({ ...prod, NEXT_PUBLIC_SITE_URL: 'https://vercel.app' })).toThrow(/vercel\.app/);
+    expect(demarrer({ ...prod, NEXT_PUBLIC_SITE_URL: 'https://billets.exemple.cd' })).not.toThrow();
+    // Un domaine qui contient seulement le mot n'est pas une adresse vercel.app.
+    expect(demarrer({ ...prod, NEXT_PUBLIC_SITE_URL: 'https://vercel.app.exemple.cd' })).not.toThrow();
+  });
+  it('APP_ENV vide sur un serveur de production : règles de production', () => {
+    expect(demarrer({ NODE_ENV: 'production' })).toThrow(/NEXT_PUBLIC_SITE_URL/);
+  });
+  it('development n\'exige pas NEXT_PUBLIC_SITE_URL', () => {
+    expect(demarrer({ ...simulation, APP_ENV: 'development' })).not.toThrow();
   });
   it('refuse une configuration sans secret', () => {
     expect(() => lireEnv({ DATABASE_URL: 'x' })).toThrow(/Configuration invalide/);

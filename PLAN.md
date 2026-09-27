@@ -583,7 +583,7 @@ Migration SQL ajoutée à la main : trigger `interdire_modif_audit` (rejette `UP
 
 **Vérification planifiée.** Toutes les minutes : paiements EN_ATTENTE avec `prochaineVerifLe <= now`. Première vérification à 90 s, puis toutes les 2 min jusqu'à 15 min. Même fonction `appliquerConfirmation`. Expiration des réservations : libération du stock pour les commandes EN_ATTENTE échues sans paiement réussi.
 
-**Démarrage.** `lib/env.ts` valide l'environnement au chargement ; si `NODE_ENV=production` et `PAYMENT_PROVIDER=simulation` ou `SMS_PROVIDER=simulation`, l'application lève une erreur dans `instrumentation.ts` et ne démarre pas.
+**Démarrage.** `lib/env.ts` valide l'environnement au chargement. `APP_ENV` vaut `development`, `staging` ou `production` (vide : production si `NODE_ENV=production`). En production, `PAYMENT_PROVIDER=simulation`, `SMS_PROVIDER=simulation`, un `NEXT_PUBLIC_SITE_URL` absent ou en `vercel.app` lèvent une erreur dans `instrumentation.ts` et l'application ne démarre pas. En staging, la simulation est autorisée, un bandeau rouge s'affiche en haut de chaque page et le code OTP s'affiche sous le champ.
 
 ## 5. Routes
 
@@ -677,7 +677,7 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 
 - PostgreSQL 16 local : base `eticket` (développement) et `eticket_test` (tests), utilisateur `eticket`. `service postgresql start` si le conteneur a redémarré.
 - `.env` local non versionné (voir `.env.example`).
-- Playwright 1.56.1 figé pour le Chromium préinstallé ; e2e sur `next dev` (port 3100, dossier `.next-e2e`) parce que la simulation est interdite par `next start`.
+- Playwright 1.56.1 figé pour le Chromium préinstallé ; e2e sur `next dev` (port 3100, dossier `.next-e2e`, `APP_ENV=development`) et projet `staging` (port 3101, dossier `.next-staging`, `APP_ENV=staging`, tests dans `tests/staging`).
 
 ### Écarts avec la maquette, et pourquoi
 
@@ -721,6 +721,11 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 ### Risque ouvert : lecture du QR par le repli ZXing
 
 Mesure demandée (docs/billet.md) : sur une image fixe, ZXing en JavaScript (repli du scanner quand BarcodeDetector manque) rate de 0 à 3 billets sur 25 selon le lancement, à toutes les densités, alors que la zone QR seule se lit toujours. Trois tentatives de correction (recadrage au centre, agrandissement, rendu `crispEdges`) n'ont pas supprimé ces échecs. Le test est une mesure avec un plancher de contrôle à 80 %, pas une garantie. À trancher par un essai terrain avant l'ouverture (voir docs/billet.md et docs/reste-a-faire.md).
+
+Après la livraison :
+
+- [x] `APP_ENV` à trois valeurs (development, staging, production). Staging : simulation autorisée, bandeau rouge fixe, code OTP affiché sous le champ (acheteur et administrateur). Production : simulation refusée, `NEXT_PUBLIC_SITE_URL` obligatoire et hors `vercel.app`. Paiement simulé remis par `after()` et retrouvé par la vérification planifiée, pour tenir sur Vercel. Débordement horizontal de l'accueil vide en 360 px corrigé (existait déjà). Tests : 84 Vitest, 31 Playwright (24 e2e, 7 staging). Guide : `docs/deploiement.md`, section 9. Captures : `docs/captures/staging/`.
+
 
 ## Vérification finale (27/09/2026)
 

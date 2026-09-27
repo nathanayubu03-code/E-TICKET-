@@ -1,8 +1,9 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import { after } from 'next/server';
 import type { Operateur } from '@/lib/db';
 import type { CommandeAPayer, EvenementWebhook, PaymentProvider, RequeteBrute, StatutNormalise } from './fournisseur';
 
-// Développement uniquement : interdit en production (lib/env.ts refuse de démarrer).
+// Development et staging uniquement : interdit en production (lib/env.ts refuse de démarrer).
 // Réponse de « l'opérateur » selon la fin du numéro, pour tester chaque état de la maquette :
 //   …0000 → refusé, …9999 → aucune réponse (délai dépassé), autre → reçu après 4 secondes.
 // La réponse arrive par un vrai webhook signé, traité comme celui d'un agrégateur.
@@ -28,18 +29,29 @@ export class SimulationProvider implements PaymentProvider {
   readonly nom = 'simulation';
 
   async initier(commande: CommandeAPayer, numero: string, operateur: Operateur) {
-    const reference = `SIM-${commande.paiementId}`;
     const issue = issueSimulee(numero);
+    // L'issue est inscrite dans la référence : la vérification planifiée la retrouve si le webhook se perd.
+    const reference = `SIM-${commande.paiementId}:${issue === 'REUSSI' ? 'R' : issue === 'ECHOUE' ? 'E' : 'N'}`;
     if (issue && livreur) {
       const corps = JSON.stringify({ id: `evt-${commande.paiementId}`, reference, paiementId: commande.paiementId, statut: issue, montant: commande.montantCdf, operateur });
       const l = livreur;
-      setTimeout(() => { void l(corps, signerSimulation(corps)); }, delaiSimulationMs);
+      const livrer = () => l(corps, signerSimulation(corps));
+      const delai = delaiSimulationMs;
+      try {
+        // Sur Vercel (staging), une minuterie seule ne survit pas à la fin de la requête : after() garde la fonction active.
+        after(() => new Promise<void>((fin) => setTimeout(() => { void livrer().finally(fin); }, delai)));
+      } catch {
+        // Hors requête (tests, scripts) : simple minuterie.
+        setTimeout(() => { void livrer(); }, delai);
+      }
     }
     return { statut: 'EN_ATTENTE' as const, referenceOperateur: reference, brut: 'PENDING' };
   }
 
   async verifierStatut(referenceOperateur: string | null) {
-    return { statut: 'EN_ATTENTE' as const, referenceOperateur, brut: 'PENDING' };
+    const code = referenceOperateur?.match(/:([REN])$/)?.[1];
+    const statut: StatutNormalise = code === 'R' ? 'REUSSI' : code === 'E' ? 'ECHOUE' : 'EN_ATTENTE';
+    return { statut, referenceOperateur, brut: statut === 'EN_ATTENTE' ? 'PENDING' : statut };
   }
 
   async verifierWebhook({ corps, entetes }: RequeteBrute): Promise<EvenementWebhook | null> {

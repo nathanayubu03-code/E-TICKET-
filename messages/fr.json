@@ -14,7 +14,8 @@
     "retour": "Retour",
     "erreurInconnue": "Une erreur est survenue. Réessayez dans un instant.",
     "tropDeDemandes": "Trop de demandes. Réessayez dans quelques minutes.",
-    "champObligatoire": "Ce champ est obligatoire."
+    "champObligatoire": "Ce champ est obligatoire.",
+    "bandeauTest": "Version de test : aucun paiement réel, codes SMS affichés à l'écran"
   },
   "reseau": {
     "horsLigne": "Pas de connexion. Vos billets restent disponibles hors ligne.",
@@ -223,7 +224,8 @@
     "voirTous": "Voir tous mes billets",
     "payeeSansPlace": "Votre paiement est bien reçu, mais les places ont été prises pendant l'attente. Vous serez remboursé : notre équipe vous contacte par SMS.",
     "commandeIntrouvable": "Commande introuvable.",
-    "reessayer": "Réessayer"
+    "reessayer": "Réessayer",
+    "codeTest": "Code de test : {code}"
   },
   "agent": {
     "titre": "Payer chez un agent",
