@@ -1,0 +1,8 @@
+{
+  "commun": { "reessayer": "Meka lisusu" },
+  "reseau": { "coupe": "Connexion ezali te" },
+  "entete": { "evenements": "Makambo", "billets": "Batike na ngai", "orga": "Babongisi", "connexion": "Kota" },
+  "achat": { "attenteTitre": "Ndima na telefone na yo", "rienRecu": "Ozwi eloko te ?", "securiteGras": "Tosengaka code na yo ya sekele soko moke te" },
+  "mesBillets": { "titre": "Batike na ngai" },
+  "scan": { "valide": "Ebongi", "refuse": "Eboyami" }
+}

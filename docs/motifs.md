@@ -1,6 +1,6 @@
 # Système de motifs Kuba : note pour le développeur
 
-Référence exécutable : `site/assets/kuba.js` (réexporté par `src/kuba/kuba.js`) (sans dépendance, testé par `npm test`). Le canvas de design (`design/project/Kuba.dc.html`) utilise le même algorithme, vérifié à l'identique.
+Référence exécutable : `design/maquette/assets/kuba.js`, portée en TypeScript dans `lib/kuba/` et vérifiée à l'identique par `tests/unit/kuba.test.ts`. Le canvas de design (`design/project/Kuba.dc.html`) utilise le même algorithme, vérifié à l'identique.
 
 ## Principe
 

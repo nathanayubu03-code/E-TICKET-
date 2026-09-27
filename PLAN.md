@@ -1,42 +1,29 @@
 # PLAN.md · e-Ticket RDC
 
-Statut : en attente de validation. Aucune ligne de l'application n'est écrite avant ton accord.
+Statut : plan validé le 27/09/2026, construction en cours. Voir la section « Avancement » en fin de fichier.
 
-## 0. Écarts entre le prompt et le dépôt, à trancher
+## 0. Décisions prises sur les écarts entre le prompt et le dépôt
 
-Ces points changent le plan. Chacun porte ma recommandation.
+1. **Emplacement de la maquette.** La maquette HTML statique est dans `design/maquette/` (déplacée depuis `site/` à l'étape 1). Le canvas reste dans `design/project/` et sert de référence pour le scanner, le tableau de bord et les états.
+2. **Tokens.** `design/maquette/assets/styles.css` fait foi, avec son mécanisme `[data-theme]` + `prefers-color-scheme`. `tokens/theme.css` reste tel quel, non utilisé ; les écarts sont listés dans `docs/design.md`.
+3. **Préfixes Afrimoney.** 090 et 091, marqués « à confirmer » dans `lib/operateurs.ts`. L'utilisateur peut corriger l'opérateur détecté.
+4. **Next.js 16.** Décision : Next.js 16.3.6. Raison : au 27/09/2026, next-intl 4.14 déclare `next ^16.0.0` dans ses peerDependencies, @serwist/next 9.5 déclare `next >=14.0.0` (et Next 16 garde webpack via `next build --webpack`, requis par @serwist/next), Prisma 7.10 est indépendant de la version de Next (client généré + adaptateur `@prisma/adapter-pg`). Conséquences : `proxy.ts` remplace `middleware.ts`, paramètres de route asynchrones, ESLint en configuration plate, build en `--webpack`. Prisma : 7.10.0 (la balise « latest » du registre pointe vers une 8.0 release candidate, écartée).
+5. **QR code.** Le QR contient seulement le code court de l'événement et le code aléatoire du billet (128 bits, base32), sans signature. Le scanner télécharge la liste des empreintes SHA-256 des codes valides avant de démarrer (refus sans elle), se resynchronise toutes les 60 s avec du réseau, vérifie côté serveur quand il est en ligne, et affiche l'état orange « Inconnu, à vérifier » pour un code absent de sa liste hors ligne. Grille Kuba 11 × 11 et zone QR de 168 px conservées. Mesure de lisibilité dans `docs/billet.md`.
+6. **Sel d'affichage.** Le champ s'appelle `selAffichage` : il est public (le téléphone de l'acheteur en a besoin pour le signe du moment). La sécurité repose sur le code aléatoire et la liste côté scanner.
+7. **Code 128 bits et identifiant lisible.** `ET-XXXX-XXXX` est public ; le code 128 bits est à la fois le contenu du QR et le jeton du lien SMS (`/b/<code>`). Sa possession vaut billet, comme le billet papier.
+8. **Seed de démonstration.** Refus si `NODE_ENV=production`, si `APP_ENV=production`, ou si l'hôte de `DATABASE_URL` n'est pas `localhost`, `127.0.0.1`, `db` ou `postgres`.
+9. **Journal d'audit non modifiable.** Trigger PostgreSQL qui rejette `UPDATE` et `DELETE` sur `AuditLog`.
+10. **Réservation atomique.** Compteur `restant` sur `TicketType`, décrément par `updateMany` conditionnel. Test : 20 requêtes simultanées sur les 3 dernières places donnent exactement 3 succès.
 
-1. **Emplacement de la maquette.** Le prompt parle de `/design/index.html`, `/design/assets/…`. Dans le dépôt, `design/` contient le canvas (`design/project/*.dc.html`, 47 planches) et la maquette HTML statique se trouve dans `site/`. J'ai lu les deux. Le contenu de `site/` est identique octet pour octet à l'artifact publié. Recommandation : `git mv site design/maquette` à l'étape 1, pour que la source de vérité ait un chemin stable et que la racine accueille l'application Next.js. Le canvas reste dans `design/project/` et sert de référence pour les écrans absents de la maquette HTML (scanner, tableau de bord, états).
+## 1. Réponses aux questions (27/09/2026)
 
-2. **Deux jeux de tokens légèrement différents.** `site/assets/styles.css` et `tokens/theme.css` divergent sur trois points : ombre en mode sombre (`#000000` dans styles.css, `transparent` dans theme.css), `--focus-halo` et `--contour` absents de theme.css, bascule du thème par `[data-theme]` dans styles.css et par `.dark` dans theme.css. Le prompt désigne styles.css comme source de vérité : je reprends ses valeurs et son mécanisme `[data-theme]` + `prefers-color-scheme`, et je supprime `tokens/` une fois le thème Tailwind en place.
-
-3. **Préfixes Afrimoney.** `app.js` dit 090 et 091, le prompt dit 090 seul. Je mets 090 et 091 dans le fichier de configuration avec un commentaire « à confirmer », puisque l'utilisateur peut corriger l'opérateur détecté. Confiance faible sur les deux listes : à valider auprès des opérateurs ou de l'agrégateur.
-
-4. **Next.js 15.** Next.js 16 est sorti fin 2025 (confiance élevée). Le prompt impose 15 ; je m'y tiens (dernière 15.x) sauf avis contraire. Conséquence : Serwist exige un build webpack, donc pas de Turbopack pour `next build`.
-
-5. **Taille du QR signé.** La charge utile `idBillet | idEvenement | signature Ed25519` fait environ 12 + 10 + 86 (64 octets en base64url) + séparateurs, soit à peu près 112 caractères. En mode octet, niveau de correction M, il faut un QR version 6 ou 7 (41 à 45 modules). La maquette prévoit 168 px CSS pour la zone QR, calculée pour 25 modules : on tomberait à environ 3,7 px par module, trop peu pour un scan fiable sur écran de téléphone bas de gamme en plein soleil. Deux leviers, que je combine : encoder la charge en base32 majuscules (mode alphanumérique du QR, 5,5 bits par caractère au lieu de 8) et agrandir le billet pour que la zone QR fasse au moins 220 px CSS (grille Kuba 13 × 13 au lieu de 11 × 11, anneau de 2 cases conservé). L'algorithme Kuba ne change pas, seul le paramètre `cols/rows` change. Confiance moyenne sur le seuil exact : je le vérifierai avec un vrai téléphone et BarcodeDetector à l'étape du scanner.
-
-6. **Le « sel Kuba secret » n'est secret que du public.** Pour afficher le signe du moment hors ligne, le téléphone de l'acheteur doit connaître le sel de l'événement. Tout détenteur d'un billet le connaît donc. Le signe du moment reste utile contre les captures d'écran d'un autre événement ou d'une autre heure, mais la vraie protection reste la signature Ed25519 et la liste des billets déjà scannés. Je le documente tel quel, sans prétendre autre chose.
-
-7. **Code 128 bits et identifiant lisible.** Le prompt définit les deux sans dire à quoi sert le code 128 bits. Proposition : l'identifiant lisible `ET-XXXX-XXXX` est public (affiché, dicté au support), le code 128 bits sert de jeton porteur dans le lien SMS (`/b/<code>`) pour ouvrir le billet sans se connecter. Il n'entre pas dans le QR.
-
-8. **Seed de démonstration et « base de production ».** On ne peut pas deviner qu'une URL pointe vers la production. Règle proposée : `seed-demo.ts` refuse si `NODE_ENV=production`, si `APP_ENV=production`, ou si l'hôte de `DATABASE_URL` n'est pas dans une liste blanche (`localhost`, `127.0.0.1`, `db`, `postgres`).
-
-9. **Journal d'audit non modifiable.** Prisma ne sait pas l'imposer. Je l'impose dans PostgreSQL : un trigger qui rejette `UPDATE` et `DELETE` sur `AuditLog`, ajouté dans une migration SQL, plus un rôle applicatif sans droit `TRUNCATE`.
-
-10. **Réservation atomique sans SQL brut.** Je stocke un compteur `restant` sur `TicketType` et je fais `updateMany({ where: { id, restant: { gte: n } }, data: { restant: { decrement: n } } })`. Une seule instruction SQL, conditionnelle, sans lecture préalable. Si `count === 0`, la place n'est plus disponible. Même principe pour la libération (`increment`) à l'expiration.
-
-## 1. Questions bloquantes (je ne choisis pas à ta place)
-
-1. Agrégateur Mobile Money retenu (et sa documentation, identifiants de test). Bloque l'étape « adaptateur réel » seulement.
-2. Fournisseur SMS. Bloque l'envoi réel seulement.
-3. Hébergement : où tournent l'application, PostgreSQL et les tâches planifiées (vérification des paiements toutes les 2 minutes, expiration des réservations) ? Un hébergement serverless oblige à un cron externe qui appelle des routes protégées ; un VPS ou un conteneur permet un worker. Bloque l'étape paiement pour la partie planification.
-4. Stockage des affiches (S3 compatible, Cloudflare R2, disque local du serveur ?). Bloque l'étape visuels.
-5. Domaine de production et adresse de contact pour les organisateurs (bouton « Créer mon événement »).
-6. Next.js 15 imposé ou passage à 16 accepté ?
-7. Déplacement de `site/` vers `design/maquette/` accepté ?
-
-En attendant, j'avance sur tout ce qui n'en dépend pas, avec les adaptateurs de simulation.
+1. Agrégateur Mobile Money : non choisi. `SimulationProvider` en développement, interface `PaymentProvider` prête pour un adaptateur. Liste des informations à demander dans `docs/paiement.md`.
+2. Fournisseur SMS : non choisi. `SimulationSmsProvider` qui écrit dans `SmsLog`, interdit en production.
+3. Hébergement : Vercel + Neon, région européenne. `/api/cron/verifier-paiements` protégée par `CRON_SECRET`, idempotente, Vercel Cron dans `vercel.json`, alternative de planificateur externe dans `docs/deploiement.md`.
+4. Stockage : compatible S3, cible Cloudflare R2 ; adaptateur disque local en développement.
+5. Domaine et contact : variables `NEXT_PUBLIC_SITE_URL`, `CONTACT_ORGANISATEURS_EMAIL`, `CONTACT_ORGANISATEURS_TELEPHONE` ; bloc masqué si vide.
+6. Next.js : 16 (voir 0.4).
+7. Déplacement de `site/` : fait.
 
 ## 2. Arborescence
 
@@ -45,7 +32,7 @@ En attendant, j'avance sur tout ce qui n'en dépend pas, avec les adaptateurs de
 ├── CLAUDE.md
 ├── PLAN.md
 ├── design/
-│   ├── maquette/                 ← ex-site/, source de vérité visuelle, jamais importée par l'app
+│   ├── maquette/                 ← maquette HTML validée, source de vérité visuelle, jamais importée par l'app
 │   └── project/                  ← canvas (.dc.html)
 ├── app/
 │   ├── layout.tsx                ← polices next/font, thème, next-intl
@@ -125,7 +112,7 @@ En attendant, j'avance sur tout ce qui n'en dépend pas, avec les adaptateurs de
 │   ├── unit/                     ← Vitest
 │   ├── fixtures/kuba.json
 │   └── e2e/                      ← Playwright
-├── middleware.ts                 ← rôles sur /admin et /scan, en-têtes de sécurité, CSP avec nonce
+├── proxy.ts                      ← rôles sur /admin et /scan, en-têtes de sécurité, CSP avec nonce (Next 16)
 └── .env.example
 ```
 
@@ -268,7 +255,7 @@ model Event {
   infosPratiques  String?
   afficheCle      String?                     // clé de stockage de l'original
   afficheVariantes Json?                      // { "4x5": {webp, avif}, "16x9": {...} }
-  selKuba         String                      // 128 bits aléatoires, base32
+  selAffichage    String                      // public : sert au signe du moment, pas à la sécurité
   limiteParPersonne Int?                      // null = paramètre global
   archiveLe       DateTime?
   publieLe        DateTime?
@@ -606,7 +593,7 @@ Scanner (CONTROLEUR, ADMIN, SUPERADMIN) : `/scan`, `/scan/[evenementId]`.
 
 Administration : `/admin/connexion`, `/admin`, `/admin/evenements`, `/admin/evenements/nouveau`, `/admin/evenements/[id]/[etape]`, `/admin/organisateurs`, `/admin/organisateurs/[id]`, `/admin/commandes`, `/admin/commandes/[code]`, `/admin/paiements`, `/admin/paiements/manuels`, `/admin/reversements`, `/admin/controleurs`, `/admin/promos`, `/admin/parametres`, `/admin/audit`.
 
-Accès par rôle (vérifié dans `middleware.ts` et à nouveau dans chaque action serveur par `exigerRole()`) :
+Accès par rôle (vérifié dans `proxy.ts` et à nouveau dans chaque action serveur par `exigerRole()`) :
 
 | Zone | SUPERADMIN | ADMIN | AGENT | CONTROLEUR | ORGANISATEUR |
 |---|---|---|---|---|---|
@@ -657,8 +644,51 @@ Chaque étape se termine par `pnpm lint`, `pnpm typecheck`, `pnpm test` et les t
 
 ## 8. Dépendances prévues
 
-next@15, react@19, typescript, tailwindcss@4, @prisma/client + prisma, zod, next-intl, @serwist/next, @noble/ed25519 (signature, fonctionne aussi dans le navigateur du scanner), qrcode, @zxing/browser, pdf-lib, sharp, exceljs, argon2 (ou @node-rs/argon2), idb, vitest, @playwright/test, eslint, prettier. shadcn/ui seulement pour Dialog, DropdownMenu et Select (Radix), restylés.
+next@16, react@19, typescript, tailwindcss@4, @prisma/client + prisma, zod, next-intl, @serwist/next, @noble/ed25519 (signature, fonctionne aussi dans le navigateur du scanner), qrcode, @zxing/browser, pdf-lib, sharp, exceljs, argon2 (ou @node-rs/argon2), idb, vitest, @playwright/test, eslint, prettier. shadcn/ui seulement pour Dialog, DropdownMenu et Select (Radix), restylés.
 
 ## 9. Ce que je ne peux pas garantir sans mesure
 
 Budget de 150 ko de JS sur l'accueil avec next-intl et React 19 : atteignable si l'accueil reste en Server Components avec un seul îlot client pour les filtres (confiance moyenne, je mesure dès l'étape 4 avec `next build` et Lighthouse en 3G lente). Lighthouse Performance 90 en 3G lente dépend aussi de l'hébergement (latence vers Kinshasa) : je mesure, je ne promets pas avant d'avoir la réponse à la question 3.
+
+## Avancement
+
+Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la première étape non cochée.
+
+### Étapes
+
+- [x] 1. Socle et thème
+- [ ] 2. Module Kuba
+- [ ] 3. Schéma et seeds
+- [ ] 4. Pages publiques et états vides
+- [ ] 5. Administration des événements
+- [ ] 6. Connexion OTP
+- [ ] 7. Commande et réservation
+- [ ] 8. Paiement
+- [ ] 9. Billets et PDF
+- [ ] 10. Mes billets hors ligne
+- [ ] 11. Scanner
+- [ ] 12. SMS
+- [ ] 13. Tableau de bord, reversements, exports
+- [ ] 14. PWA
+- [ ] 15. Sécurité
+- [ ] 16. Traductions et pages légales
+
+### Environnement de travail
+
+- PostgreSQL 16 local : base `eticket` (développement) et `eticket_test` (tests), utilisateur `eticket`. `service postgresql start` si le conteneur a redémarré.
+- `.env` local non versionné (voir `.env.example`).
+- Playwright 1.56.1 figé pour le Chromium préinstallé ; e2e sur `next dev` (port 3100, dossier `.next-e2e`) parce que la simulation est interdite par `next start`.
+
+### Écarts avec la maquette, et pourquoi
+
+- Texte de l'aperçu du billet : « si c'est une vraie » devient « si c'est un vrai » (accord avec « billet »).
+- Pied de page : liens réels (Aide, Payer chez un agent, Alertes SMS, Conditions, Confidentialité). Le lien « Alertes SMS » est ajouté pour la désinscription, exigée par le consentement explicite. Les villes affichées viennent des événements publiés.
+- Placeholder du numéro : « XX XXX XX XX » au lieu d'un numéro d'exemple, pour n'afficher aucun numéro inventé.
+
+### Décisions techniques
+
+- Les classes de la maquette sont reprises comme composants CSS (`@layer components`) plutôt que réécrites en utilitaires : c'est le moyen le plus sûr de garder chaque valeur identique. Tailwind sert à la mise en page des nouveaux écrans, avec des utilitaires qui pointent vers les mêmes variables.
+- Thème : cookie `et-theme` lu côté serveur pour poser `data-theme` sur `<html>` sans script inline (compatible CSP stricte). Sans cookie, `prefers-color-scheme` s'applique, comme dans la maquette.
+- Langue : cookie `NEXT_LOCALE`, sans préfixe d'URL.
+- L'administration reste en français uniquement (équipe interne) ; seules les pages publiques et le scanner passent par next-intl.
+- `PAYMENT_PROVIDER` et `SMS_PROVIDER` acceptent `non_configure` : l'application démarre en production sans fournisseur, les achats en ligne affichent que le paiement n'est pas ouvert. La simulation reste interdite.

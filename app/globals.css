@@ -1,0 +1,50 @@
+@import "tailwindcss";
+@import "./styles/tokens.css";
+@import "./styles/maquette.css";
+@import "./styles/complements.css";
+
+/* Thème Tailwind : chaque utilitaire pointe vers les variables de la maquette,
+   qui changent avec le mode clair ou sombre. Aucune valeur n'est redéfinie ici. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme inline {
+  --color-fond: var(--fond);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-encre: var(--encre);
+  --color-encre-douce: var(--encre-douce);
+  --color-trait: var(--trait);
+  --color-champ: var(--champ);
+  --color-lien: var(--lien);
+  --color-focus: var(--focus);
+  --color-focus-halo: var(--focus-halo);
+  --color-contour: var(--contour);
+  --color-ombre: var(--ombre);
+  --color-soleil: var(--soleil);
+  --color-braise: var(--braise);
+  --color-ciel: var(--ciel);
+  --color-danger: var(--danger);
+  --color-danger-doux: var(--danger-doux);
+  --color-succes: var(--succes);
+  --color-succes-doux: var(--succes-doux);
+  --color-succes-plein: var(--succes-plein);
+  --color-sur-succes: var(--sur-succes);
+  --color-info: var(--info);
+  --color-info-doux: var(--info-doux);
+  --color-attention: var(--attention);
+  --color-attention-doux: var(--attention-doux);
+  --color-desactive: var(--desactive);
+  --color-nuit: #14120E;
+  --color-ivoire: #FBF5E6;
+
+  --font-affiche: var(--affiche);
+  --font-texte: var(--texte);
+
+  --radius-bouton: 14px;
+  --radius-carte: 18px;
+  --radius-panneau: 20px;
+
+  --shadow-affiche-sm: 3px 3px 0 var(--ombre);
+  --shadow-affiche: 4px 4px 0 var(--ombre);
+  --shadow-panneau: 6px 6px 0 var(--ombre);
+}

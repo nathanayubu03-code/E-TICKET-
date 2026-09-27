@@ -1,0 +1,94 @@
+/* Repris tel quel de design/maquette/assets/styles.css (source de vérité visuelle).
+   Seuls changent : le chemin des motifs de fond et le nom des polices (next/font).
+   Ne pas modifier une valeur ici sans modifier la maquette. */
+
+:root {
+  --fond: #FBF5E6;
+  --surface: #FFFDF7;
+  --surface-2: #F1E6CC;
+  --encre: #14120E;
+  --encre-douce: #5C5446;
+  --trait: #D9CAA6;
+  --champ: #8A7F6A;
+  --lien: #0050A6;
+  --focus: #0050A6;
+  --focus-halo: #BFDDFF;
+  --contour: #14120E;
+  --ombre: #14120E;
+  --soleil: #FFD21F;
+  --braise: #C8102E;
+  --ciel: #1E8FFF;
+  --danger: #B00E28;
+  --danger-doux: #FBE0E3;
+  --succes: #0B6B37;
+  --succes-doux: #DDF3E4;
+  --succes-plein: #0B7A3E;
+  --sur-succes: #FFFFFF;
+  --info: #0050A6;
+  --info-doux: #DCEBFF;
+  --attention: #8A4500;
+  --attention-doux: #FFE7C2;
+  --desactive: #7A705E;
+  --motif: url("/motifs/motif-fond.svg");
+  --affiche: var(--font-anybody), "Anybody", "Arial Narrow", sans-serif;
+  --texte: var(--font-atkinson), "Atkinson Hyperlegible", system-ui, sans-serif;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --fond: #0D0C0A;
+  --surface: #1A1813;
+  --surface-2: #2E2A21;
+  --encre: #FBF5E6;
+  --encre-douce: #B9AE98;
+  --trait: #4A4436;
+  --champ: #8A7F6A;
+  --lien: #8CC4FF;
+  --focus: #FFD21F;
+  --focus-halo: #4A3D08;
+  --contour: #FFD21F;
+  --ombre: #000000;
+  --danger: #FF7A86;
+  --danger-doux: #3B0F15;
+  --succes: #5BE08F;
+  --succes-doux: #0E2E1B;
+  --succes-plein: #34C26E;
+  --sur-succes: #14120E;
+  --info: #8CC4FF;
+  --info-doux: #0F2A47;
+  --attention: #FFB84D;
+  --attention-doux: #3A2608;
+  --desactive: #8A7F6A;
+  --motif: url("/motifs/motif-fond-sombre.svg");
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fond: #0D0C0A;
+    --surface: #1A1813;
+    --surface-2: #2E2A21;
+    --encre: #FBF5E6;
+    --encre-douce: #B9AE98;
+    --trait: #4A4436;
+    --lien: #8CC4FF;
+    --focus: #FFD21F;
+    --focus-halo: #4A3D08;
+    --contour: #FFD21F;
+    --ombre: #000000;
+    --danger: #FF7A86;
+    --danger-doux: #3B0F15;
+    --succes: #5BE08F;
+    --succes-doux: #0E2E1B;
+    --succes-plein: #34C26E;
+    --sur-succes: #14120E;
+    --info: #8CC4FF;
+    --info-doux: #0F2A47;
+    --attention: #FFB84D;
+    --attention-doux: #3A2608;
+    --desactive: #8A7F6A;
+    --motif: url("/motifs/motif-fond-sombre.svg");
+    color-scheme: dark;
+  }
+}
+
