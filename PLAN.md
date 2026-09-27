@@ -717,3 +717,7 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 - Paramètres : modifiables par le seul super-administrateur ; l'ADMIN les lit.
 - Export Excel : numéros complets pour l'équipe e-Ticket, masqués pour l'organisateur.
 - PWA : `context.setOffline` de Playwright ne coupe pas les requêtes du service worker ; le test hors ligne (`npm run test:pwa`) démarre et arrête lui-même `next start` pour obtenir une vraie coupure. Les pages préchargées par Next.js (liens visibles) restent disponibles hors ligne ; seule une page jamais chargée affiche la page de secours.
+
+### Risque ouvert : lecture du QR par le repli ZXing
+
+Mesure demandée (docs/billet.md) : sur une image fixe, ZXing en JavaScript (repli du scanner quand BarcodeDetector manque) rate de 0 à 3 billets sur 25 selon le lancement, à toutes les densités, alors que la zone QR seule se lit toujours. Trois tentatives de correction (recadrage au centre, agrandissement, rendu `crispEdges`) n'ont pas supprimé ces échecs. Le test est une mesure avec un plancher de contrôle à 80 %, pas une garantie. À trancher par un essai terrain avant l'ouverture (voir docs/billet.md et docs/reste-a-faire.md).

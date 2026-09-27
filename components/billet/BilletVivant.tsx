@@ -74,7 +74,7 @@ export function BilletVivant({ billet, evenement, qr, textes, arrive = false, ho
           {qr ? (
             <>
               <rect x={qr.x} y={qr.y} width={qr.taille} height={qr.taille} fill="#FFFFFF" />
-              <path d={qr.chemin} fill="#000000" />
+              <path d={qr.chemin} fill="#000000" shapeRendering="crispEdges" />
             </>
           ) : null}
         </svg>

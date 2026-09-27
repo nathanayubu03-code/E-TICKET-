@@ -1,5 +1,6 @@
 {
   "date": "2026-09-27",
+  "billets": 25,
   "contenu": "33 caractères alphanumériques",
   "mesures": [
     {
@@ -8,8 +9,9 @@
       "zoneQrCss": 178,
       "moduleCss": 5.4,
       "modulePixelsPhysiques": 5.4,
-      "decodeNet": true,
-      "decodeDegrade": false
+      "imageEntiere": "25/25",
+      "avecRecadrage": "25/25",
+      "captureDegradee": "0/25"
     },
     {
       "dpr": 1.5,
@@ -17,8 +19,9 @@
       "zoneQrCss": 178,
       "moduleCss": 5.4,
       "modulePixelsPhysiques": 8.1,
-      "decodeNet": true,
-      "decodeDegrade": true
+      "imageEntiere": "25/25",
+      "avecRecadrage": "25/25",
+      "captureDegradee": "25/25"
     },
     {
       "dpr": 2,
@@ -26,8 +29,9 @@
       "zoneQrCss": 178,
       "moduleCss": 5.4,
       "modulePixelsPhysiques": 10.8,
-      "decodeNet": true,
-      "decodeDegrade": true
+      "imageEntiere": "25/25",
+      "avecRecadrage": "25/25",
+      "captureDegradee": "25/25"
     },
     {
       "dpr": 3,
@@ -35,8 +39,9 @@
       "zoneQrCss": 178,
       "moduleCss": 5.4,
       "modulePixelsPhysiques": 16.2,
-      "decodeNet": true,
-      "decodeDegrade": true
+      "imageEntiere": "25/25",
+      "avecRecadrage": "25/25",
+      "captureDegradee": "25/25"
     }
   ]
 }

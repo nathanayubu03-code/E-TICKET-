@@ -30,7 +30,7 @@ Classé par ordre de blocage : chaque point du haut empêche d'ouvrir la vente.
 
 ## 5. Avant l'ouverture : essais sur le terrain
 
-- Lisibilité du QR : essai réel avec des téléphones de contrôleurs et d'acheteurs, en extérieur, luminosité au maximum (`docs/billet.md`).
+- Lisibilité du QR : essai réel avec des téléphones de contrôleurs (dont un sans BarcodeDetector, par exemple un iPhone) et d'acheteurs, en extérieur, luminosité au maximum, sur une centaine de billets. Les mesures sur images fixes montrent des échecs occasionnels du repli ZXing (`docs/billet.md`, risque ouvert).
 - Scanner : une répétition complète avec deux appareils, dont un en mode avion, puis synchronisation.
 - Lighthouse sur le domaine réel depuis Kinshasa ou une connexion équivalente (les mesures de `PLAN.md` sont faites en local).
 - Test d'intrusion externe, sauvegarde et restauration de la base testées, rotation des secrets documentée (`docs/securite.md`).
