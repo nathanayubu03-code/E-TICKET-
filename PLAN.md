@@ -667,7 +667,7 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 - [x] 9. Billets et PDF (code 128 bits base32 + identifiant ET-XXXX-XXXX, QR alphanumérique version 2 dans la zone de la grille 11 × 11, lisibilité mesurée dans docs/billet.md, PDF A6 de moins de 30 ko, page du lien SMS)
 - [x] 10. Mes billets hors ligne (billets serveur et billets du téléphone fusionnés, IndexedDB avec décalage d'horloge, onglets à venir / passés, état vide ; lisibles sans session ; le chargement de la page sans réseau vient avec la PWA à l'étape 14)
 - [x] 11. Scanner (manifeste des empreintes SHA-256 obligatoire au démarrage, resynchronisation toutes les 60 s, vérification serveur en ligne avec passage VALIDE → UTILISE conditionnel, mode avion avec état orange « Inconnu, à vérifier », synchronisation idempotente et doublons signalés, BarcodeDetector ou @zxing/browser, saisie du numéro, lampe ; administration des contrôleurs avec suivi en direct)
-- [ ] 12. SMS
+- [x] 12. SMS (interface SmsProvider, simulation journalisée et interdite en production, OTP masqués hors simulation, billets, payée sans place, réclamation refusée, alerte des abonnés à la première publication, liste d'attente prévenue par un administrateur, journal des SMS)
 - [ ] 13. Tableau de bord, reversements, exports
 - [ ] 14. PWA
 - [ ] 15. Sécurité

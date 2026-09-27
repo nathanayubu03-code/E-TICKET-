@@ -8,6 +8,7 @@ export const ROLES_EXIGEANT_MOT_DE_PASSE: Role[] = ['SUPERADMIN', 'ADMIN', 'AGEN
 export const ACCES_ADMIN: { prefixe: string; roles: Role[] }[] = [
   { prefixe: '/admin/parametres', roles: ['SUPERADMIN', 'ADMIN'] },
   { prefixe: '/admin/audit', roles: ['SUPERADMIN', 'ADMIN'] },
+  { prefixe: '/admin/sms', roles: ['SUPERADMIN', 'ADMIN', 'AGENT'] },
   { prefixe: '/admin/controleurs', roles: ['SUPERADMIN', 'ADMIN'] },
   { prefixe: '/admin/promos', roles: ['SUPERADMIN', 'ADMIN'] },
   { prefixe: '/admin/organisateurs', roles: ['SUPERADMIN', 'ADMIN'] },

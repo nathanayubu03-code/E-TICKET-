@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { after } from 'next/server';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { changerQuota, codeEvenementUnique, dupliquerEvenement, manquesPublication, nouveauSel, QuotaTropBas, slugUnique } from '@/lib/admin/evenements';
@@ -10,6 +11,7 @@ import { exigerRole } from '@/lib/auth/session';
 import { db, Prisma, type StatutEvenement } from '@/lib/db';
 import { localVersUtc } from '@/lib/fuseaux';
 import { ipClient } from '@/lib/requete';
+import { alerterNouvelEvenement, prevenirListeAttente } from '@/lib/sms/diffusion';
 import { deposerOriginal, genererVariantes, type FormatAffiche, type Position } from '@/lib/stockage/affiche';
 
 export interface EtatAction { ok: boolean; message?: string; erreurs?: Record<string, string>; sauveLe?: string }
@@ -250,6 +252,8 @@ export async function changerStatut(id: string, cible: StatutEvenement): Promise
   }
   await db.event.update({ where: { id }, data: { statut: cible, ...(cible === 'PUBLIE' && !e.publieLe ? { publieLe: new Date() } : {}) } });
   await auditer({ acteur: s.user, action: 'evenement.statut', entite: 'Event', entiteId: id, avant: { statut: e.statut }, apres: { statut: cible } });
+  // Première publication : alerte SMS des abonnés, après la réponse pour ne pas faire attendre l'administrateur.
+  if (cible === 'PUBLIE' && !e.publieLe) after(() => alerterNouvelEvenement(id));
   revalidatePath('/', 'layout');
   return { ok: true, message: 'Statut mis à jour.' };
 }
@@ -268,3 +272,9 @@ export async function archiver(id: string, archive: boolean) {
   revalidatePath('/admin/evenements');
 }
 
+
+export async function prevenirAttente(id: string): Promise<EtatAction> {
+  const s = await exigerRole(ROLES_EDITION);
+  const n = await prevenirListeAttente(id, s.user);
+  return { ok: true, message: n ? `${n} SMS envoyé${n > 1 ? 's' : ''}.` : 'Personne à prévenir.' };
+}

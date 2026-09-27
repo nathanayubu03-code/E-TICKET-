@@ -2,11 +2,13 @@ import { BoutonAction } from '@/components/admin/BoutonAction';
 import { evenementAEditer } from '@/lib/admin/charger';
 import { manquesPublication } from '@/lib/admin/evenements';
 import { LIBELLES_STATUT } from '@/lib/admin/libelles';
-import { changerStatut } from '../../actions';
+import { db } from '@/lib/db';
+import { changerStatut, prevenirAttente } from '../../actions';
 
 export default async function EtapePublication({ params }: { params: Promise<{ id: string }> }) {
   const e = await evenementAEditer((await params).id);
   const manques = manquesPublication(e);
+  const attente = await db.waitlistEntry.count({ where: { evenementId: e.id, prevenuLe: null } });
   return (
     <section className="admin-panneau pile" style={{ ['--gap' as string]: '16px' }} aria-label="Publication">
       <p>Statut actuel : <b>{LIBELLES_STATUT[e.statut]}</b></p>
@@ -30,6 +32,12 @@ export default async function EtapePublication({ params }: { params: Promise<{ i
         {e.statut === 'PUBLIE' || e.statut === 'COMPLET' ? <BoutonAction libelle="Marquer terminé" confirmation="Marquer l'événement comme terminé ?" action={changerStatut.bind(null, e.id, 'TERMINE')} /> : null}
         {e.statut !== 'ANNULE' && e.statut !== 'TERMINE' ? <BoutonAction danger libelle="Annuler l'événement" confirmation="Annuler l'événement ? Les ventes s'arrêtent. Les remboursements se font ensuite depuis « Commandes »." action={changerStatut.bind(null, e.id, 'ANNULE')} /> : null}
       </div>
+      {attente > 0 ? (
+        <div className="pile" style={{ ['--gap' as string]: '8px', borderTop: '2px dashed var(--trait)', paddingTop: 16 }}>
+          <p><b>{attente}</b> personne{attente > 1 ? 's' : ''} sur la liste d&apos;attente.</p>
+          <BoutonAction libelle="Prévenir la liste d'attente par SMS" confirmation="Envoyer un SMS à la liste d'attente ? À faire quand des places sont de nouveau en vente." action={prevenirAttente.bind(null, e.id)} />
+        </div>
+      ) : null}
     </section>
   );
 }

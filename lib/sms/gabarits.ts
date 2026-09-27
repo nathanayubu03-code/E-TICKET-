@@ -17,3 +17,6 @@ export const smsReclamationRefusee = (code: string) =>
 
 export const smsListeAttente = (titre: string, slug: string) =>
   `e-Ticket RDC : des places sont disponibles pour ${titre}.${site() ? ' ' + site() + '/evenements/' + slug : ''}`;
+
+export const smsNouvelEvenement = (titre: string, ville: string | null, quand: string, slug: string) =>
+  `e-Ticket RDC : ${titre}${ville ? ' à ' + ville : ''}, ${quand}. Billets en vente.${site() ? ' ' + site() + '/evenements/' + slug : ''} Désinscription : page Alertes SMS.`;

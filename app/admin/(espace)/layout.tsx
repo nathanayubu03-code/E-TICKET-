@@ -18,6 +18,7 @@ const LIENS = [
   { href: '/admin/reversements', texte: 'Reversements' },
   { href: '/admin/controleurs', texte: 'Contrôleurs' },
   { href: '/admin/promos', texte: 'Codes promo' },
+  { href: '/admin/sms', texte: 'SMS envoyés' },
   { href: '/admin/parametres', texte: 'Paramètres' },
   { href: '/admin/audit', texte: "Journal d'audit" },
 ];
