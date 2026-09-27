@@ -4,6 +4,17 @@ Billetterie d'événements pour la RDC, pensée pour des Android d'entrée de ga
 
 Canvas de design (logos, tokens, motifs, 10 écrans en clair et en sombre, composants) : https://claude.ai/artifact/NcyNXr97TwbdXJ7gAGXTEM
 
+## Site web
+
+`site/` est la version web, sans build ni dépendance : ouvrir avec n'importe quel serveur statique (`python3 -m http.server -d site`).
+
+- `index.html` : accueil, événement à la une, filtres par ville et catégorie, recherche, état vide.
+- `evenement.html?id=…` : détail, plan léger, programme, choix des billets avec limite de 4 par personne.
+- `achat.html` : numéro +243 et code OTP (collage et remplissage SMS gérés), choix de l'opérateur, attente de validation avec compte à rebours de 2 minutes et les états reçu, refusé, délai dépassé, puis billet vivant.
+- `mes-billets.html` : billets à venir et passés, billet vivant ouvert.
+- Fond : `site/assets/motif-fond.svg` (et `-sombre`), tuile répétable de 480 px inspirée des motifs Kuba, générée par `outils/gen_motif_fond.py`.
+- Le panneau « Démonstration » de l'écran d'attente simule la réponse de l'opérateur ; à retirer une fois l'API de paiement branchée.
+
 ## Contenu
 
 - `design/project/` : sources du canvas. Un fichier `.dc.html` par planche, `canvas.json` pour la disposition.
@@ -13,7 +24,7 @@ Canvas de design (logos, tokens, motifs, 10 écrans en clair et en sombre, compo
   - Composants réutilisables : `Logo`, `Kuba` (moteur de motif), `Billet` (billet vivant), `Composants` (bibliothèque).
 - `tokens/theme.css` : tokens pour Tailwind v4 (`@theme`), thème clair et sombre par variables.
 - `tokens/tailwind.config.cjs` : les mêmes tokens pour Tailwind v3.
-- `src/kuba/kuba.js` : moteur de motif de référence, identique au canvas. `npm test` lance les tests.
+- `site/assets/kuba.js` : moteur de motif de référence, identique au canvas (réexporté par `src/kuba/kuba.js`). `npm test` lance les tests.
 - `docs/motifs.md` : logique du système de motifs, à lire avant de coder le billet et le scanner.
 - `docs/libelles.md` : libellés clés en français, lingala et swahili, à faire valider.
 

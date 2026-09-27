@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Événement · e-Ticket RDC</title>
+<meta name="theme-color" content="#FBF5E6">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,700..900&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<div class="note note-attention cache" data-reseau role="status" style="border-radius:0;justify-content:center">Pas de connexion. Vos billets restent disponibles hors ligne.</div>
+<header class="entete">
+  <div class="conteneur">
+    <a class="logo" href="index.html" aria-label="e-Ticket RDC, accueil"><img src="assets/logo.svg" width="40" height="40" alt=""><span>e-Ticket</span><span class="rdc">RDC</span></a>
+    <nav class="nav" aria-label="Principale">
+      <a href="index.html" aria-current="page" data-t="evenements">Événements</a>
+      <a href="mes-billets.html" data-t="billets">Mes billets</a>
+      <a href="index.html#organisateurs" data-t="orga">Organisateurs</a>
+    </nav>
+    <div class="outils">
+      <label class="sr" for="langue">Langue</label>
+      <select id="langue" class="langue" data-langue><option value="fr">FR</option><option value="ln">Lingála</option><option value="sw">Kiswahili</option></select>
+      <button class="icone-bouton" data-theme-toggle type="button" aria-label="Changer de thème"></button>
+      <a class="btn btn-principal" href="achat.html" data-t="connexion" style="min-height:48px">Se connecter</a>
+    </div>
+  </div>
+</header>
+
+<main class="conteneur">
+  <a class="lien-bouton" href="index.html" style="margin-bottom:8px;background:var(--surface);border:2px solid var(--encre);border-radius:12px;padding:0 14px;text-decoration:none" data-ic="back">Tous les événements</a>
+  <div class="evt-grille">
+    <div class="pile" style="--gap:24px">
+      <article class="panneau evt-heros">
+        <div class="visuel" data-visuel><span class="tampon" aria-hidden="true" data-tampon></span></div>
+        <div class="corps">
+          <span style="font-weight:700" data-genre></span>
+          <h1 class="affiche" data-titre></h1>
+          <p style="font-size:19px;font-weight:700" data-artiste></p>
+        </div>
+      </article>
+
+      <section class="panneau pile" style="--gap:20px" aria-label="Infos pratiques">
+        <div class="infos">
+          <div class="info"><span class="pic" data-ic="cal"></span><div><b style="font-size:17px" data-quand></b><div class="doux">Portes 18:00</div></div></div>
+          <div class="info"><span class="pic" data-ic="pin"></span><div><b style="font-size:17px" data-lieu></b><div class="doux" data-ville></div></div></div>
+        </div>
+        <div class="carte-plan">
+          <svg viewBox="0 0 640 220" role="img" aria-label="Plan simplifié du quartier" style="width:100%;height:auto">
+            <rect width="640" height="220" fill="var(--surface-2)"/>
+            <path d="M0 30 C 160 8, 320 60, 640 20 L640 0 L0 0 Z" fill="#BFDDFF" opacity=".9"/>
+            <path d="M0 120 H640 M0 190 H640 M110 0 V220 M300 30 V220 M500 0 V220 M0 220 L230 50 M390 220 L640 80" stroke="var(--surface)" stroke-width="12" fill="none"/>
+            <path d="M0 120 H640 M300 30 V220" stroke="var(--fond)" stroke-width="16" fill="none"/>
+            <rect x="350" y="138" width="100" height="44" rx="22" fill="#CFE6C7"/>
+            <path d="M400 62c-11 0-19 8-19 19 0 14 19 34 19 34s19-20 19-34c0-11-8-19-19-19z" fill="#C8102E" stroke="#14120E" stroke-width="3"/>
+            <circle cx="400" cy="81" r="7" fill="#FBF5E6"/>
+          </svg>
+        </div>
+        <div class="rangee entre envelopper">
+          <span class="doux">Plan simplifié, léger en données</span>
+          <a href="#" class="lien-bouton">Ouvrir l'itinéraire</a>
+        </div>
+        <div class="rangee" style="padding:12px;border:2px solid var(--trait);border-radius:16px">
+          <span style="width:48px;height:48px;flex:none;border-radius:12px;background:#1E8FFF;color:#14120E;display:flex;align-items:center;justify-content:center" class="affiche">KP</span>
+          <div style="flex:1"><div class="doux" style="font-size:14px">Organisé par</div><b style="font-size:17px">Kin Productions</b></div>
+          <span class="badge badge-info" data-ic-badge="shieldOk">Vérifié</span>
+        </div>
+      </section>
+
+      <section class="panneau pile" aria-labelledby="t-prog">
+        <h2 id="t-prog" class="titre-section">Programme</h2>
+        <ol class="programme">
+          <li><span class="h">18:00</span><span class="axe"><i style="background:#FFD21F"></i><b></b></span><span class="txt"><b>Ouverture des portes</b><span class="doux">Portes A, B et C</span></span></li>
+          <li><span class="h">19:30</span><span class="axe"><i style="background:#1E8FFF"></i><b></b></span><span class="txt"><b>Première partie</b><span class="doux">DJ Mama Kasa</span></span></li>
+          <li><span class="h">21:00</span><span class="axe"><i style="background:#C8102E"></i><b></b></span><span class="txt"><b>Concert principal</b><span class="doux">2 h 30 sur scène</span></span></li>
+          <li><span class="h">23:30</span><span class="axe"><i style="background:#FFD21F"></i><b></b></span><span class="txt"><b>Fin</b><span class="doux">Navettes vers Gombe et Limete</span></span></li>
+        </ol>
+        <h2 class="titre-section" style="margin-top:8px">À savoir</h2>
+        <ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px">
+          <li>1 billet = 1 entrée. Gardez votre téléphone chargé.</li>
+          <li>Le billet s'ouvre même sans internet.</li>
+          <li>Remboursement seulement si l'événement est annulé.</li>
+        </ul>
+      </section>
+    </div>
+
+    <aside class="panneau pile panier" style="--gap:14px" aria-labelledby="t-billets">
+      <h2 id="t-billets" class="titre-section">Vos billets</h2>
+      <div class="note note-info" data-ic-note="info">4 billets maximum par personne</div>
+      <div class="pile" style="--gap:12px" data-categories-billets></div>
+      <p class="doux" style="font-size:14px;text-align:center">Places restantes mises à jour il y a 1 min</p>
+      <div class="note note-attention cache" data-limite role="status">Limite atteinte : 4 billets par personne</div>
+      <div class="total rangee entre" aria-live="polite">
+        <div class="prix"><span class="doux" data-total-label></span><b data-total-cdf style="font-size:26px"></b><span class="doux" data-total-usd></span></div>
+      </div>
+      <a class="btn btn-principal btn-grand btn-plein" href="achat.html" data-continuer>Continuer</a>
+    </aside>
+  </div>
+</main>
+
+<footer class="pied">
+  <div class="conteneur">
+    <div class="pile" style="--gap:8px"><a class="logo" href="index.html"><img src="assets/logo.svg" width="32" height="32" alt=""><span style="font-size:24px">e-Ticket</span></a><p class="doux">Kinshasa · Lubumbashi · Goma · Kisangani</p></div>
+    <nav aria-label="Pied de page"><a href="#">Aide</a><a href="#">Payer chez un agent</a><a href="#">Conditions</a><a href="#">Confidentialité</a></nav>
+  </div>
+</footer>
+
+<script type="module">
+import { initEntete, icone, EVENEMENTS, BILLETS_EVT, MAX_BILLETS, cdf, usd, motifSVGInline, ecrire } from './assets/app.js';
+
+initEntete();
+document.querySelectorAll('[data-ic]').forEach((n) => n.insertAdjacentHTML('afterbegin', icone(n.dataset.ic, 22)));
+document.querySelectorAll('[data-ic-badge]').forEach((n) => n.insertAdjacentHTML('afterbegin', icone(n.dataset.icBadge, 14, 3)));
+document.querySelectorAll('[data-ic-note]').forEach((n) => n.insertAdjacentHTML('afterbegin', icone(n.dataset.icNote, 20, 2.2)));
+
+const id = new URLSearchParams(location.search).get('id') || 'EVT-RUMBA-1411';
+const evt = EVENEMENTS.find((e) => e.id === id) || EVENEMENTS[0];
+document.title = evt.titre + ' · e-Ticket RDC';
+document.querySelector('[data-visuel]').insertAdjacentHTML('afterbegin', `<div style="position:absolute;inset:0;line-height:0">${motifSVGInline(evt.id, { cols: 20, rows: 7 })}</div>`);
+document.querySelector('[data-tampon]').innerHTML = `<b>${evt.jour}</b><span>${evt.mois.toUpperCase()}</span>`;
+document.querySelector('[data-genre]').textContent = evt.genre;
+document.querySelector('[data-titre]').textContent = evt.titre;
+document.querySelector('[data-artiste]').textContent = evt.artiste;
+document.querySelector('[data-quand]').textContent = evt.quand;
+document.querySelector('[data-lieu]').textContent = evt.lieu;
+document.querySelector('[data-ville]').textContent = evt.ville;
+
+const q = { vip: 0, early: 0, std: 2, grad: 0 };
+const zone = document.querySelector('[data-categories-billets]');
+
+function dessiner() {
+  const total = Object.values(q).reduce((a, b) => a + b, 0);
+  const montant = BILLETS_EVT.reduce((s, c) => s + q[c.k] * c.prix, 0);
+  zone.innerHTML = BILLETS_EVT.map((c) => {
+    const n = q[c.k];
+    const epuise = c.reste === 0;
+    const peu = !epuise && c.reste <= 20;
+    const plusOff = epuise || total >= MAX_BILLETS || n >= c.reste;
+    const badge = epuise ? '<span class="badge badge-neutre">Épuisé</span>' : peu ? `<span class="badge badge-danger">Plus que ${c.reste} places</span>` : '<span class="badge badge-neutre">Disponible</span>';
+    return `<div class="categorie-billet${n ? ' choisie' : ''}${epuise ? ' epuisee' : ''}">
+      <div class="rangee entre" style="align-items:flex-start"><div><h3>${c.nom}</h3><span class="doux" style="font-size:14px">${c.desc}</span></div>${badge}</div>
+      <div class="rangee entre">
+        <div class="prix"><b style="font-size:18px">${cdf(c.prix)}</b><span class="doux" style="font-size:14px">${usd(c.prix)}</span></div>
+        <div class="compteur">
+          <button type="button" data-moins="${c.k}" ${n === 0 ? 'disabled' : ''} aria-label="Retirer un billet ${c.nom}">${icone('minus', 22, 2.6)}</button>
+          <output aria-live="polite" aria-label="${c.nom}, quantité">${n}</output>
+          <button type="button" class="plus" data-plus="${c.k}" ${plusOff ? 'disabled' : ''} aria-label="Ajouter un billet ${c.nom}">${icone('plus', 22, 2.6)}</button>
+        </div>
+      </div></div>`;
+  }).join('');
+  document.querySelector('[data-limite]').classList.toggle('cache', total < MAX_BILLETS);
+  document.querySelector('[data-total-label]').textContent = total ? `${total} billet${total > 1 ? 's' : ''}` : 'Aucun billet choisi';
+  document.querySelector('[data-total-cdf]').textContent = cdf(montant).replace('Gratuit', '0 CDF');
+  document.querySelector('[data-total-usd]').textContent = montant ? usd(montant) : '';
+  const cta = document.querySelector('[data-continuer]');
+  cta.setAttribute('aria-disabled', String(total === 0));
+  ecrire('et-panier', { evt: evt.id, q, montant, total });
+}
+
+zone.addEventListener('click', (e) => {
+  const m = e.target.closest('[data-moins]'); const p = e.target.closest('[data-plus]');
+  if (m && !m.disabled) q[m.dataset.moins]--;
+  if (p && !p.disabled) q[p.dataset.plus]++;
+  dessiner();
+});
+document.querySelector('[data-continuer]').addEventListener('click', (e) => { if (e.currentTarget.getAttribute('aria-disabled') === 'true') e.preventDefault(); });
+dessiner();
+</script>
+</body>
+</html>

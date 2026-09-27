@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mes billets · e-Ticket RDC</title>
+<meta name="theme-color" content="#FBF5E6">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,700..900&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .mb-grille { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 24px; align-items: start; }
+  @media (max-width: 900px) { .mb-grille { grid-template-columns: 1fr; } }
+  .ligne-billet { display: flex; gap: 14px; padding: 10px; border: 2px solid var(--trait); border-radius: 16px; background: var(--surface); text-align: left; width: 100%; cursor: pointer; color: var(--encre); }
+  .ligne-billet[aria-pressed="true"] { border-color: var(--encre); box-shadow: 3px 3px 0 var(--ombre); }
+  .ligne-billet .mini { width: 64px; height: 96px; flex: none; border-radius: 10px; overflow: hidden; line-height: 0; }
+  .ligne-billet .mini svg { width: 100%; height: 100%; }
+  .onglets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 14px; background: var(--surface-2); }
+  .onglets button { min-height: 48px; border-radius: 10px; border: 2px solid transparent; background: transparent; font-weight: 700; cursor: pointer; color: var(--encre-douce); }
+  .onglets button[aria-selected="true"] { background: var(--surface); border-color: var(--encre); color: var(--encre); }
+</style>
+</head>
+<body>
+<div class="note note-attention cache" data-reseau role="status" style="border-radius:0;justify-content:center">Pas de connexion. Vos billets restent disponibles hors ligne.</div>
+<header class="entete">
+  <div class="conteneur">
+    <a class="logo" href="index.html" aria-label="e-Ticket RDC, accueil"><img src="assets/logo.svg" width="40" height="40" alt=""><span>e-Ticket</span><span class="rdc">RDC</span></a>
+    <nav class="nav" aria-label="Principale">
+      <a href="index.html" data-t="evenements">Événements</a>
+      <a href="mes-billets.html" aria-current="page" data-t="billets">Mes billets</a>
+      <a href="index.html#organisateurs" data-t="orga">Organisateurs</a>
+    </nav>
+    <div class="outils">
+      <label class="sr" for="langue">Langue</label>
+      <select id="langue" class="langue" data-langue><option value="fr">FR</option><option value="ln">Lingála</option><option value="sw">Kiswahili</option></select>
+      <button class="icone-bouton" data-theme-toggle type="button" aria-label="Changer de thème"></button>
+    </div>
+  </div>
+</header>
+
+<main class="conteneur">
+  <div class="mb-grille">
+    <section class="panneau pile" style="--gap:16px" aria-labelledby="t-mb">
+      <h1 id="t-mb" class="affiche" style="font-size:clamp(40px,6vw,60px)">Mes billets</h1>
+      <div class="note note-info" data-ic-note="download"><span><b>Pas d'internet ? Pas de souci.</b> Les billets marqués « Sur ce téléphone » s'ouvrent quand même.</span></div>
+      <div class="onglets" role="tablist" aria-label="Période">
+        <button role="tab" aria-selected="true" data-onglet="avenir">À venir</button>
+        <button role="tab" aria-selected="false" data-onglet="passes">Passés (3)</button>
+      </div>
+      <div class="pile" style="--gap:12px" data-liste role="tabpanel"></div>
+    </section>
+    <aside class="pile" style="--gap:12px;position:sticky;top:92px" aria-label="Billet ouvert">
+      <div data-billet></div>
+      <p class="panneau doux" style="padding:14px 16px;font-size:15px;box-shadow:none">À l'entrée, montez la luminosité et montrez l'écran. Le contrôleur vérifie que le motif bouge et que le signe correspond au sien.</p>
+    </aside>
+  </div>
+</main>
+
+<script type="module">
+import { initEntete, icone, EVENEMENTS, lire, motifSVGInline, monterBillet } from './assets/app.js';
+
+initEntete();
+document.querySelectorAll('[data-ic-note]').forEach((n) => n.insertAdjacentHTML('afterbegin', icone(n.dataset.icNote, 20, 2.2)));
+
+const exemples = [
+  { id: 'ET-7K4Q-19XZ', evt: 'EVT-RUMBA-1411', categorie: 'Standard', titulaire: 'Grâce Mbuyi', entree: 'Porte B', prix: 50000, horsLigne: true },
+  { id: 'ET-M3PA-77QD', evt: 'EVT-GALA-1511', categorie: 'Gradins', titulaire: 'Grâce Mbuyi', entree: 'Tribune Est', prix: 5000, horsLigne: false },
+];
+const achetes = lire('et-billets', []).map((b) => ({ ...b, horsLigne: true }));
+const avenir = [...achetes, ...exemples];
+const passes = [
+  { titre: 'Afrobeat Session', info: 'Utilisé le 12 oct. à 21:14' },
+  { titre: 'Festival des Grands Lacs, Goma', info: 'Utilisé le 30 août à 16:02' },
+  { titre: 'Soirée comédie', info: 'Non utilisé · 2 août' },
+];
+document.querySelector('[data-onglet="avenir"]').textContent = `À venir (${avenir.length})`;
+
+let choisi = avenir[0].id, onglet = 'avenir', arreter;
+const liste = document.querySelector('[data-liste]');
+
+function dessiner() {
+  if (onglet === 'passes') {
+    liste.innerHTML = passes.map((p) => `<div class="rangee" style="padding:14px;border-radius:14px;background:var(--surface-2)">${icone('check', 22)}<div><b>${p.titre}</b><div class="doux">${p.info}</div></div></div>`).join('');
+    return;
+  }
+  liste.innerHTML = avenir.map((b) => {
+    const e = EVENEMENTS.find((x) => x.id === b.evt);
+    const badge = b.horsLigne
+      ? `<span class="badge badge-info">${icone('check', 14, 3)}Sur ce téléphone</span>`
+      : `<span class="badge badge-attention">${icone('download', 14, 3)}À télécharger</span>`;
+    return `<button class="ligne-billet" type="button" aria-pressed="${b.id === choisi}" data-id="${b.id}">
+      <span class="mini">${motifSVGInline(b.id, { cols: 4, rows: 6 })}</span>
+      <span class="pile" style="--gap:4px;flex:1;min-width:0">
+        <b class="affiche" style="font-size:24px;font-stretch:80%">${e.titre}</b>
+        <span class="doux" style="font-size:14px">${e.quand} · ${e.lieu}</span>
+        <span style="font-size:14px;font-weight:700">1 billet · ${b.categorie}</span>
+        <span>${badge}</span>
+      </span></button>`;
+  }).join('');
+}
+function ouvrir() {
+  arreter?.();
+  arreter = monterBillet(document.querySelector('[data-billet]'), avenir.find((b) => b.id === choisi));
+}
+liste.addEventListener('click', (e) => { const b = e.target.closest('[data-id]'); if (!b) return; choisi = b.dataset.id; dessiner(); ouvrir(); });
+document.querySelectorAll('[data-onglet]').forEach((t) => t.addEventListener('click', () => {
+  onglet = t.dataset.onglet;
+  document.querySelectorAll('[data-onglet]').forEach((x) => x.setAttribute('aria-selected', String(x === t)));
+  dessiner();
+}));
+dessiner();
+ouvrir();
+</script>
+</body>
+</html>

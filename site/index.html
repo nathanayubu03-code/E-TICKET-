@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>e-Ticket RDC</title>
+<meta name="description" content="Billets de concerts, matchs, festivals et spectacles en RDC. Paiement Airtel Money, M-Pesa, Orange Money, Afrimoney.">
+<meta name="theme-color" content="#FBF5E6">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,700..900&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<div class="note note-attention cache" data-reseau role="status" style="border-radius:0;justify-content:center">Pas de connexion. Vos billets restent disponibles hors ligne.</div>
+<header class="entete">
+  <div class="conteneur">
+    <a class="logo" href="index.html" aria-label="e-Ticket RDC, accueil"><img src="assets/logo.svg" width="40" height="40" alt=""><span>e-Ticket</span><span class="rdc">RDC</span></a>
+    <nav class="nav" aria-label="Principale">
+      <a href="index.html" aria-current="page" data-t="evenements">Événements</a>
+      <a href="mes-billets.html" data-t="billets">Mes billets</a>
+      <a href="#organisateurs" data-t="orga">Organisateurs</a>
+    </nav>
+    <div class="outils">
+      <label class="sr" for="langue">Langue</label>
+      <select id="langue" class="langue" data-langue><option value="fr">FR</option><option value="ln">Lingála</option><option value="sw">Kiswahili</option></select>
+      <button class="icone-bouton" data-theme-toggle type="button" aria-label="Changer de thème"></button>
+      <a class="btn btn-principal" href="achat.html" data-t="connexion" style="min-height:48px">Se connecter</a>
+    </div>
+  </div>
+</header>
+
+<main class="conteneur">
+  <section class="heros" aria-label="À la une">
+    <article class="panneau une">
+      <div class="bandeau">
+        <span class="etiquette">À la une</span>
+        <span class="tampon" aria-hidden="true"><b>14</b><span>NOV.</span></span>
+      </div>
+      <div class="corps">
+        <span style="font-weight:700">Concert · Rumba congolaise</span>
+        <h1 class="affiche">Nuit de la Rumba</h1>
+        <p style="font-size:18px">Kin Malebo Orchestra et invités</p>
+        <div class="meta">
+          <span data-ic="cal">Sam. 14 nov. · 20:00</span>
+          <span data-ic="pin">Stade des Martyrs, Kinshasa</span>
+        </div>
+        <p style="font-size:17px;max-width:520px">Une nuit entière de rumba au Stade des Martyrs : les classiques, les nouveaux titres, et trois invités surprise.</p>
+        <div class="rangee envelopper" style="--gap:8px">
+          <span class="badge" style="background:#FBF5E6;color:#14120E">Portes 18:00</span>
+          <span class="badge" style="background:#FBF5E6;color:#14120E">VIP · Standard · Gradins</span>
+          <span class="badge" style="background:#FFD21F;color:#14120E">Plus que 12 places VIP</span>
+        </div>
+        <div class="rangee entre">
+          <div class="prix"><span style="font-size:14px">Dès</span><b>25 000 CDF</b><span>≈ 9 USD</span></div>
+          <a class="btn btn-principal btn-grand" href="evenement.html?id=EVT-RUMBA-1411">Réserver ma place</a>
+        </div>
+      </div>
+    </article>
+    <aside class="panneau apercu-billet" aria-label="Le billet vivant">
+      <span class="etiquette" style="align-self:flex-start">Nouveau</span>
+      <h2 class="affiche">Un billet vivant, impossible à copier en capture d'écran</h2>
+      <p class="doux">Chaque billet porte un motif Kuba unique qui bouge et change toutes les 30 secondes. Le contrôleur voit tout de suite si c'est une vraie.</p>
+      <div data-billet-demo style="margin-top:4px"></div>
+    </aside>
+  </section>
+
+  <section aria-labelledby="titre-liste">
+    <div class="panneau pile" style="--gap:18px">
+      <div class="rangee entre envelopper">
+        <h2 id="titre-liste" class="titre-section">Trouver un événement</h2>
+        <label class="saisie" style="min-height:48px;max-width:340px;flex:1 1 240px">
+          <span class="sr">Rechercher</span>
+          <span class="prefixe" style="background:transparent;border:none;padding-right:0" data-ic="search"></span>
+          <input type="search" placeholder="Artiste, équipe, lieu…" data-recherche style="font-size:17px;letter-spacing:0">
+        </label>
+      </div>
+      <div class="pastilles" role="group" aria-label="Ville" data-villes></div>
+      <div class="categories" role="group" aria-label="Catégorie" data-categories></div>
+    </div>
+  </section>
+
+  <section aria-live="polite">
+    <div class="rangee entre" style="margin-bottom:14px">
+      <h2 class="titre-section panneau" style="padding:10px 18px;box-shadow:none" data-titre-grille>À Kinshasa bientôt</h2>
+    </div>
+    <div class="grille" data-grille></div>
+    <div class="panneau pile cache" data-vide style="align-items:center;text-align:center;--gap:12px">
+      <svg width="96" height="96" viewBox="0 0 120 120" aria-hidden="true"><path d="M60 6L114 60L60 114L6 60Z" fill="none" stroke="var(--trait)" stroke-width="6"/><path d="M60 26L94 60L60 94L26 60Z" fill="none" stroke="#1E8FFF" stroke-width="6"/><path d="M60 46L74 60L60 74L46 60Z" fill="#FFD21F" stroke="var(--encre)" stroke-width="3"/></svg>
+      <h3 class="affiche" style="font-size:32px" data-vide-titre>Rien ici pour le moment</h3>
+      <p class="doux">Revenez bientôt, ou regardez ce qui se passe dans les autres villes.</p>
+      <div class="rangee envelopper" style="justify-content:center">
+        <button class="btn btn-principal" type="button" data-toutes>Voir toutes les villes</button>
+        <button class="btn" type="button">M'alerter par SMS</button>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="titre-comment">
+    <div class="panneau pile" style="--gap:22px">
+      <h2 id="titre-comment" class="titre-section">Payer avec Mobile Money, en 3 étapes</h2>
+      <div class="etapes">
+        <div class="etape"><span class="num">1</span><b style="font-size:18px">Choisissez vos billets</b><p class="doux">Prix en CDF, avec l'équivalent en USD. 4 billets maximum par personne.</p></div>
+        <div class="etape"><span class="num">2</span><b style="font-size:18px">Validez sur votre téléphone</b><p class="doux">Un message de votre opérateur s'affiche. Vous tapez votre code secret dedans. Nous ne le demandons jamais.</p></div>
+        <div class="etape"><span class="num">3</span><b style="font-size:18px">Montrez votre billet</b><p class="doux">Il s'ouvre même sans internet. Montrez-le à l'entrée, le contrôleur le scanne.</p></div>
+      </div>
+      <div class="operateurs-ligne" aria-label="Opérateurs acceptés">
+        <span class="op-puce"><i style="background:#E40000"></i>Airtel Money</span>
+        <span class="op-puce"><i style="background:#007A3D"></i>M-Pesa</span>
+        <span class="op-puce"><i style="background:#FF7900"></i>Orange Money</span>
+        <span class="op-puce"><i style="background:#5A2D82"></i>Afrimoney</span>
+        <span class="op-puce">Paiement chez un agent</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="organisateurs" aria-labelledby="titre-orga">
+    <div class="panneau bande-orga">
+      <div class="pile" style="--gap:10px">
+        <h2 id="titre-orga" class="affiche" style="font-size:clamp(34px,4vw,48px);color:#FFD21F">Vous organisez un événement ?</h2>
+        <p class="doux" style="font-size:17px">Vendez vos billets en ligne, suivez vos ventes par opérateur et par catégorie, contrôlez les entrées même sans réseau au stade.</p>
+      </div>
+      <a class="btn btn-principal btn-grand" href="#">Créer mon événement</a>
+    </div>
+  </section>
+</main>
+
+<footer class="pied">
+  <div class="conteneur">
+    <div class="pile" style="--gap:8px"><a class="logo" href="index.html"><img src="assets/logo.svg" width="32" height="32" alt=""><span style="font-size:24px">e-Ticket</span></a><p class="doux">Kinshasa · Lubumbashi · Goma · Kisangani</p></div>
+    <nav aria-label="Pied de page"><a href="#">Aide</a><a href="#">Payer chez un agent</a><a href="#">Conditions</a><a href="#">Confidentialité</a></nav>
+  </div>
+</footer>
+
+<script type="module">
+import { initEntete, icone, EVENEMENTS, CATEGORIES, cdf, usd, motifSVGInline, monterBillet } from './assets/app.js';
+
+initEntete();
+document.querySelectorAll('[data-ic]').forEach((n) => n.insertAdjacentHTML('afterbegin', icone(n.dataset.ic, 20)));
+
+monterBillet(document.querySelector('[data-billet-demo]'), {
+  id: 'ET-7K4Q-19XZ', evt: 'EVT-RUMBA-1411', categorie: 'VIP', titulaire: 'Grâce Mbuyi', entree: 'Porte B', prix: 150000,
+});
+
+const VILLES = ['Toutes', 'Kinshasa', 'Lubumbashi', 'Goma', 'Kisangani'];
+const etat = { ville: 'Kinshasa', cat: null, q: '' };
+const zVilles = document.querySelector('[data-villes]');
+const zCats = document.querySelector('[data-categories]');
+const grille = document.querySelector('[data-grille]');
+const vide = document.querySelector('[data-vide]');
+
+function dessinerFiltres() {
+  zVilles.innerHTML = VILLES.map((v) => `<button class="pastille" type="button" aria-pressed="${v === etat.ville}" data-v="${v}">${v}</button>`).join('');
+  zCats.innerHTML = CATEGORIES.map((c) => `<button class="categorie" type="button" aria-pressed="${c.id === etat.cat}" data-c="${c.id}"><span class="pic" style="background:${c.bg};color:${c.fg}">${icone(c.icone, 24)}</span>${c.nom}</button>`).join('');
+}
+
+function dessinerGrille() {
+  const q = etat.q.trim().toLowerCase();
+  const liste = EVENEMENTS.filter((e) =>
+    (etat.ville === 'Toutes' || e.ville === etat.ville) &&
+    (!etat.cat || e.cat === etat.cat) &&
+    (!q || (e.titre + ' ' + e.artiste + ' ' + e.lieu).toLowerCase().includes(q)));
+  document.querySelector('[data-titre-grille]').textContent = etat.ville === 'Toutes' ? 'Partout en RDC' : 'À ' + etat.ville + ' bientôt';
+  grille.innerHTML = liste.map((e) => {
+    const cat = CATEGORIES.find((c) => c.id === e.cat);
+    return `<a class="carte" href="evenement.html?id=${e.id}">
+      <div class="vignette">${motifSVGInline(e.id, { cols: 12, rows: 5 })}<span class="date">${e.jour}<small>${e.mois.toUpperCase()}</small></span></div>
+      <div class="corps">
+        <span class="doux" style="font-size:14px;font-weight:700">${cat.nom.replace(/s$/, '')} · ${e.genre}</span>
+        <h3>${e.titre}</h3>
+        <span class="doux" style="font-size:15px">${e.quand}</span>
+        <span class="doux" style="font-size:15px">${e.lieu}, ${e.ville}</span>
+        <div class="bas"><span><b style="font-size:17px">${e.des ? 'Dès ' : ''}${cdf(e.des)}</b> <span class="doux" style="font-size:14px">${usd(e.des)}</span></span>${e.alerte ? `<span class="badge badge-danger">${e.alerte}</span>` : ''}</div>
+      </div></a>`;
+  }).join('');
+  vide.classList.toggle('cache', liste.length > 0);
+  document.querySelector('[data-vide-titre]').textContent = etat.ville === 'Toutes' ? 'Aucun résultat' : 'Rien à ' + etat.ville + ' pour le moment';
+}
+
+zVilles.addEventListener('click', (e) => { const b = e.target.closest('[data-v]'); if (!b) return; etat.ville = b.dataset.v; dessinerFiltres(); dessinerGrille(); });
+zCats.addEventListener('click', (e) => { const b = e.target.closest('[data-c]'); if (!b) return; etat.cat = etat.cat === b.dataset.c ? null : b.dataset.c; dessinerFiltres(); dessinerGrille(); });
+document.querySelector('[data-recherche]').addEventListener('input', (e) => { etat.q = e.target.value; dessinerGrille(); });
+document.querySelector('[data-toutes]').addEventListener('click', () => { etat.ville = 'Toutes'; etat.cat = null; dessinerFiltres(); dessinerGrille(); });
+
+dessinerFiltres();
+dessinerGrille();
+</script>
+</body>
+</html>

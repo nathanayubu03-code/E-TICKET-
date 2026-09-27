@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Achat · e-Ticket RDC</title>
+<meta name="theme-color" content="#FBF5E6">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,700..900&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<div class="note note-attention cache" data-reseau role="status" style="border-radius:0;justify-content:center">Pas de connexion. Vos billets restent disponibles hors ligne.</div>
+<header class="entete">
+  <div class="conteneur">
+    <a class="logo" href="index.html" aria-label="e-Ticket RDC, accueil"><img src="assets/logo.svg" width="40" height="40" alt=""><span>e-Ticket</span><span class="rdc">RDC</span></a>
+    <div class="outils">
+      <label class="sr" for="langue">Langue</label>
+      <select id="langue" class="langue" data-langue><option value="fr">FR</option><option value="ln">Lingála</option><option value="sw">Kiswahili</option></select>
+      <button class="icone-bouton" data-theme-toggle type="button" aria-label="Changer de thème"></button>
+    </div>
+  </div>
+</header>
+
+<main class="conteneur">
+  <div class="achat pile" style="--gap:18px">
+    <div class="panneau pile" style="--gap:10px;padding:16px 20px">
+      <div class="rangee entre envelopper"><b data-resume-evt></b><span class="doux" data-etape-label></span></div>
+      <div class="progression" aria-hidden="true"><span data-p="1"></span><span data-p="2"></span><span data-p="3"></span><span data-p="4"></span></div>
+    </div>
+
+    <!-- 1. Numéro et code -->
+    <section class="panneau pile" style="--gap:18px" data-etape="tel" aria-labelledby="t-tel">
+      <h1 id="t-tel" class="affiche" style="font-size:clamp(36px,6vw,52px)">Votre numéro de téléphone</h1>
+      <p class="doux" style="font-size:17px">Nous vous envoyons un code par SMS. Pas de mot de passe à retenir.</p>
+      <div class="champ">
+        <label for="tel">Numéro</label>
+        <div class="saisie">
+          <span class="prefixe"><svg width="24" height="17" viewBox="0 0 22 16" aria-hidden="true"><rect width="22" height="16" rx="2" fill="#1E8FFF"/><path d="M0 14L18 0h4v2L4 16H0z" fill="#FFD21F"/><path d="M0 15L19.5 0H22v.6L2.8 16H0z" fill="#C8102E"/><path d="M4.5 2l.9 1.8 2 .3-1.4 1.4.3 2-1.8-.9-1.8.9.3-2-1.4-1.4 2-.3z" fill="#FFD21F"/></svg>+243</span>
+          <input id="tel" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="97 123 45 67" aria-describedby="op-detecte" data-tel>
+        </div>
+        <div id="op-detecte" class="rangee" style="min-height:24px;font-size:15px" data-op-detecte></div>
+      </div>
+      <button class="btn btn-principal btn-grand" type="button" data-envoyer disabled>Recevoir le code</button>
+
+      <div class="pile cache" style="--gap:12px;border-top:2px dashed var(--trait);padding-top:18px" data-bloc-otp>
+        <div class="rangee entre envelopper"><span>Code envoyé au <b data-tel-affiche></b></span><button class="lien-bouton" type="button" data-modifier>Modifier</button></div>
+        <fieldset class="otp" data-otp><legend class="sr">Code à 6 chiffres</legend></fieldset>
+        <p class="doux" style="font-size:14px">Le code se remplit tout seul si votre téléphone le permet. Démo : n'importe quel code à 6 chiffres.</p>
+        <div class="rangee entre"><span class="doux">Rien reçu ?</span><button class="lien-bouton" type="button" data-renvoyer-sms disabled>Renvoyer dans 0:45</button></div>
+        <button class="btn btn-principal btn-grand" type="button" data-valider-otp disabled>Valider le code</button>
+      </div>
+    </section>
+
+    <!-- 2. Paiement -->
+    <section class="panneau pile cache" style="--gap:18px" data-etape="paiement" aria-labelledby="t-pay">
+      <h1 id="t-pay" class="affiche" style="font-size:clamp(36px,6vw,52px)">Payer avec</h1>
+      <div class="operateurs" role="group" aria-label="Opérateur Mobile Money" data-operateurs></div>
+      <div class="champ">
+        <label for="num-pay" data-label-num>Numéro</label>
+        <div class="saisie"><span class="prefixe">+243</span><input id="num-pay" type="tel" inputmode="numeric" data-num-pay></div>
+        <span class="doux" style="font-size:14px">La demande de paiement arrivera sur ce numéro.</span>
+      </div>
+      <div class="pile" style="--gap:8px;padding:18px;border:2px solid var(--encre);border-radius:18px;box-shadow:3px 3px 0 var(--ombre)">
+        <span class="doux" style="font-weight:700">Montant exact à valider</span>
+        <span class="montant" data-montant></span>
+        <span class="doux" data-montant-usd></span>
+        <div class="lignes" data-lignes></div>
+      </div>
+      <div class="rangee" style="align-items:flex-start;gap:10px" data-ic="shieldOk"><span>Vous validerez sur votre téléphone. <b>Nous ne demandons jamais votre code secret.</b></span></div>
+      <button class="btn btn-principal btn-grand" type="button" data-payer></button>
+      <a class="lien-bouton" href="#" style="align-self:center">Payer chez un agent</a>
+    </section>
+
+    <!-- 3. Attente de validation -->
+    <section class="panneau pile cache" style="--gap:18px" data-etape="attente" aria-labelledby="t-att">
+      <div class="pile" style="--gap:18px" data-vue="attente">
+        <div class="minuteur" role="timer" aria-label="Temps restant pour valider">
+          <svg viewBox="0 0 184 184" aria-hidden="true"><circle cx="92" cy="92" r="80" fill="none" stroke="var(--surface-2)" stroke-width="14"/><circle cx="92" cy="92" r="80" fill="none" stroke="var(--focus)" stroke-width="14" stroke-linecap="round" stroke-dasharray="502.7" stroke-dashoffset="0" data-anneau style="transition:stroke-dashoffset 1s linear"/></svg>
+          <div class="temps"><b data-mmss>2:00</b><span class="doux">pour valider</span></div>
+        </div>
+        <h1 id="t-att" class="affiche" style="font-size:clamp(36px,6vw,50px);text-align:center">Validez sur votre téléphone</h1>
+        <div class="pile" style="--gap:8px"><span class="doux" style="font-weight:700">Ce message va s'afficher :</span><div class="bulle-ussd" data-bulle></div></div>
+        <ol class="liste-num" data-etapes-att></ol>
+      </div>
+
+      <div class="pile cache" style="--gap:16px;text-align:center" data-vue="recu">
+        <span class="rond-etat" style="background:var(--succes-plein);color:var(--sur-succes)" data-ic-lg="check"></span>
+        <h1 class="affiche" style="font-size:44px" role="status">Paiement reçu</h1>
+        <p style="font-size:18px" data-recu-txt></p>
+        <div class="barre-indet"><i></i></div>
+        <p class="doux">Ne fermez pas la page.</p>
+      </div>
+
+      <div class="pile cache" style="--gap:16px;text-align:center" data-vue="echec">
+        <span class="rond-etat" style="background:#C8102E;color:#FFFFFF" data-ic-lg="x"></span>
+        <h1 class="affiche" style="font-size:44px" role="alert">Paiement refusé</h1>
+        <p style="font-size:18px" data-echec-txt></p>
+        <p class="note" style="background:var(--succes-doux);color:var(--succes);justify-content:center">Aucun montant n'a été débité.</p>
+      </div>
+
+      <div class="pile cache" style="--gap:16px;text-align:center" data-vue="delai">
+        <span class="rond-etat" style="background:#FFD21F;color:#14120E;border:3px solid #14120E" data-ic-lg="clock"></span>
+        <h1 class="affiche" style="font-size:44px" role="alert">Temps écoulé</h1>
+        <p style="font-size:18px">La demande a expiré après 2 minutes.</p>
+        <p style="padding:14px;border-radius:14px;background:var(--attention-doux);text-align:left;line-height:1.5"><b>Vous avez validé quand même ?</b> Si votre compte est débité, vos billets arrivent tout seuls par SMS dans les 15 minutes. <b>Ne payez pas une deuxième fois.</b></p>
+      </div>
+
+      <div class="alerte-secret" role="note"><span data-ic-secret></span><div class="pile" style="--gap:4px"><b style="font-size:18px">Votre code secret reste secret</b><span data-secret-txt></span></div></div>
+
+      <details class="aide" open data-aide>
+        <summary>Rien reçu ?</summary>
+        <ul data-aide-liste></ul>
+      </details>
+
+      <div class="pile" style="--gap:10px" data-actions-att></div>
+
+      <a id="agent" class="agent" href="#" data-agent><span data-ic-agent></span><span style="flex:1"><b style="font-size:17px;display:block">Payer avec un agent</b><span class="doux">Donnez le code <b style="color:var(--encre)">ET-4F7K92</b> à un agent Mobile Money.</span></span></a>
+
+      <div class="demo pile" style="--gap:8px">
+        <span class="doux" style="font-size:14px;font-weight:700">Démonstration : simuler la réponse de l'opérateur</span>
+        <div class="rangee envelopper">
+          <button class="btn" type="button" data-sim="recu">Reçu</button>
+          <button class="btn" type="button" data-sim="echec">Refusé</button>
+          <button class="btn" type="button" data-sim="delai">Délai dépassé</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Confirmation -->
+    <section class="panneau pile cache" style="--gap:18px" data-etape="confirmation" aria-labelledby="t-conf">
+      <span class="badge badge-succes" style="align-self:flex-start;font-size:15px" data-ic-ok>Paiement confirmé</span>
+      <h1 id="t-conf" class="affiche" style="font-size:clamp(38px,6vw,56px)">C'est bon ! Vos billets sont prêts.</h1>
+      <p class="doux" data-sms-txt></p>
+      <div data-billet></div>
+      <div class="pile" style="--gap:10px">
+        <button class="btn btn-principal btn-grand" type="button" data-ic="download" onclick="window.print()">Télécharger en PDF</button>
+        <button class="btn btn-grand" type="button" data-ic="wallet">Ajouter au portefeuille</button>
+        <a class="btn btn-grand" data-ic="chat" data-whatsapp target="_blank" rel="noopener">Partager sur WhatsApp</a>
+        <a class="lien-bouton" href="mes-billets.html" style="align-self:center">Voir tous mes billets</a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script type="module">
+import { initEntete, icone, EVENEMENTS, BILLETS_EVT, OPERATEURS, operateurDuNumero, formaterTel, cdf, usd, lire, ecrire, monterBillet } from './assets/app.js';
+
+initEntete();
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+$$('[data-ic]').forEach((n) => n.insertAdjacentHTML('afterbegin', icone(n.dataset.ic, 22)));
+$$('[data-ic-lg]').forEach((n) => n.innerHTML = icone(n.dataset.icLg, 64, 3));
+$('[data-ic-secret]').innerHTML = icone('shield', 32, 2.2);
+$('[data-ic-agent]').innerHTML = icone('user', 26);
+$('[data-ic-ok]').insertAdjacentHTML('afterbegin', icone('check', 16, 3));
+
+const panier = lire('et-panier', null) || { evt: 'EVT-RUMBA-1411', q: { vip: 0, early: 0, std: 2, grad: 0 }, montant: 100000, total: 2 };
+const evt = EVENEMENTS.find((e) => e.id === panier.evt) || EVENEMENTS[0];
+$('[data-resume-evt]').textContent = `${evt.titre} · ${panier.total} billet${panier.total > 1 ? 's' : ''} · ${cdf(panier.montant)}`;
+
+const etat = { tel: '', op: null, etape: 'tel' };
+const LABELS = { tel: 'Étape 1 sur 4 · Connexion', paiement: 'Étape 2 sur 4 · Paiement', attente: 'Étape 3 sur 4 · Validation', confirmation: 'Étape 4 sur 4 · Billets' };
+function aller(etape) {
+  etat.etape = etape;
+  $$('[data-etape]').forEach((s) => s.classList.toggle('cache', s.dataset.etape !== etape));
+  const n = ['tel', 'paiement', 'attente', 'confirmation'].indexOf(etape) + 1;
+  $$('[data-p]').forEach((p) => p.classList.toggle('fait', +p.dataset.p <= n));
+  $('[data-etape-label]').textContent = LABELS[etape];
+  scrollTo({ top: 0, behavior: 'smooth' });
+  $(`[data-etape="${etape}"] h1`)?.focus?.();
+}
+
+/* 1. Téléphone */
+const champTel = $('[data-tel]');
+champTel.addEventListener('input', () => {
+  const chiffres = champTel.value.replace(/\D/g, '').slice(0, 9);
+  champTel.value = formaterTel(chiffres);
+  etat.tel = chiffres;
+  etat.op = operateurDuNumero(chiffres);
+  $('[data-op-detecte]').innerHTML = etat.op
+    ? `<span style="width:18px;height:18px;border-radius:5px;background:${etat.op.bg}"></span><span><b>${etat.op.nom.split(' ')[0]}</b> détecté d'après le ${chiffres.slice(0, 2)}</span>`
+    : chiffres.length >= 2 ? '<span class="doux">Opérateur non reconnu : vous le choisirez à l’étape suivante.</span>' : '';
+  $('[data-envoyer]').disabled = chiffres.length !== 9;
+});
+
+const otp = $('[data-otp]');
+for (let i = 0; i < 6; i++) otp.insertAdjacentHTML('beforeend', `<input inputmode="numeric" autocomplete="${i === 0 ? 'one-time-code' : 'off'}" aria-label="Chiffre ${i + 1}">`);
+const cases = [...otp.querySelectorAll('input')];
+const majOtp = () => { cases.forEach((c) => c.classList.toggle('rempli', !!c.value)); $('[data-valider-otp]').disabled = cases.some((c) => !c.value); };
+cases.forEach((c, i) => {
+  c.addEventListener('input', () => {
+    const v = c.value.replace(/\D/g, '');
+    if (v.length > 1) { v.slice(0, 6 - i).split('').forEach((d, j) => { cases[i + j].value = d; }); cases[Math.min(5, i + v.length - 1)].focus(); }
+    else { c.value = v; if (v && i < 5) cases[i + 1].focus(); }
+    majOtp();
+  });
+  c.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && !c.value && i > 0) cases[i - 1].focus(); });
+});
+
+let minuterieSms;
+$('[data-envoyer]').addEventListener('click', () => {
+  $('[data-bloc-otp]').classList.remove('cache');
+  $('[data-envoyer]').classList.add('cache');
+  $('[data-tel-affiche]').textContent = '+243 ' + formaterTel(etat.tel);
+  cases[0].focus();
+  let s = 45; const b = $('[data-renvoyer-sms]'); b.disabled = true;
+  clearInterval(minuterieSms);
+  minuterieSms = setInterval(() => { s--; b.textContent = s > 0 ? `Renvoyer dans 0:${String(s).padStart(2, '0')}` : 'Renvoyer le code'; if (s <= 0) { b.disabled = false; clearInterval(minuterieSms); } }, 1000);
+});
+$('[data-modifier]').addEventListener('click', () => { $('[data-bloc-otp]').classList.add('cache'); $('[data-envoyer]').classList.remove('cache'); champTel.focus(); });
+$('[data-valider-otp]').addEventListener('click', () => { preparerPaiement(); aller('paiement'); });
+
+/* 2. Paiement */
+function preparerPaiement() {
+  if (!etat.op) etat.op = OPERATEURS[0];
+  $('[data-num-pay]').value = formaterTel(etat.tel);
+  dessinerOperateurs();
+  $('[data-montant]').textContent = cdf(panier.montant);
+  $('[data-montant-usd]').textContent = `${usd(panier.montant)} · taux indicatif 1 USD = 2 850 CDF`;
+  const lignes = BILLETS_EVT.filter((c) => panier.q[c.k]).map((c) => `<div><span>${panier.q[c.k]} × ${c.nom}</span><span>${cdf(panier.q[c.k] * c.prix)}</span></div>`).join('');
+  $('[data-lignes]').innerHTML = lignes + `<div><span>Frais de service</span><span>0 CDF</span></div><div style="font-weight:700"><span>Total</span><span>${cdf(panier.montant)}</span></div>`;
+  $('[data-payer]').textContent = 'Payer ' + cdf(panier.montant);
+}
+function dessinerOperateurs() {
+  $('[data-operateurs]').innerHTML = OPERATEURS.map((o) => `<button type="button" class="operateur" aria-pressed="${o.k === etat.op.k}" data-op="${o.k}" style="background:${o.bg};color:${o.fg}">
+    <span class="losanges" aria-hidden="true"><i style="background:${o.fg}"></i><i style="border:2px solid ${o.fg}"></i></span>
+    <span><b>${o.nom}</b><br><small>${operateurDuNumero(etat.tel)?.k === o.k ? 'Détecté · ' + etat.tel.slice(0, 2) : o.prefixes.slice(0, 3).join(' · ')}</small></span>
+    <span class="coche">${icone('check', 18, 3)}</span></button>`).join('');
+  $('[data-label-num]').textContent = 'Numéro ' + etat.op.nom;
+}
+$('[data-operateurs]').addEventListener('click', (e) => { const b = e.target.closest('[data-op]'); if (!b) return; etat.op = OPERATEURS.find((o) => o.k === b.dataset.op); dessinerOperateurs(); });
+$('[data-num-pay]').addEventListener('input', (e) => { const d = e.target.value.replace(/\D/g, '').slice(0, 9); e.target.value = formaterTel(d); etat.tel = d; });
+$('[data-payer]').addEventListener('click', () => { lancerAttente(); aller('attente'); });
+
+/* 3. Attente */
+const TOTAL = 120;
+let debut = 0, minuterieAtt;
+function vue(nom) {
+  $$('[data-vue]').forEach((v) => v.classList.toggle('cache', v.dataset.vue !== nom));
+  $('[data-aide]').classList.toggle('cache', nom !== 'attente');
+  $('[data-agent]').classList.toggle('cache', nom === 'recu');
+  const op = etat.op.nom;
+  const actions = {
+    attente: `<button class="btn btn-grand" type="button" data-relancer disabled>Renvoyer la demande dans 0:30</button><button class="lien-bouton" type="button" data-changer style="align-self:center">Changer de moyen de paiement</button>`,
+    recu: '',
+    echec: `<button class="btn btn-principal btn-grand" type="button" data-relancer>Réessayer</button><button class="btn btn-grand" type="button" data-changer>Choisir un autre opérateur</button>`,
+    delai: `<button class="btn btn-principal btn-grand" type="button" data-relancer>Relancer la demande</button><button class="btn btn-grand" type="button">Vérifier mon paiement</button>`,
+  };
+  $('[data-actions-att]').innerHTML = actions[nom];
+  $('[data-recu-txt]').innerHTML = `${op} a confirmé <b>${cdf(panier.montant)}</b>. Nous préparons vos billets.`;
+  $('[data-echec-txt]').textContent = `${op} a refusé la demande. Le solde est peut-être insuffisant, ou le code secret incorrect.`;
+}
+function lancerAttente() {
+  const op = etat.op;
+  $('[data-bulle]').innerHTML = `${op.nom}<br>Payer ${panier.montant} CDF à E-TICKET RDC ?<br>Entrez votre code secret :<br><u>&nbsp;</u>`;
+  $('[data-etapes-att]').innerHTML = [
+    `Attendez le message ${op.nom} sur ce téléphone.`,
+    `Vérifiez le montant : <b>${cdf(panier.montant)}</b>.`,
+    `Tapez votre code secret <b>dans ce message</b>, puis validez.`,
+  ].map((t, i) => `<li><span>${i + 1}</span><span>${t}</span></li>`).join('');
+  $('[data-secret-txt]').textContent = `Tapez-le seulement dans le message ${op.nom}. e-Ticket ne le demande jamais : ni par appel, ni par SMS, ni sur WhatsApp.`;
+  $('[data-aide-liste]').innerHTML = [
+    'Vérifiez que ce téléphone a du réseau.',
+    op.ussd ? `Ouvrez le menu ${op.nom} (<b>${op.ussd}</b>) pour voir la demande en attente.` : `Ouvrez le menu ${op.nom} pour voir la demande en attente.`,
+    `Vérifiez votre solde : il faut au moins <b>${cdf(panier.montant)}</b>.`,
+  ].map((t) => `<li>${t}</li>`).join('');
+  vue('attente');
+  debut = Date.now();
+  clearInterval(minuterieAtt);
+  const tic = () => {
+    const ecoule = Math.floor((Date.now() - debut) / 1000);
+    const reste = Math.max(0, TOTAL - ecoule);
+    $('[data-mmss]').textContent = Math.floor(reste / 60) + ':' + String(reste % 60).padStart(2, '0');
+    $('[data-anneau]').style.strokeDashoffset = String(502.7 * (1 - reste / TOTAL));
+    const b = $('[data-relancer]');
+    if (b && b.disabled !== undefined && !$('[data-vue="attente"]').classList.contains('cache')) {
+      const r = Math.max(0, 30 - ecoule);
+      b.disabled = r > 0;
+      b.textContent = r > 0 ? `Renvoyer la demande dans 0:${String(r).padStart(2, '0')}` : 'Renvoyer la demande';
+    }
+    if (reste === 0) { clearInterval(minuterieAtt); vue('delai'); }
+  };
+  tic();
+  minuterieAtt = setInterval(tic, 1000);
+}
+$('[data-etape="attente"]').addEventListener('click', (e) => {
+  if (e.target.closest('[data-relancer]')) lancerAttente();
+  if (e.target.closest('[data-changer]')) { clearInterval(minuterieAtt); aller('paiement'); }
+  const sim = e.target.closest('[data-sim]');
+  if (sim) {
+    clearInterval(minuterieAtt);
+    vue(sim.dataset.sim);
+    if (sim.dataset.sim === 'recu') setTimeout(confirmer, 2200);
+  }
+});
+
+/* 4. Confirmation */
+let arreterBillet;
+function confirmer() {
+  const cat = BILLETS_EVT.find((c) => panier.q[c.k]) || BILLETS_EVT[2];
+  const graine = Date.now().toString(36).toUpperCase().slice(-8);
+  const billet = { id: `ET-${graine.slice(0, 4)}-${graine.slice(4)}`, evt: evt.id, categorie: cat.nom, titulaire: 'Vous', entree: 'Porte B', prix: cat.prix, decalageMs: 0 };
+  const tous = lire('et-billets', []);
+  tous.unshift(billet);
+  ecrire('et-billets', tous.slice(0, 20));
+  $('[data-sms-txt]').textContent = `Un SMS avec le lien est parti vers le +243 ${formaterTel(etat.tel)}.`;
+  arreterBillet?.();
+  arreterBillet = monterBillet($('[data-billet]'), billet, { arrive: true });
+  $('[data-whatsapp]').href = 'https://wa.me/?text=' + encodeURIComponent(`J'ai mon billet pour ${evt.titre} (${evt.quand}) sur e-Ticket !`);
+  aller('confirmation');
+}
+
+aller('tel');
+</script>
+</body>
+</html>
