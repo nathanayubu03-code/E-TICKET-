@@ -1,3 +1,6 @@
+// e-Ticket RDC · schéma de données
+// Montants : entiers en CDF. Dates : UTC. Commission : points de base (1000 = 10 %).
+
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -7,6 +10,564 @@ datasource db {
   provider = "postgresql"
 }
 
-model Placeholder {
-  id String @id
+enum Role {
+  SUPERADMIN
+  ADMIN
+  AGENT
+  CONTROLEUR
+  ORGANISATEUR
+  ACHETEUR
+}
+
+enum StatutEvenement {
+  BROUILLON
+  A_VALIDER
+  PUBLIE
+  COMPLET
+  ANNULE
+  TERMINE
+}
+
+enum StatutCommande {
+  EN_ATTENTE
+  PAYEE
+  PAYEE_SANS_PLACE
+  EXPIREE
+  ECHOUEE
+  ANNULEE
+  REMBOURSEE
+}
+
+enum ModePaiement {
+  MOBILE_MONEY
+  MANUEL
+  GRATUIT
+}
+
+enum Operateur {
+  MPESA
+  AIRTEL
+  ORANGE
+  AFRIMONEY
+}
+
+enum StatutPaiement {
+  INITIE
+  EN_ATTENTE
+  REUSSI
+  ECHOUE
+  EXPIRE
+}
+
+enum StatutReclamation {
+  EN_ATTENTE
+  VALIDEE
+  REFUSEE
+}
+
+enum StatutBillet {
+  VALIDE
+  UTILISE
+  ANNULE
+}
+
+enum ResultatScan {
+  VALIDE
+  DEJA_SCANNE
+  REFUSE
+  INCONNU
+}
+
+enum TypePromo {
+  POURCENTAGE
+  MONTANT
+}
+
+enum ObjetOtp {
+  CONNEXION
+  ADMIN_DEUXIEME_ETAPE
+}
+
+enum StatutSms {
+  EN_FILE
+  ENVOYE
+  ECHOUE
+}
+
+model User {
+  id             String            @id @default(cuid())
+  telephone      String            @unique // +243XXXXXXXXX
+  nom            String?
+  email          String?           @unique
+  motDePasse     String? // argon2id, obligatoire pour les rôles d'administration
+  roles          Role[]            @default([ACHETEUR])
+  organisateurId String?
+  organisateur   Organizer?        @relation(fields: [organisateurId], references: [id])
+  desactiveLe    DateTime?
+  creeLe         DateTime          @default(now())
+  sessions       Session[]
+  commandes      Order[]
+  affectations   EventController[]
+  appareils      ScannerDevice[]
+}
+
+model Session {
+  id              String    @id @default(cuid())
+  jetonHash       String    @unique // SHA-256 du jeton du cookie
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deuxiemeEtapeLe DateTime? // administration : OTP validé
+  expireLe        DateTime
+  ip              String?
+  userAgent       String?
+  creeLe          DateTime  @default(now())
+
+  @@index([userId])
+}
+
+model OtpCode {
+  id        String    @id @default(cuid())
+  telephone String
+  objet     ObjetOtp
+  codeHash  String // HMAC-SHA256 avec SESSION_SECRET
+  essais    Int       @default(0) // 5 maximum
+  expireLe  DateTime // + 5 min
+  utiliseLe DateTime?
+  creeLe    DateTime  @default(now())
+
+  @@index([telephone, objet, creeLe])
+}
+
+model Organizer {
+  id                       String     @id @default(cuid())
+  nom                      String
+  slug                     String     @unique
+  contactNom               String?
+  telephone                String?
+  email                    String?
+  reversementOperateur     Operateur?
+  reversementNumeroChiffre String? // AES-256-GCM, base64
+  reversementNumeroFin     String? // 3 derniers chiffres pour l'affichage
+  commissionBps            Int? // null = taux global
+  verifie                  Boolean    @default(false)
+  verifieLe                DateTime?
+  verifieParId             String?
+  archiveLe                DateTime?
+  creeLe                   DateTime   @default(now())
+  evenements               Event[]
+  membres                  User[]
+  reversements             Payout[]
+}
+
+model City {
+  id         String                 @id @default(cuid())
+  nom        String                 @unique
+  slug       String                 @unique
+  fuseau     String // Africa/Kinshasa ou Africa/Lubumbashi
+  lieux      Venue[]
+  evenements Event[]
+  alertes    SmsAlertSubscription[]
+}
+
+model Venue {
+  id         String   @id @default(cuid())
+  nom        String
+  villeId    String
+  ville      City     @relation(fields: [villeId], references: [id])
+  adresse    String?
+  latitude   Decimal? @db.Decimal(9, 6)
+  longitude  Decimal? @db.Decimal(9, 6)
+  evenements Event[]
+
+  @@unique([villeId, nom])
+}
+
+model Category {
+  id         String  @id @default(cuid())
+  slug       String  @unique
+  nom        String
+  icone      String
+  fond       String
+  texte      String
+  ordre      Int     @default(0)
+  evenements Event[]
+}
+
+model Event {
+  id                String              @id @default(cuid())
+  code              String              @unique // court, entre dans le QR
+  slug              String              @unique
+  titre             String
+  description       String?
+  statut            StatutEvenement     @default(BROUILLON)
+  categorieId       String?
+  categorie         Category?           @relation(fields: [categorieId], references: [id])
+  organisateurId    String?
+  organisateur      Organizer?          @relation(fields: [organisateurId], references: [id])
+  lieuId            String?
+  lieu              Venue?              @relation(fields: [lieuId], references: [id])
+  villeId           String? // dénormalisé depuis le lieu pour l'index public
+  ville             City?               @relation(fields: [villeId], references: [id])
+  fuseau            String? // copié de la ville
+  ouverturePortesLe DateTime?
+  debutLe           DateTime?
+  finLe             DateTime?
+  infosPratiques    String?
+  afficheCle        String?
+  afficheVariantes  Json?
+  selAffichage      String // public : signe du moment, pas une donnée de sécurité
+  limiteParPersonne Int?
+  archiveLe         DateTime?
+  publieLe          DateTime?
+  brouillonSauveLe  DateTime?
+  creeParId         String
+  creeLe            DateTime            @default(now())
+  majLe             DateTime            @updatedAt
+  typesBillet       TicketType[]
+  programme         EventScheduleItem[]
+  commandes         Order[]
+  billets           Ticket[]
+  controleurs       EventController[]
+  appareils         ScannerDevice[]
+  scans             Scan[]
+  attente           WaitlistEntry[]
+  promos            PromoCode[]
+  reversements      Payout[]
+
+  @@index([statut, villeId, debutLe])
+  @@index([statut, debutLe])
+}
+
+model EventScheduleItem {
+  id          String  @id @default(cuid())
+  evenementId String
+  evenement   Event   @relation(fields: [evenementId], references: [id], onDelete: Cascade)
+  heure       String // "HH:mm", heure locale de la ville
+  titre       String
+  detail      String?
+  ordre       Int     @default(0)
+
+  @@index([evenementId, ordre])
+}
+
+model TicketType {
+  id                String          @id @default(cuid())
+  evenementId       String
+  evenement         Event           @relation(fields: [evenementId], references: [id], onDelete: Cascade)
+  nom               String
+  description       String?
+  prixCdf           Int
+  quota             Int
+  restant           Int // décrémenté atomiquement à la réservation
+  venteDebutLe      DateTime?
+  venteFinLe        DateTime?
+  limiteParCommande Int?
+  ordre             Int             @default(0)
+  lignes            OrderItem[]
+  billets           Ticket[]
+  attente           WaitlistEntry[]
+
+  @@index([evenementId, ordre])
+}
+
+model Order {
+  id                 String               @id @default(cuid())
+  code               String               @unique // ET-XXXXXX
+  telephone          String
+  userId             String?
+  user               User?                @relation(fields: [userId], references: [id])
+  evenementId        String
+  evenement          Event                @relation(fields: [evenementId], references: [id])
+  statut             StatutCommande       @default(EN_ATTENTE)
+  mode               ModePaiement?
+  sousTotalCdf       Int
+  remiseCdf          Int                  @default(0)
+  totalCdf           Int
+  commissionBps      Int
+  commissionCdf      Int
+  netOrganisateurCdf Int
+  tauxUsdId          String?
+  reserveJusquau     DateTime
+  stockLibere        Boolean              @default(false)
+  payeeLe            DateTime?
+  annuleeLe          DateTime?
+  rembourseeLe       DateTime?
+  rembourseeParId    String?
+  noteRemboursement  String?
+  creeLe             DateTime             @default(now())
+  lignes             OrderItem[]
+  paiements          Payment[]
+  reclamations       ManualPaymentClaim[]
+  billets            Ticket[]
+  promo              PromoRedemption?
+
+  @@index([telephone, creeLe])
+  @@index([statut, reserveJusquau])
+  @@index([evenementId, statut])
+}
+
+model OrderItem {
+  id              String     @id @default(cuid())
+  commandeId      String
+  commande        Order      @relation(fields: [commandeId], references: [id], onDelete: Cascade)
+  typeBilletId    String
+  typeBillet      TicketType @relation(fields: [typeBilletId], references: [id])
+  quantite        Int
+  prixUnitaireCdf Int
+
+  @@index([commandeId])
+}
+
+model Payment {
+  id                 String         @id @default(cuid())
+  commandeId         String
+  commande           Order          @relation(fields: [commandeId], references: [id])
+  fournisseur        String
+  operateur          Operateur
+  telephone          String
+  montantCdf         Int
+  cleIdempotence     String         @unique
+  referenceOperateur String?        @unique
+  statut             StatutPaiement @default(INITIE)
+  statutBrut         String?
+  motifEchec         String?
+  nbVerifications    Int            @default(0)
+  prochaineVerifLe   DateTime?
+  confirmeLe         DateTime?
+  creeLe             DateTime       @default(now())
+  majLe              DateTime       @updatedAt
+  evenements         PaymentEvent[]
+
+  @@index([statut, prochaineVerifLe])
+  @@index([commandeId])
+}
+
+model PaymentEvent {
+  id              String    @id @default(cuid())
+  paiementId      String?
+  paiement        Payment?  @relation(fields: [paiementId], references: [id])
+  fournisseur     String
+  cleDedup        String    @unique // identifiant d'événement du fournisseur, sinon SHA-256 du corps
+  corpsBrut       String
+  entetes         Json
+  signatureValide Boolean
+  recuLe          DateTime  @default(now())
+  traiteLe        DateTime?
+  erreur          String?
+}
+
+model ManualPaymentClaim {
+  id                   String            @id @default(cuid())
+  commandeId           String
+  commande             Order             @relation(fields: [commandeId], references: [id])
+  operateur            Operateur
+  referenceTransaction String // normalisée : majuscules, sans espaces
+  telephonePayeur      String
+  montantCdf           Int
+  statut               StatutReclamation @default(EN_ATTENTE)
+  traiteParId          String?
+  traiteLe             DateTime?
+  motifRefus           String?
+  creeLe               DateTime          @default(now())
+
+  @@unique([operateur, referenceTransaction])
+  @@index([statut, creeLe])
+}
+
+model Ticket {
+  id            String       @id @default(cuid())
+  publicId      String       @unique // ET-XXXX-XXXX
+  code          String       @unique // 128 bits en base32 : contenu du QR et jeton du lien SMS
+  codeEmpreinte String       @unique // SHA-256 du code, téléchargé par le scanner
+  commandeId    String
+  commande      Order        @relation(fields: [commandeId], references: [id])
+  evenementId   String
+  evenement     Event        @relation(fields: [evenementId], references: [id])
+  typeBilletId  String
+  typeBillet    TicketType   @relation(fields: [typeBilletId], references: [id])
+  titulaire     String?
+  entree        String?
+  prixPayeCdf   Int
+  statut        StatutBillet @default(VALIDE)
+  premierScanLe DateTime?
+  premierePorte String?
+  emisLe        DateTime     @default(now())
+  scans         Scan[]
+
+  @@index([evenementId, statut])
+  @@index([commandeId])
+}
+
+model Scan {
+  id           String        @id @default(cuid())
+  scanClientId String        @unique // généré par l'appareil : synchronisation idempotente
+  billetId     String?
+  billet       Ticket?       @relation(fields: [billetId], references: [id])
+  evenementId  String
+  evenement    Event         @relation(fields: [evenementId], references: [id])
+  appareilId   String
+  appareil     ScannerDevice @relation(fields: [appareilId], references: [id])
+  controleurId String
+  resultat     ResultatScan
+  chargeBrute  String?
+  porte        String?
+  horsLigne    Boolean       @default(false)
+  scanneLe     DateTime // heure de l'appareil corrigée du décalage
+  recuLe       DateTime      @default(now())
+  conflit      Boolean       @default(false) // second scan hors ligne d'un même billet
+
+  @@index([evenementId, scanneLe])
+  @@index([billetId])
+  @@index([evenementId, conflit])
+}
+
+model ScannerDevice {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id])
+  evenementId       String
+  evenement         Event     @relation(fields: [evenementId], references: [id])
+  libelle           String?
+  derniereSynchroLe DateTime?
+  creeLe            DateTime  @default(now())
+  scans             Scan[]
+
+  @@index([evenementId])
+}
+
+model EventController {
+  userId      String
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evenementId String
+  evenement   Event   @relation(fields: [evenementId], references: [id], onDelete: Cascade)
+  porte       String?
+
+  @@id([userId, evenementId])
+}
+
+model PromoCode {
+  id                 String            @id @default(cuid())
+  code               String            @unique
+  type               TypePromo
+  valeur             Int // points de base si pourcentage, CDF si montant
+  evenementId        String?
+  evenement          Event?            @relation(fields: [evenementId], references: [id])
+  quota              Int?
+  utilise            Int               @default(0)
+  debutLe            DateTime?
+  finLe              DateTime?
+  limiteParTelephone Int               @default(1)
+  actif              Boolean           @default(true)
+  creeLe             DateTime          @default(now())
+  utilisations       PromoRedemption[]
+}
+
+model PromoRedemption {
+  id         String    @id @default(cuid())
+  promoId    String
+  promo      PromoCode @relation(fields: [promoId], references: [id])
+  commandeId String    @unique
+  commande   Order     @relation(fields: [commandeId], references: [id], onDelete: Cascade)
+  telephone  String
+  remiseCdf  Int
+  creeLe     DateTime  @default(now())
+
+  @@index([promoId, telephone])
+}
+
+model WaitlistEntry {
+  id             String      @id @default(cuid())
+  evenementId    String
+  evenement      Event       @relation(fields: [evenementId], references: [id], onDelete: Cascade)
+  typeBilletId   String?
+  typeBillet     TicketType? @relation(fields: [typeBilletId], references: [id])
+  telephone      String
+  consentementLe DateTime
+  prevenuLe      DateTime?
+  creeLe         DateTime    @default(now())
+
+  @@unique([evenementId, telephone])
+}
+
+model SmsAlertSubscription {
+  id                String    @id @default(cuid())
+  telephone         String
+  villeId           String?
+  ville             City?     @relation(fields: [villeId], references: [id])
+  consentementLe    DateTime
+  texteConsentement String
+  desinscritLe      DateTime?
+  creeLe            DateTime  @default(now())
+
+  @@index([telephone])
+}
+
+model SmsLog {
+  id                   String    @id @default(cuid())
+  telephone            String
+  gabarit              String
+  contenu              String
+  fournisseur          String
+  statut               StatutSms @default(EN_FILE)
+  referenceFournisseur String?
+  erreur               String?
+  creeLe               DateTime  @default(now())
+
+  @@index([telephone, creeLe])
+}
+
+model ExchangeRate {
+  id         String   @id @default(cuid())
+  cdfParUsd  Int
+  effectifLe DateTime
+  saisiParId String
+  creeLe     DateTime @default(now())
+
+  @@index([effectifLe])
+}
+
+model Setting {
+  cle      String   @id
+  valeur   Json
+  majParId String?
+  majLe    DateTime @updatedAt
+}
+
+model Payout {
+  id                   String     @id @default(cuid())
+  organisateurId       String
+  organisateur         Organizer  @relation(fields: [organisateurId], references: [id])
+  evenementId          String
+  evenement            Event      @relation(fields: [evenementId], references: [id])
+  montantCdf           Int
+  operateur            Operateur?
+  referenceTransaction String
+  effectueLe           DateTime
+  saisiParId           String
+  note                 String?
+  creeLe               DateTime   @default(now())
+
+  @@index([organisateurId, evenementId])
+}
+
+model RateLimit {
+  cle          String   @id
+  compteur     Int
+  fenetreDebut DateTime
+}
+
+model AuditLog {
+  id         BigInt   @id @default(autoincrement())
+  acteurId   String?
+  acteurRole Role?
+  action     String
+  entite     String
+  entiteId   String?
+  avant      Json?
+  apres      Json?
+  ip         String?
+  creeLe     DateTime @default(now())
+
+  @@index([entite, entiteId])
+  @@index([creeLe])
 }
