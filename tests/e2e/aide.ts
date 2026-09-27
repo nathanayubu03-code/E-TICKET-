@@ -28,3 +28,27 @@ export async function creerEvenement(p: { titre: string; ville?: string; cat?: s
     include: { typesBillet: true },
   });
 }
+
+/** Dernier code OTP envoyé à ce numéro (le fournisseur SMS de simulation le journalise). */
+export async function dernierCode(telephone: string, depuis = new Date(0)): Promise<string> {
+  for (let i = 0; i < 40; i++) {
+    const sms = await db.smsLog.findFirst({ where: { telephone, gabarit: 'otp', creeLe: { gt: depuis } }, orderBy: { creeLe: 'desc' } });
+    const m = sms && /(\d{6})/.exec(sms.contenu);
+    if (m) return m[1]!;
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  throw new Error('Aucun code reçu');
+}
+
+export async function connecterAdmin(page: import('@playwright/test').Page, suite = '/admin') {
+  await db.otpCode.deleteMany({ where: { telephone: '+243990000001' } });
+  await db.rateLimit.deleteMany({});
+  const depuis = new Date();
+  await page.goto(`/admin/connexion?suite=${encodeURIComponent(suite)}`);
+  await page.getByLabel('Numéro').fill('990000001');
+  await page.getByLabel('Mot de passe').fill('MotDePasseE2E-tres-long-2026');
+  await page.getByRole('button', { name: 'Continuer' }).click();
+  await page.getByLabel('Code reçu par SMS').fill(await dernierCode('+243990000001', depuis));
+  await page.getByRole('button', { name: 'Valider le code' }).click();
+  await page.waitForURL((u) => !u.pathname.startsWith('/admin/connexion') && u.pathname.startsWith(suite));
+}

@@ -61,15 +61,20 @@ export async function villesEtCategoriesPubliques() {
   };
 }
 
-export async function evenementPublic(slug: string) {
-  const e = await db.event.findFirst({
-    where: { slug, statut: { in: ['PUBLIE', 'COMPLET', 'ANNULE', 'TERMINE'] }, archiveLe: null },
-    include: {
-      categorie: true, ville: true, lieu: true,
-      organisateur: { select: { nom: true, verifie: true } },
-      programme: { orderBy: { ordre: 'asc' } },
-      typesBillet: { orderBy: { ordre: 'asc' } },
-    },
-  });
-  return e;
+const inclusionDetails = {
+  categorie: true, ville: true, lieu: true,
+  organisateur: { select: { nom: true, verifie: true } },
+  programme: { orderBy: { ordre: 'asc' } },
+  typesBillet: { orderBy: { ordre: 'asc' } },
+} satisfies Prisma.EventInclude;
+
+export type EvenementDetail = Prisma.EventGetPayload<{ include: typeof inclusionDetails }>;
+
+export async function evenementPublic(slug: string): Promise<EvenementDetail | null> {
+  return db.event.findFirst({ where: { slug, statut: { in: ['PUBLIE', 'COMPLET', 'ANNULE', 'TERMINE'] }, archiveLe: null }, include: inclusionDetails });
+}
+
+/** Aperçu dans l'administration : même rendu, quel que soit le statut. */
+export async function evenementPourApercu(id: string): Promise<EvenementDetail | null> {
+  return db.event.findUnique({ where: { id }, include: inclusionDetails });
 }

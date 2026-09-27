@@ -660,7 +660,7 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 - [x] 2. Module Kuba (parité exacte : 961 motifs, 960 SVG, 320 rendus inline, 160 signes, sur 20 identifiants et 8 phases)
 - [x] 3. Schéma et seeds (migration initiale, CHECK sur le stock, trigger d'audit ; seed de production idempotent ; seed [DEMO] protégé)
 - [x] 4. Pages publiques et états vides (accueil 0 / 1 / n événements, filtres dérivés des données, recherche, page événement, panier, liste d'attente, alertes SMS, aide, organisateurs ; 5 tests e2e)
-- [ ] 5. Administration des événements
+- [x] 5. Administration des événements (connexion mot de passe + OTP, rôles vérifiés dans proxy.ts et en base, assistant en 8 étapes avec sauvegarde automatique, règle de publication avec liste des manques, duplication, archivage, organisateurs avec numéro de reversement chiffré, affiches recadrées 4:5 et 16:9 en WebP et AVIF ; e2e : création et publication en moins de 5 minutes)
 - [ ] 6. Connexion OTP
 - [ ] 7. Commande et réservation
 - [ ] 8. Paiement
@@ -692,6 +692,8 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 - Événement : champs `sousTitre` (ligne d'artistes) et `genre` ajoutés pour reproduire la maquette.
 - Captures : les pages de la maquette s'affichent avec la police de repli dans l'environnement de test (Google Fonts n'y est pas joignable depuis le navigateur) ; l'application auto-héberge ses polices et les affiche correctement. Les captures pleine page de 1280 px montrent le fond Kuba seulement sur la hauteur de l'écran, parce que le fond est fixe (`background-attachment: fixed`) ; ce n'est pas visible en navigation.
 
+- Administration : la maquette n'a pas d'écran d'administration en HTML ; les écrans reprennent ses variables, bordures et typographie, sans motif de fond (`app/styles/complements.css`).
+
 ### Décisions techniques
 
 - Les classes de la maquette sont reprises comme composants CSS (`@layer components`) plutôt que réécrites en utilitaires : c'est le moyen le plus sûr de garder chaque valeur identique. Tailwind sert à la mise en page des nouveaux écrans, avec des utilitaires qui pointent vers les mêmes variables.
@@ -699,3 +701,7 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 - Langue : cookie `NEXT_LOCALE`, sans préfixe d'URL.
 - L'administration reste en français uniquement (équipe interne) ; seules les pages publiques et le scanner passent par next-intl.
 - `PAYMENT_PROVIDER` et `SMS_PROVIDER` acceptent `non_configure` : l'application démarre en production sans fournisseur, les achats en ligne affichent que le paiement n'est pas ouvert. La simulation reste interdite.
+- Le socle d'authentification (sessions en cookie httpOnly, OTP haché, jeton de rôles signé lu par `proxy.ts`, `exigerRole` en base) est posé à l'étape 5 parce que l'administration en dépend ; l'étape 6 y ajoute la connexion des acheteurs.
+- Recadrage des affiches : choix de la zone (automatique « attention » de sharp, haut, centre, bas) par format, plutôt qu'un outil de recadrage libre à la souris, pour garder un JavaScript minimal dans l'administration. L'original est réencodé (métadonnées EXIF supprimées).
+- Jeton de rôles signé (HMAC) dans un cookie séparé : il permet au proxy de refuser tôt sans base de données ; chaque page et action serveur revérifie la session et les rôles en base.
+- Tests Vitest et Playwright : les bases `eticket_test` et `eticket_e2e` sont recréées à chaque lancement (`prisma migrate reset`). Prisma 7 demande un consentement explicite quand un agent lance cette commande ; les scripts de test le donnent pour ces deux bases locales uniquement.
