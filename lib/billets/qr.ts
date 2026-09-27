@@ -1,16 +1,7 @@
 import QRCode from 'qrcode';
 import { zoneQR } from '@/lib/kuba';
 
-/**
- * Contenu du QR : code court de l'événement + « / » + code du billet (base32).
- * Tout est en majuscules et chiffres : le QR utilise le mode alphanumérique, le plus compact.
- */
-export const contenuQR = (codeEvenement: string, codeBillet: string) => `${codeEvenement}/${codeBillet}`;
-
-export function lireContenuQR(texte: string): { evenement: string; code: string } | null {
-  const m = /^([A-Z0-9]{4,12})\/([A-Z2-7]{26})$/.exec(texte.trim().toUpperCase());
-  return m ? { evenement: m[1] as string, code: m[2] as string } : null;
-}
+export { contenuQR, lireContenuQR } from './contenu';
 
 export interface QRDessin { chemin: string; modules: number; x: number; y: number; taille: number }
 

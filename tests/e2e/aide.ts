@@ -52,3 +52,19 @@ export async function connecterAdmin(page: import('@playwright/test').Page, suit
   await page.getByRole('button', { name: 'Valider le code' }).click();
   await page.waitForURL((u) => !u.pathname.startsWith('/admin/connexion') && u.pathname.startsWith(suite));
 }
+
+/** Crée un contrôleur affecté à l'événement et le connecte (mot de passe + code SMS). */
+export async function connecterControleur(page: import('@playwright/test').Page, evenementId: string, telephone = '+243990000044') {
+  const { hacherMotDePasse } = await import('../../lib/auth/motdepasse');
+  const user = await db.user.upsert({ where: { telephone }, update: { roles: ['CONTROLEUR'] }, create: { telephone, nom: 'Contrôleur e2e', roles: ['CONTROLEUR'], motDePasse: await hacherMotDePasse('MotDePasseControleur-2026') } });
+  await db.eventController.upsert({ where: { userId_evenementId: { userId: user.id, evenementId } }, update: {}, create: { userId: user.id, evenementId, porte: 'B' } });
+  await db.rateLimit.deleteMany({});
+  const depuis = new Date();
+  await page.goto(`/admin/connexion?suite=/scan/${evenementId}`);
+  await page.getByLabel('Numéro').fill(telephone.slice(4));
+  await page.getByLabel('Mot de passe').fill('MotDePasseControleur-2026');
+  await page.getByRole('button', { name: 'Continuer' }).click();
+  await page.getByLabel('Code reçu par SMS').fill(await dernierCode(telephone, depuis));
+  await page.getByRole('button', { name: 'Valider le code' }).click();
+  await page.waitForURL((u) => u.pathname === `/scan/${evenementId}`);
+}
