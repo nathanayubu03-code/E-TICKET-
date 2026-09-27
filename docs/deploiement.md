@@ -31,7 +31,7 @@ Le disque de Vercel est éphémère : `STORAGE_DRIVER=local` y perdrait les affi
 
 ## 3. Projet Vercel
 
-1. Importez le dépôt GitHub dans Vercel (framework détecté : Next.js). La commande de build vient de `vercel.json` : `npm run vercel-build`, qui génère le client Prisma, applique les migrations (`prisma migrate deploy` sur `DIRECT_URL`) puis construit l'application.
+1. Importez le dépôt GitHub dans Vercel (framework détecté : Next.js). La commande de build vient de `vercel.json` : `npm run vercel-build`, qui génère le client Prisma, applique les migrations (`prisma migrate deploy` sur `DIRECT_URL`, ou `DATABASE_URL_UNPOOLED` posée par l'intégration Neon de Vercel), met à jour le référentiel (catégories, villes, paramètres ; super-administrateur si `SUPERADMIN_TELEPHONE` est défini) puis construit l'application.
 2. Dans Settings, Environment Variables, saisissez pour **Production** les variables de `.env.example` :
    - `DATABASE_URL`, `DIRECT_URL` (Neon) ;
    - `APP_ENV=production` ;
@@ -55,7 +55,7 @@ SUPERADMIN_NOM="<nom>" \
 npm run db:seed
 ```
 
-Il est idempotent : le relancer ne recrée ni ne modifie le mot de passe d'un super-administrateur existant. Ne mettez pas `SUPERADMIN_MOT_DE_PASSE` dans les variables de Vercel. Le seed de démonstration (`npm run db:seed-demo`) refuse de s'exécuter sur une base distante.
+Il est idempotent : le relancer ne recrée ni ne modifie le mot de passe d'un super-administrateur existant. Ne mettez pas `SUPERADMIN_MOT_DE_PASSE` dans les variables de Vercel de la production. Chaque déploiement relance ce seed en mode `--deploiement` : sans `SUPERADMIN_TELEPHONE`, il met seulement à jour le référentiel. Le seed de démonstration (`npm run db:seed-demo`) refuse de s'exécuter sur une base distante.
 
 Connexion : `/admin/connexion`, mot de passe puis code SMS. Il faut donc un fournisseur SMS configuré.
 
@@ -63,13 +63,17 @@ Connexion : `/admin/connexion`, mot de passe puis code SMS. Il faut donc un four
 
 `/api/cron/verifier-paiements` vérifie les paiements restés sans webhook (première vérification à 90 secondes, puis toutes les 2 minutes pendant 15 minutes) et libère les réservations expirées. Elle est idempotente et exige l'en-tête `Authorization: Bearer <CRON_SECRET>`.
 
-**Vercel Cron** : `vercel.json` déclare un appel toutes les 2 minutes (`*/2 * * * *`). Vercel envoie tout seul l'en-tête `Authorization` quand la variable `CRON_SECRET` est définie. **Une fréquence de 2 minutes demande un plan payant de Vercel** : le plan gratuit limite les tâches planifiées à une exécution par jour (à vérifier sur la page des limites de Vercel au moment du choix). Avec une seule exécution par jour, la promesse « vos billets arrivent dans les 15 minutes » n'est pas tenue quand un webhook se perd.
-
-**Alternative : planificateur externe**. N'importe quel service capable d'appeler une URL toutes les 1 ou 2 minutes convient (cron-job.org, Upstash QStash, un serveur à vous). Supprimez alors le bloc `crons` de `vercel.json` et programmez :
+**Planificateur externe (configuration du dépôt)**. `vercel.json` ne déclare pas de tâche planifiée, parce que le plan gratuit de Vercel limite les tâches planifiées à une exécution par jour, ce qui ne tient pas la promesse « vos billets arrivent dans les 15 minutes » quand un webhook se perd. N'importe quel service capable d'appeler une URL toutes les 1 ou 2 minutes convient (cron-job.org, Upstash QStash, un serveur à vous). Programmez :
 
 ```bash
 curl -fsS -X POST https://votre-domaine.cd/api/cron/verifier-paiements \
   -H "Authorization: Bearer $CRON_SECRET"
+```
+
+**Vercel Cron (plan payant)**. Ajoutez à `vercel.json` le bloc suivant ; Vercel envoie tout seul l'en-tête `Authorization` quand la variable `CRON_SECRET` est définie :
+
+```json
+"crons": [{ "path": "/api/cron/verifier-paiements", "schedule": "*/2 * * * *" }]
 ```
 
 La réponse indique le nombre de paiements vérifiés, confirmés, expirés et de réservations libérées. Évitez les planificateurs dont l'exécution peut prendre plusieurs minutes de retard.
@@ -118,14 +122,14 @@ Si `APP_ENV` est vide, un serveur de production (`next start`, Vercel) applique 
 3. **Variables** (environnement Production de ce projet de test) :
    - `APP_ENV=staging` ;
    - `PAYMENT_PROVIDER=simulation`, `SMS_PROVIDER=simulation` ;
-   - `DATABASE_URL`, `DIRECT_URL` de la base de test ;
+   - `DATABASE_URL`, `DIRECT_URL` de la base de test (déjà posées si la base est créée depuis Vercel, onglet Storage, avec l'intégration Neon) ;
    - `SESSION_SECRET`, `ENCRYPTION_KEY`, `CRON_SECRET`, `SIMULATION_WEBHOOK_SECRET` : nouvelles valeurs, jamais celles de la production (`openssl rand -hex 32`, `openssl rand -base64 32`, `openssl rand -hex 24`) ;
    - `NEXT_PUBLIC_SITE_URL` : `https://eticket-test.vercel.app` convient, ou un sous-domaine comme `https://test.votre-domaine.cd` ;
    - stockage : un bucket R2 à part (`eticket-affiches-test`) avec son propre jeton. `STORAGE_DRIVER=local` démarre aussi, avec un avertissement, mais les affiches disparaissent à chaque redéploiement ;
    - `CONTACT_*`, `EDITEUR_*` : vides, ou les vraies valeurs si les testeurs doivent relire ces pages.
 4. **Déployez**, puis vérifiez `https://<projet-test>.vercel.app/api/sante` et que le bandeau rouge s'affiche sur l'accueil.
-5. **Seed** : lancez le seed de production sur la base de test (section 4) avec un numéro et un mot de passe réservés aux essais. Le seed de démonstration refuse les bases distantes : créez les événements de test dans l'administration.
-6. **Tâche planifiée** : les mêmes règles qu'en section 5. Avec le plan gratuit, prévoyez un planificateur externe sur `https://<projet-test>.vercel.app/api/cron/verifier-paiements` avec le `CRON_SECRET` de test.
+5. **Seed** : sans ordinateur, ajoutez aux variables du projet de test `SUPERADMIN_TELEPHONE`, `SUPERADMIN_MOT_DE_PASSE` (réservé aux essais) et `SUPERADMIN_NOM`, puis redéployez : le build crée le compte. Supprimez ensuite `SUPERADMIN_MOT_DE_PASSE` des variables. Avec un ordinateur, lancez le seed comme en section 4. Le seed de démonstration refuse les bases distantes : créez les événements de test dans l'administration.
+6. **Tâche planifiée** : les mêmes règles qu'en section 5. Programmez un planificateur externe sur `https://<projet-test>.vercel.app/api/cron/verifier-paiements` avec le `CRON_SECRET` de test.
 
 ### Paiement simulé sur Vercel
 

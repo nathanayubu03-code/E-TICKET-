@@ -19,7 +19,7 @@ Statut : plan validé le 27/09/2026, construction en cours. Voir la section « A
 
 1. Agrégateur Mobile Money : non choisi. `SimulationProvider` en développement, interface `PaymentProvider` prête pour un adaptateur. Liste des informations à demander dans `docs/paiement.md`.
 2. Fournisseur SMS : non choisi. `SimulationSmsProvider` qui écrit dans `SmsLog`, interdit en production.
-3. Hébergement : Vercel + Neon, région européenne. `/api/cron/verifier-paiements` protégée par `CRON_SECRET`, idempotente, Vercel Cron dans `vercel.json`, alternative de planificateur externe dans `docs/deploiement.md`.
+3. Hébergement : Vercel + Neon, région européenne. `/api/cron/verifier-paiements` protégée par `CRON_SECRET`, idempotente, planificateur externe par défaut (le plan gratuit de Vercel limite les tâches planifiées à une par jour), bloc Vercel Cron pour un plan payant dans `docs/deploiement.md`.
 4. Stockage : compatible S3, cible Cloudflare R2 ; adaptateur disque local en développement.
 5. Domaine et contact : variables `NEXT_PUBLIC_SITE_URL`, `CONTACT_ORGANISATEURS_EMAIL`, `CONTACT_ORGANISATEURS_TELEPHONE` ; bloc masqué si vide.
 6. Next.js : 16 (voir 0.4).

@@ -3,11 +3,5 @@
   "regions": [
     "fra1"
   ],
-  "buildCommand": "npm run vercel-build",
-  "crons": [
-    {
-      "path": "/api/cron/verifier-paiements",
-      "schedule": "*/2 * * * *"
-    }
-  ]
+  "buildCommand": "npm run vercel-build"
 }

@@ -1,5 +1,7 @@
 // Seed de production. Crée uniquement : le super-administrateur (variables d'environnement),
 // les catégories, les villes de référence et les paramètres par défaut. Idempotent.
+// --deploiement (lancé par vercel-build) : sans SUPERADMIN_TELEPHONE, le référentiel est créé et le
+// super-administrateur est ignoré au lieu de faire échouer le build.
 import 'dotenv/config';
 import { db } from '../lib/db';
 import { hacherMotDePasse, motDePasseFort } from '../lib/auth/motdepasse';
@@ -18,6 +20,10 @@ async function main() {
     await db.setting.upsert({ where: { cle }, update: {}, create: { cle, valeur } });
   }
 
+  if (process.argv.includes('--deploiement') && !process.env.SUPERADMIN_TELEPHONE?.trim()) {
+    console.log(`Référentiel à jour (${CATEGORIES_REFERENCE.length} catégories, ${VILLES_REFERENCE.length} villes). SUPERADMIN_TELEPHONE vide : aucun super-administrateur créé.`);
+    return;
+  }
   const telephone = normaliserTelephone(process.env.SUPERADMIN_TELEPHONE ?? '');
   const motDePasse = process.env.SUPERADMIN_MOT_DE_PASSE ?? '';
   if (!telephone) throw new Error('SUPERADMIN_TELEPHONE manquant ou invalide (format +243XXXXXXXXX).');
