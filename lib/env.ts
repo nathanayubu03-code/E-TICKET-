@@ -27,6 +27,12 @@ const schema = z.object({
   S3_PUBLIC_URL: optionnel,
   CONTACT_ORGANISATEURS_EMAIL: z.preprocess(vide, z.email().optional()),
   CONTACT_ORGANISATEURS_TELEPHONE: optionnel,
+  // Mentions légales : affichées dans Conditions et Confidentialité quand elles sont renseignées.
+  EDITEUR_NOM: optionnel,
+  EDITEUR_FORME: optionnel,
+  EDITEUR_RCCM: optionnel,
+  EDITEUR_ADRESSE: optionnel,
+  CONTACT_EMAIL: z.preprocess(vide, z.email().optional()),
 });
 
 export type Env = z.infer<typeof schema>;

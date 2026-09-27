@@ -671,7 +671,7 @@ Mis à jour à la fin de chaque étape. Une nouvelle session reprend à la premi
 - [x] 13. Tableau de bord, reversements, exports (ventes du jour et du mois, brut, commission, net, par opérateur et par catégorie, zéros sans vente ; reversements dus et enregistrés ; export Excel ; commandes : recherche, renvoi SMS, annulation, remboursement, payées sans place en priorité ; codes promo ; paramètres ; journal d'audit ; SMS envoyés)
 - [x] 14. PWA (Serwist : manifestes public et scanner, icônes, service worker qui garde en cache les pages des billets et du scanner, API jamais en cache, page de secours hors ligne ; test sur build de production avec serveur réellement arrêté)
 - [x] 15. Sécurité (CSP avec nonce et en-têtes dans proxy.ts, origine contrôlée sur les routes internes, limite des actions serveur à 9 Mo pour les affiches, numéro de reversement affiché sur demande et audité, docs/securite.md ; tests des en-têtes, du nonce, des refus)
-- [ ] 16. Traductions et pages légales
+- [x] 16. Traductions et pages légales (ln et sw limités aux clés relues, repli français clé par clé, tests de cohérence des clés ; Conditions et Confidentialité fidèles au fonctionnement réel, identité de l'éditeur par variables d'environnement ; points juridiques listés dans docs/legal-a-valider.md)
 
 ### Environnement de travail
 
