@@ -89,7 +89,7 @@ La réponse indique le nombre de paiements vérifiés, confirmés, expirés et d
 1. Écrivez les adaptateurs à partir des réponses de l'agrégateur et du fournisseur SMS (liste des questions : `docs/paiement.md`).
 2. Déclarez chez l'agrégateur l'URL de webhook : `https://votre-domaine.cd/api/webhooks/paiement/<nom-du-fournisseur>`.
 3. Testez d'abord dans leur environnement de test, sur un déploiement de prévisualisation.
-4. Saisissez dans l'administration (Paramètres) les numéros marchands pour le paiement chez un agent, la commission et le taux CDF/USD.
+4. Saisissez dans l'administration (Paramètres) les numéros marchands CDF et USD pour le paiement chez un agent, et la commission.
 
 ## 8. Vérifications après mise en ligne
 

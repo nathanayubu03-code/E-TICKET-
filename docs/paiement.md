@@ -30,7 +30,7 @@ Rien d'autre ne change : réservation, idempotence, génération des billets, v�
 6. Paiement confirmé après expiration de la réservation : les places sont reprises si elles sont encore libres ; sinon la commande passe `PAYEE_SANS_PLACE`, un SMS prévient l'acheteur et la commande apparaît en priorité dans l'administration pour remboursement.
 7. Les billets ne sont jamais générés sur un retour navigateur.
 
-Montants : entiers en CDF. L'USD n'est qu'un affichage indicatif au taux saisi par un administrateur.
+Montants : entiers dans la plus petite unité de la devise de la commande (CDF ou USD, voir plus bas). Aucun taux de change.
 
 Contrainte métier : les agrégateurs en RDC ne partagent pas les revenus automatiquement. Tout arrive sur le compte marchand d'e-Ticket ; la commission est figée sur chaque commande ; les reversements aux organisateurs sont enregistrés ensuite dans l'administration.
 
