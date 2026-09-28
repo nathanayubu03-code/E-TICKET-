@@ -1,20 +1,23 @@
 import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { Icone } from '@/components/ui/Icone';
 import { cdf, usd } from '@/lib/argent';
+import { nomCategorie } from '@/lib/categorie';
 import type { EvenementListe } from '@/lib/evenements';
+import { texteEvenement } from '@/lib/langue';
 import { dateCourte, heure, tampon } from '@/lib/fuseaux';
 import { ecart } from '@/lib/style';
 import type { Variantes } from './Couverture';
 
 export async function BlocUne({ e, taux }: { e: EvenementListe; taux: number | null }) {
   const t = await getTranslations();
+  const langue = await getLocale();
   const fuseau = e.ville?.fuseau ?? e.fuseau ?? undefined;
-  const date = e.debutLe ? tampon(e.debutLe, fuseau) : null;
+  const date = e.debutLe ? tampon(e.debutLe, fuseau, langue) : null;
   const v = (e.afficheVariantes as Variantes | null)?.['16x9'];
   const rare = e.typesBillet.filter((x) => x.restant > 0 && x.restant <= 20).sort((a, b) => a.restant - b.restant)[0];
   const plusieursPrix = new Set(e.typesBillet.map((x) => x.prixCdf)).size > 1;
-  const dollars = usd(e.prixMin, taux);
+  const dollars = usd(e.prixMin, taux, langue);
   return (
     <article className="panneau une">
       <div className="bandeau">
@@ -25,14 +28,14 @@ export async function BlocUne({ e, taux }: { e: EvenementListe; taux: number | n
         {date ? <span className="tampon" aria-hidden="true"><b>{date.jour}</b><span>{date.mois.toUpperCase()}</span></span> : null}
       </div>
       <div className="corps">
-        <span style={{ fontWeight: 700 }}>{[e.categorie?.nom.replace(/s$/, ''), e.genre].filter(Boolean).join(' · ')}</span>
-        <h1 className="affiche">{e.titre}</h1>
+        <span style={{ fontWeight: 700 }}>{[nomCategorie(t, e.categorie), e.genre].filter(Boolean).join(' · ')}</span>
+        <h1 className="affiche">{texteEvenement(e, 'titre', langue)}</h1>
         {e.sousTitre ? <p style={{ fontSize: 'var(--t-chapo)' }}>{e.sousTitre}</p> : null}
         <div className="meta">
-          {e.debutLe ? <span><Icone nom="cal" />{dateCourte(e.debutLe, fuseau)}</span> : null}
+          {e.debutLe ? <span><Icone nom="cal" />{dateCourte(e.debutLe, fuseau, langue)}</span> : null}
           <span><Icone nom="pin" />{[e.lieu?.nom, e.ville?.nom].filter(Boolean).join(', ')}</span>
         </div>
-        {e.description ? <p className="ligne-clamp" style={{ fontSize: 'var(--t-texte)', maxWidth: 520 }}>{e.description}</p> : null}
+        {e.description ? <p className="ligne-clamp" style={{ fontSize: 'var(--t-texte)', maxWidth: 520 }}>{texteEvenement(e, 'description', langue)}</p> : null}
         <div className="rangee envelopper" style={ecart(8)}>
           {e.ouverturePortesLe ? <span className="badge" style={{ background: '#FBF5E6', color: '#14120E' }}>{t('accueil.portes', { heure: heure(e.ouverturePortesLe, fuseau) })}</span> : null}
           {e.nomsTypes.length > 1 ? <span className="badge" style={{ background: '#FBF5E6', color: '#14120E' }}>{e.nomsTypes.join(' · ')}</span> : null}
@@ -42,7 +45,7 @@ export async function BlocUne({ e, taux }: { e: EvenementListe; taux: number | n
         <div className="rangee entre">
           <div className="prix">
             {plusieursPrix && e.prixMin > 0 ? <span style={{ fontSize: 'var(--t-petit)' }}>{t('commun.des')}</span> : null}
-            <b>{cdf(e.prixMin, t('commun.gratuit'))}</b>
+            <b>{cdf(e.prixMin, t('commun.gratuit'), langue)}</b>
             {dollars ? <span>{dollars}</span> : null}
           </div>
           <Link className="btn btn-principal btn-grand" href={`/evenements/${e.slug}`}>{t('accueil.reserver')}</Link>

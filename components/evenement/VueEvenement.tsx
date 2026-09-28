@@ -1,11 +1,13 @@
 import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { FormListeAttente } from '@/components/evenement/FormListeAttente';
 import { Panier, type TypePanier } from '@/components/evenement/Panier';
 import { Couverture } from '@/components/public/Couverture';
 import { Icone } from '@/components/ui/Icone';
 import { cdf } from '@/lib/argent';
+import { nomCategorie } from '@/lib/categorie';
 import type { EvenementDetail } from '@/lib/evenements';
+import { texteEvenement } from '@/lib/langue';
 import { dateCourte, dateLongue, heure, tampon } from '@/lib/fuseaux';
 import { parametre, tauxCourant } from '@/lib/parametres';
 import { ecart } from '@/lib/style';
@@ -18,15 +20,16 @@ function initiales(nom: string) {
 
 export async function VueEvenement({ e, apercu = false }: { e: EvenementDetail; apercu?: boolean }) {
   const t = await getTranslations();
+  const langue = await getLocale();
   const [taux, maxGlobal] = await Promise.all([tauxCourant(), parametre('limite_billets')]);
   const max = e.limiteParPersonne ?? maxGlobal;
   const fuseau = e.ville?.fuseau ?? e.fuseau ?? undefined;
-  const date = e.debutLe ? tampon(e.debutLe, fuseau) : null;
+  const date = e.debutLe ? tampon(e.debutLe, fuseau, langue) : null;
   const maintenant = new Date();
   const types: TypePanier[] = e.typesBillet.map((tb) => ({
     id: tb.id, nom: tb.nom, description: tb.description, prixCdf: tb.prixCdf, restant: tb.restant, limiteParCommande: tb.limiteParCommande,
     etat: tb.venteDebutLe && tb.venteDebutLe > maintenant ? 'pasEncore' : tb.venteFinLe && tb.venteFinLe < maintenant ? 'termine' : 'ouvert',
-    ouvertureTexte: tb.venteDebutLe ? t('evenement.pasEncore', { date: dateLongue(tb.venteDebutLe, fuseau) }) : undefined,
+    ouvertureTexte: tb.venteDebutLe ? t('evenement.pasEncore', { date: dateLongue(tb.venteDebutLe, fuseau, langue) }) : undefined,
   }));
   const complet = e.statut === 'COMPLET' || (types.length > 0 && types.every((x) => x.restant === 0));
   const itineraire = e.lieu?.latitude && e.lieu.longitude
@@ -46,8 +49,8 @@ export async function VueEvenement({ e, apercu = false }: { e: EvenementDetail; 
               {date ? <span className="tampon" aria-hidden="true"><b>{date.jour}</b><span>{date.mois.toUpperCase()}</span></span> : null}
             </div>
             <div className="corps">
-              <span style={{ fontWeight: 700 }}>{[e.categorie?.nom.replace(/s$/, ''), e.genre].filter(Boolean).join(' · ')}</span>
-              <h1 className="affiche">{e.titre}</h1>
+              <span style={{ fontWeight: 700 }}>{[nomCategorie(t, e.categorie), e.genre].filter(Boolean).join(' · ')}</span>
+              <h1 className="affiche">{texteEvenement(e, 'titre', langue)}</h1>
               {e.sousTitre ? <p style={{ fontSize: 'var(--t-chapo)', fontWeight: 700 }}>{e.sousTitre}</p> : null}
             </div>
           </article>
@@ -55,13 +58,13 @@ export async function VueEvenement({ e, apercu = false }: { e: EvenementDetail; 
           <section className="panneau pile" style={ecart(20)} aria-label={t('evenement.infosAria')}>
             <div className="infos">
               {e.debutLe ? (
-                <div className="info"><span className="pic"><Icone nom="cal" taille={22} /></span><div><b style={{ fontSize: 'var(--t-texte)' }}>{dateCourte(e.debutLe, fuseau)}</b>{e.ouverturePortesLe ? <div className="doux">{t('evenement.portes', { heure: heure(e.ouverturePortesLe, fuseau) })}</div> : null}</div></div>
+                <div className="info"><span className="pic"><Icone nom="cal" taille={22} /></span><div><b style={{ fontSize: 'var(--t-texte)' }}>{dateCourte(e.debutLe, fuseau, langue)}</b>{e.ouverturePortesLe ? <div className="doux">{t('evenement.portes', { heure: heure(e.ouverturePortesLe, fuseau) })}</div> : null}</div></div>
               ) : null}
               {e.lieu ? (
                 <div className="info"><span className="pic"><Icone nom="pin" taille={22} /></span><div><b style={{ fontSize: 'var(--t-texte)' }}>{e.lieu.nom}</b><div className="doux">{[e.lieu.adresse, e.ville?.nom].filter(Boolean).join(', ')}</div></div></div>
               ) : null}
             </div>
-            {e.description ? <p style={{ whiteSpace: 'pre-line' }}>{e.description}</p> : null}
+            {e.description ? <p style={{ whiteSpace: 'pre-line' }}>{texteEvenement(e, 'description', langue)}</p> : null}
             {itineraire ? (
               <div className="rangee entre envelopper"><span /><a href={itineraire} className="lien-bouton" target="_blank" rel="noopener noreferrer">{t('evenement.itineraire')}</a></div>
             ) : null}
@@ -95,7 +98,7 @@ export async function VueEvenement({ e, apercu = false }: { e: EvenementDetail; 
               <li>{t('evenement.regle2')}</li>
               <li>{t('evenement.regle3')}</li>
             </ul>
-            {e.infosPratiques ? <p style={{ whiteSpace: 'pre-line' }}>{e.infosPratiques}</p> : null}
+            {e.infosPratiques ? <p style={{ whiteSpace: 'pre-line' }}>{texteEvenement(e, 'infosPratiques', langue)}</p> : null}
           </section>
         </div>
 
@@ -121,6 +124,7 @@ export async function VueEvenement({ e, apercu = false }: { e: EvenementDetail; 
             types={types}
             max={max}
             taux={taux?.cdfParUsd ?? null}
+            langue={langue}
             textes={{
               vosBillets: t('evenement.vosBillets'), maxParPersonne: t.raw('evenement.maxParPersonne') as string, epuise: t('evenement.epuise'),
               plusQue: t.raw('evenement.plusQue') as string, disponible: t('evenement.disponible'), venteTerminee: t('evenement.venteTerminee'),

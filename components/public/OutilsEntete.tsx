@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState, useSyncExternalStore } from 'react';
 import { Icone } from '@/components/ui/Icone';
-import { COOKIE_LANGUE, LANGUES, NOMS_LANGUES, type Langue } from '@/i18n/config';
+import { COOKIE_LANGUE, LANGUES, NOMS_COMPLETS, NOMS_LANGUES, type Langue } from '@/i18n/config';
 
 function ecrireCookie(nom: string, valeur: string) {
   document.cookie = `${nom}=${valeur}; path=/; max-age=31536000; samesite=lax`;
@@ -20,7 +20,7 @@ export function ChoixLangue({ langue, label }: { langue: Langue; label: string }
         defaultValue={langue}
         onChange={(e) => { ecrireCookie(COOKIE_LANGUE, e.target.value); router.refresh(); }}
       >
-        {LANGUES.map((l) => <option key={l} value={l}>{NOMS_LANGUES[l]}</option>)}
+        {LANGUES.map((l) => <option key={l} value={l} aria-label={NOMS_COMPLETS[l]} lang={l}>{NOMS_LANGUES[l]}</option>)}
       </select>
     </>
   );

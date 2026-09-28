@@ -6,7 +6,9 @@ import { textesConnexion } from '@/components/achat/textes';
 import { sessionCourante } from '@/lib/auth/session';
 import { ecart } from '@/lib/style';
 
-export const metadata: Metadata = { title: 'Connexion' };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getTranslations('pages'))('connexion') };
+}
 
 export default async function Connexion({ searchParams }: { searchParams: Promise<{ suite?: string }> }) {
   const { suite: brute } = await searchParams;

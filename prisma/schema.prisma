@@ -201,6 +201,10 @@ model Event {
   sousTitre         String? // ligne d'artistes ou d'équipes sous le titre
   genre             String? // précision affichée après la catégorie : « Rumba », « Match amical »…
   description       String?
+  // Versions anglaises facultatives, saisies par l'administrateur. Vides : le site affiche le français.
+  titreEn           String?
+  descriptionEn     String?
+  infosPratiquesEn  String?
   statut            StatutEvenement     @default(BROUILLON)
   categorieId       String?
   categorie         Category?           @relation(fields: [categorieId], references: [id])
@@ -289,6 +293,7 @@ model Order {
   commissionCdf      Int
   netOrganisateurCdf Int
   tauxUsdId          String?
+  langue             String               @default("fr") // langue de l'acheteur : SMS et PDF
   reserveJusquau     DateTime
   stockLibere        Boolean              @default(false)
   payeeLe            DateTime?
@@ -484,6 +489,7 @@ model WaitlistEntry {
   typeBilletId   String?
   typeBillet     TicketType? @relation(fields: [typeBilletId], references: [id])
   telephone      String
+  langue         String      @default("fr") // langue des SMS envoyés
   consentementLe DateTime
   prevenuLe      DateTime?
   creeLe         DateTime    @default(now())
@@ -494,6 +500,7 @@ model WaitlistEntry {
 model SmsAlertSubscription {
   id                String    @id @default(cuid())
   telephone         String
+  langue            String    @default("fr") // langue des SMS envoyés
   villeId           String?
   ville             City?     @relation(fields: [villeId], references: [id])
   consentementLe    DateTime

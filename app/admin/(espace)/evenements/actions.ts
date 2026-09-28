@@ -49,6 +49,8 @@ const schemaInfos = z.object({
   categorieId: z.string().min(1, 'Choisissez une catégorie'),
   organisateurId: optionnel(40),
   description: optionnel(5000),
+  titreEn: optionnel(140),
+  descriptionEn: optionnel(5000),
 });
 
 export async function enregistrerInfos(id: string, _e: EtatAction, formData: FormData): Promise<EtatAction> {
@@ -184,6 +186,7 @@ export async function enregistrerPratique(id: string, _e: EtatAction, formData: 
   const s = await exigerRole(ROLES_EDITION);
   const r = z.object({
     infosPratiques: optionnel(3000),
+    infosPratiquesEn: optionnel(3000),
     limiteParPersonne: z.string().optional().transform((v) => (v ? Number(v) : null)).refine((v) => v === null || (Number.isInteger(v) && v >= 1 && v <= 20), 'Entre 1 et 20'),
   }).safeParse(Object.fromEntries(formData));
   if (!r.success) return { ok: false, erreurs: erreursZod(r.error) };

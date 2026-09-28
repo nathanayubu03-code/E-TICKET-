@@ -51,7 +51,9 @@
 
 ## Langues, heures
 
-- Français complet dans `messages/fr.json`. `ln.json` et `sw.json` ne contiennent que des clés relues ; le reste retombe sur le français. Aucune traduction automatique.
+- Langues : français (par défaut), anglais, lingala, swahili. Français et anglais complets (`messages/fr.json`, `messages/en.json`) : toute nouvelle clé s'ajoute dans les deux, `tests/unit/traductions.test.ts` échoue sinon. `ln.json` et `sw.json` ne contiennent que des clés relues ; le reste retombe sur le français. Aucune traduction automatique.
+- Contenu saisi par l'administrateur : champs anglais facultatifs (`titreEn`, `descriptionEn`, `infosPratiquesEn`), lus avec `texteEvenement()` de `lib/langue.ts` (repli sur le français). Dates et nombres : passer la langue aux fonctions de `lib/fuseaux.ts` et `lib/argent.ts`. SMS et PDF : langue enregistrée sur la commande ou l'abonnement.
+- Après une modification de `messages/en.json` : `node outils/doc-traductions.mjs` régénère `docs/traductions/en.md`.
 - Dates stockées en UTC, affichées dans le fuseau de la ville (Kinshasa UTC+1, Lubumbashi, Goma, Kisangani UTC+2).
 
 ## Commandes

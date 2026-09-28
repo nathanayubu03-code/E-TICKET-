@@ -1,6 +1,7 @@
 import { cdf } from '@/lib/argent';
 import { db } from '@/lib/db';
 import { dateCourte } from '@/lib/fuseaux';
+import { texteEvenement } from '@/lib/langue';
 import { contenuQR, dessinQR, type QRDessin } from './qr';
 
 /** Billet tel qu'il est enregistré sur le téléphone (IndexedDB) : tout ce qu'il faut pour l'afficher sans réseau. */
@@ -16,7 +17,8 @@ export interface BilletHorsLigne {
   heureServeur: number; // pour calculer le décalage d'horloge au moment de l'enregistrement
 }
 
-export async function billetsHorsLigne(ids: string[]): Promise<BilletHorsLigne[]> {
+/** `langue` : langue de la page qui enregistre les billets (titre anglais, format des dates et des montants). */
+export async function billetsHorsLigne(ids: string[], langue?: string): Promise<BilletHorsLigne[]> {
   if (ids.length === 0) return [];
   const billets = await db.ticket.findMany({ where: { id: { in: ids } }, include: { typeBillet: { select: { nom: true } }, evenement: { include: { lieu: true, ville: true } } }, orderBy: { emisLe: 'asc' } });
   const maintenant = Date.now();
@@ -24,8 +26,8 @@ export async function billetsHorsLigne(ids: string[]): Promise<BilletHorsLigne[]
     const e = b.evenement;
     const fuseau = e.ville?.fuseau ?? e.fuseau ?? undefined;
     return {
-      publicId: b.publicId, categorie: b.typeBillet.nom, titulaire: b.titulaire, entree: b.entree, prix: cdf(b.prixPayeCdf), statut: b.statut,
-      evenement: { id: e.id, titre: e.titre, sousTitre: e.sousTitre, quand: e.debutLe ? dateCourte(e.debutLe, fuseau) : '', lieu: [e.lieu?.nom, e.ville?.nom].filter(Boolean).join(', '), selAffichage: e.selAffichage, debutLe: e.debutLe?.toISOString() ?? null },
+      publicId: b.publicId, categorie: b.typeBillet.nom, titulaire: b.titulaire, entree: b.entree, prix: cdf(b.prixPayeCdf, undefined, langue), statut: b.statut,
+      evenement: { id: e.id, titre: texteEvenement(e, 'titre', langue), sousTitre: e.sousTitre, quand: e.debutLe ? dateCourte(e.debutLe, fuseau, langue) : '', lieu: [e.lieu?.nom, e.ville?.nom].filter(Boolean).join(', '), selAffichage: e.selAffichage, debutLe: e.debutLe?.toISOString() ?? null },
       qr: dessinQR(contenuQR(e.code, b.code)),
       heureServeur: maintenant,
     };

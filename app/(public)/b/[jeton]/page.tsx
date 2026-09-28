@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { BilletVivant } from '@/components/billet/BilletVivant';
 import { EnregistrerBillets } from '@/components/billet/EnregistrerBillets';
 import { textesBillet } from '@/components/billet/textes';
@@ -11,9 +11,12 @@ import { billetsHorsLigne } from '@/lib/billets/hors-ligne';
 import { contenuQR, dessinQR } from '@/lib/billets/qr';
 import { db } from '@/lib/db';
 import { dateCourte } from '@/lib/fuseaux';
+import { texteEvenement } from '@/lib/langue';
 import { ecart } from '@/lib/style';
 
-export const metadata: Metadata = { title: 'Billet', robots: { index: false, follow: false } };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getTranslations('pages'))('billet'), robots: { index: false, follow: false } };
+}
 export const dynamic = 'force-dynamic';
 
 // Billet ouvert depuis le lien reçu par SMS : le code aléatoire de 128 bits vaut billet.
@@ -23,16 +26,17 @@ export default async function BilletParLien({ params }: { params: Promise<{ jeto
   const b = await db.ticket.findUnique({ where: { code: jeton }, include: { typeBillet: true, evenement: { include: { lieu: true, ville: true } } } });
   if (!b) notFound();
   const t = await getTranslations();
+  const langue = await getLocale();
   const e = b.evenement;
   return (
     <main className="conteneur">
       <div className="pile" style={ecart(14, { maxWidth: 420, marginInline: 'auto' })}>
-        {b.statut === 'VALIDE' ? <EnregistrerBillets billets={await billetsHorsLigne([b.id])} /> : null}
+        {b.statut === 'VALIDE' ? <EnregistrerBillets billets={await billetsHorsLigne([b.id], langue)} /> : null}
         <BilletVivant
-          billet={{ publicId: b.publicId, categorie: b.typeBillet.nom, titulaire: b.titulaire, entree: b.entree, prix: cdf(b.prixPayeCdf, t('commun.gratuit')) }}
-          evenement={{ titre: e.titre, sousTitre: e.sousTitre, quand: e.debutLe ? dateCourte(e.debutLe, e.ville?.fuseau ?? undefined) : '', lieu: [e.lieu?.nom, e.ville?.nom].filter(Boolean).join(', '), selAffichage: e.selAffichage }}
+          billet={{ publicId: b.publicId, categorie: b.typeBillet.nom, titulaire: b.titulaire, entree: b.entree, prix: cdf(b.prixPayeCdf, t('commun.gratuit'), langue) }}
+          evenement={{ titre: texteEvenement(e, 'titre', langue), sousTitre: e.sousTitre, quand: e.debutLe ? dateCourte(e.debutLe, e.ville?.fuseau ?? undefined, langue) : '', lieu: [e.lieu?.nom, e.ville?.nom].filter(Boolean).join(', '), selAffichage: e.selAffichage }}
           qr={b.statut === 'ANNULE' ? null : dessinQR(contenuQR(e.code, b.code))}
-          textes={await textesBillet({ titre: e.titre, categorie: b.typeBillet.nom, publicId: b.publicId })}
+          textes={await textesBillet({ titre: texteEvenement(e, 'titre', langue), categorie: b.typeBillet.nom, publicId: b.publicId })}
           horsLigne={b.statut === 'VALIDE'}
           etat={b.statut === 'ANNULE' ? t('billet.annule') : b.statut === 'UTILISE' ? t('billet.utilise') : undefined}
         />

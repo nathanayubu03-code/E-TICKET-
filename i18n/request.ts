@@ -3,7 +3,7 @@ import { getRequestConfig } from 'next-intl/server';
 import { COOKIE_LANGUE, LANGUE_PAR_DEFAUT, estLangue } from './config';
 import { fusionner } from './fusion';
 
-// Le français est complet. Le lingala et le swahili ne contiennent que des clés relues ;
+// Le français et l'anglais sont complets (test tests/unit/traductions.test.ts). Le lingala et le swahili ne contiennent que des clés relues ;
 // toute clé absente retombe sur le français. Aucune traduction automatique.
 export default getRequestConfig(async () => {
   const valeur = (await cookies()).get(COOKIE_LANGUE)?.value;

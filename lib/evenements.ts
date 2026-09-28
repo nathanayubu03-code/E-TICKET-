@@ -9,8 +9,8 @@ export function filtrePublic(maintenant = new Date()): Prisma.EventWhereInput {
 }
 
 const selectionListe = {
-  id: true, code: true, slug: true, titre: true, sousTitre: true, genre: true, statut: true,
-  debutLe: true, ouverturePortesLe: true, fuseau: true, afficheVariantes: true, description: true,
+  id: true, code: true, slug: true, titre: true, titreEn: true, sousTitre: true, genre: true, statut: true,
+  debutLe: true, ouverturePortesLe: true, fuseau: true, afficheVariantes: true, description: true, descriptionEn: true,
   categorie: { select: { slug: true, nom: true, icone: true, fond: true, texte: true } },
   ville: { select: { nom: true, slug: true, fuseau: true } },
   lieu: { select: { nom: true } },
@@ -37,6 +37,7 @@ export async function evenementsPublics(filtres: Filtres = {}): Promise<Evenemen
     ...(filtres.cat ? { categorie: { slug: filtres.cat } } : {}),
     ...(q ? { OR: [
       { titre: { contains: q, mode: 'insensitive' } },
+      { titreEn: { contains: q, mode: 'insensitive' } },
       { sousTitre: { contains: q, mode: 'insensitive' } },
       { lieu: { nom: { contains: q, mode: 'insensitive' } } },
       { ville: { nom: { contains: q, mode: 'insensitive' } } },

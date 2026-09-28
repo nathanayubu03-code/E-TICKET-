@@ -4,7 +4,9 @@ import { getTranslations } from 'next-intl/server';
 import { Icone } from '@/components/ui/Icone';
 import { ecart } from '@/lib/style';
 
-export const metadata: Metadata = { title: 'Pas de connexion', robots: { index: false } };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getTranslations('pages'))('horsLigne'), robots: { index: false } };
+}
 
 // Page affichée par le service worker quand une page n'est pas en cache et que le réseau manque.
 export default async function HorsLigne() {

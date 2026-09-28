@@ -4,7 +4,9 @@ import { EtapesMobileMoney } from '@/components/public/EtapesMobileMoney';
 import { parametre } from '@/lib/parametres';
 import { ecart } from '@/lib/style';
 
-export const metadata: Metadata = { title: 'Aide' };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getTranslations('pages'))('aide') };
+}
 
 export default async function PageAide() {
   const t = await getTranslations('aide');

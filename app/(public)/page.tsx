@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { ApercuBillet } from '@/components/public/ApercuBillet';
+import { nomCategorie } from '@/lib/categorie';
 import { BandeOrganisateurs } from '@/components/public/BandeOrganisateurs';
 import { BlocUne } from '@/components/public/BlocUne';
 import { CarteEvenement } from '@/components/public/CarteEvenement';
@@ -106,7 +107,7 @@ export default async function Accueil({ searchParams }: { searchParams: Params }
                 <div className="categories" role="group" aria-label={t('accueil.categorie')}>
                   {categories.map((c) => (
                     <Link key={c.slug} className="categorie" href={lien(filtres, { cat: filtres.cat === c.slug ? null : c.slug })} aria-current={filtres.cat === c.slug ? 'true' : undefined}>
-                      <span className="pic" style={{ background: c.fond, color: c.texte }}><Icone nom={c.icone as 'music'} taille={24} /></span>{c.nom}
+                      <span className="pic" style={{ background: c.fond, color: c.texte }}><Icone nom={c.icone as 'music'} taille={24} /></span>{nomCategorie(t, c, true)}
                     </Link>
                   ))}
                 </div>

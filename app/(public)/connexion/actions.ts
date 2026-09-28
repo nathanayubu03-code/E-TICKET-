@@ -1,7 +1,7 @@
 'use server';
 
 import { headers } from 'next/headers';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { auditer } from '@/lib/audit';
 import { envoyerOtp, verifierOtp } from '@/lib/auth/otp';
 import { fermerSession, ouvrirSession } from '@/lib/auth/session';
@@ -16,7 +16,7 @@ export async function demanderCode(saisie: string, piege = ''): Promise<ReponseC
   if (piege) return { ok: true, renvoiDans: 45 };
   const telephone = normaliserTelephone(saisie);
   if (!telephone) return { ok: false, message: t('telephone.invalide') };
-  const r = await envoyerOtp(telephone, 'CONNEXION', await ipClient());
+  const r = await envoyerOtp(telephone, 'CONNEXION', await ipClient(), await getLocale());
   if (r.ok) return r;
   if (r.raison === 'trop_tot') return { ok: true, renvoiDans: r.renvoiDans ?? 45 };
   return { ok: false, message: r.raison === 'sms_indisponible' ? t('commun.erreurInconnue') : t('commun.tropDeDemandes') };

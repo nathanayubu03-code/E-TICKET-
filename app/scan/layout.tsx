@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from 'next';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata: Metadata = { title: 'Scanner', robots: { index: false }, manifest: '/manifeste-scanner.webmanifest' };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getTranslations('pages'))('scanner'), robots: { index: false }, manifest: '/manifeste-scanner.webmanifest' };
+}
 export const viewport: Viewport = { themeColor: '#14120E' };
 
 export default function LayoutScan({ children }: { children: React.ReactNode }) {

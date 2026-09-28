@@ -35,7 +35,9 @@ Classé par ordre de blocage : chaque point du haut empêche d'ouvrir la vente.
 - Lighthouse sur le domaine réel depuis Kinshasa ou une connexion équivalente (les mesures de `PLAN.md` sont faites en local).
 - Test d'intrusion externe, sauvegarde et restauration de la base testées, rotation des secrets documentée (`docs/securite.md`).
 
-## 6. Traductions lingala et swahili
+## 6. Traductions
+
+- Anglais : complet, à faire relire par un anglophone (`docs/traductions/en.md`, plus les SMS de `lib/sms/gabarits.ts`).
 
 - `messages/ln.json` et `messages/sw.json` ne contiennent que les libellés déjà proposés par la maquette ; tout le reste s'affiche en français.
 - Faire traduire puis relire par des locuteurs natifs (Kinshasa pour le lingala ; Lubumbashi et Goma pour le swahili, qui diffère du swahili standard), en ajoutant les clés dans ces fichiers. Aucune traduction automatique.

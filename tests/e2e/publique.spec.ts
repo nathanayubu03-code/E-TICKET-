@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { creerEvenement, viderEvenements } from './aide';
+import { db } from '../../lib/db';
 
 const INTERDITS = ['Nuit de la Rumba', 'Kin Malebo', 'Kin Productions', 'Mama Kasa', 'lorem', 'EVT-RUMBA', 'Grâce Mbuyi', '2 850', '2850'];
 
@@ -119,4 +120,28 @@ test('page /test-typo : trois options côte à côte en development', async ({ p
   await page.goto('/test-typo');
   for (const n of [1, 2, 3]) await expect(page.getByTestId(`option-${n}`)).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('data-typo', 'bricolage');
+});
+
+test('anglais : sélecteur FR EN LN SW, textes et dates en anglais, contenu anglais saisi ou repli sur le français', async ({ page }) => {
+  await viderEvenements();
+  const e = await creerEvenement({ titre: 'Concert du fleuve', types: [{ nom: 'Standard', prix: 25000, quota: 100 }], dansJours: 10 });
+  await db.event.update({ where: { id: e.id }, data: { titreEn: 'River concert', descriptionEn: 'An evening by the river.', description: 'Une soirée au bord du fleuve.' } });
+  await creerEvenement({ titre: 'Match sans anglais', cat: 'football', dansJours: 12 });
+  await page.goto('/');
+  const selecteur = page.getByLabel('Langue');
+  expect(await selecteur.locator('option').allTextContents()).toEqual(['FR', 'EN', 'LN', 'SW']);
+  await selecteur.selectOption('en');
+  await expect(page.getByRole('link', { name: 'Book my seat' })).toBeVisible();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.getByRole('heading', { name: 'River concert' }).first()).toBeVisible();
+  await expect(page.getByText('Match sans anglais').first()).toBeVisible(); // pas de titre anglais : français affiché
+  await expect(page.getByText('25,000 CDF').first()).toBeVisible();
+  await page.goto(`/evenements/${e.slug}`);
+  await expect(page.getByRole('heading', { name: 'River concert', level: 1 })).toBeVisible();
+  await expect(page.getByText('An evening by the river.')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Your tickets' })).toBeVisible();
+  await expect(page.getByText(/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) \d+ [A-Z][a-z]{2} · \d\d:\d\d$/).first()).toBeVisible();
+  // Retour au français.
+  await page.getByLabel('Language').selectOption('fr');
+  await expect(page.getByRole('heading', { name: 'Concert du fleuve', level: 1 })).toBeVisible();
 });

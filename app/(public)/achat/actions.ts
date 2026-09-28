@@ -1,6 +1,6 @@
 'use server';
 
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { auditer } from '@/lib/audit';
 import { sessionCourante } from '@/lib/auth/session';
 import { CommandeRefusee, creerCommande, lireLignes } from '@/lib/commandes';
@@ -30,7 +30,7 @@ export async function reserver(slug: string, lignesBrutes: string, codePromo: st
   const e = await db.event.findUnique({ where: { slug }, select: { id: true, limiteParPersonne: true } });
   if (!e) return { ok: false, message: t('commun.erreurInconnue') };
   try {
-    const c = await creerCommande({ telephone: s.user.telephone, userId: s.user.id, evenementId: e.id, lignes: lireLignes(lignesBrutes), codePromo: codePromo?.trim() || null });
+    const c = await creerCommande({ telephone: s.user.telephone, userId: s.user.id, evenementId: e.id, lignes: lireLignes(lignesBrutes), codePromo: codePromo?.trim() || null, langue: await getLocale() });
     await auditer({ acteur: s.user, action: 'commande.creer', entite: 'Order', entiteId: c.id, apres: { code: c.code, totalCdf: c.totalCdf }, ip });
     return { ok: true, code: c.code };
   } catch (err) {

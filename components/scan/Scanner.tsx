@@ -7,6 +7,8 @@ import { CELL, couchesInline, phaseA, signeDuMoment } from '@/lib/kuba';
 import type { ResultatScan } from '@/lib/db';
 import type { ScanHorsLigne } from '@/lib/scan';
 import { ajouterEnAttente, ecrireManifeste, idScan, lireEnAttente, lireManifeste, retirerEnAttente, sha256Hex, type ManifesteLocal } from '@/lib/scan-client';
+import { localeFormat } from '@/i18n/config';
+import { formaterNombre } from '@/lib/argent';
 import { Camera } from './Camera';
 
 export type TextesScanner = Record<'titre' | 'telechargement' | 'listeRequise' | 'enLigne' | 'horsLigne' | 'entrees' | 'signe' | 'placer' | 'verifierSigne' | 'lampe' | 'saisir' | 'saisirLabel' | 'valider' | 'motifAttendu' | 'motifTexte' | 'suivant' | 'valide' | 'refuse' | 'deja' | 'dejaTexte' | 'inconnu' | 'inconnuTexte' | 'refuseTexte' | 'camera' | 'porte' | 'reessayer', string>;
@@ -15,9 +17,9 @@ interface Resultat { type: ResultatScan; publicId?: string; categorie?: string; 
 
 const SYNCHRO_MS = 60_000;
 const remplir = (m: string, v: Record<string, string | number>) => m.replace(/\{(\w+)\}/g, (_, k: string) => String(v[k] ?? ''));
-const heureCourte = (iso: string) => new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+const heureCourte = (iso: string, langue?: string) => new Date(iso).toLocaleTimeString(localeFormat(langue), { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
 
-export function Scanner({ evenementId, porte, textes }: { evenementId: string; porte: string | null; textes: TextesScanner }) {
+export function Scanner({ evenementId, porte, textes, langue }: { evenementId: string; porte: string | null; textes: TextesScanner; langue?: string }) {
   const [m, setM] = useState<ManifesteLocal | null>(null);
   const [etatChargement, setEtatChargement] = useState<'chargement' | 'pret' | 'impossible'>('chargement');
   const [enLigne, setEnLigne] = useState(true);
@@ -174,7 +176,7 @@ export function Scanner({ evenementId, porte, textes }: { evenementId: string; p
           </span>
         </div>
         <div className="rangee entre">
-          <div><b className="affiche" style={{ fontSize: 'var(--t-scan-compteur)' }}>{entrees.toLocaleString('fr-FR').replace(/[  ]/g, ' ')}</b> <span style={{ color: '#B9AE98' }}>{remplir(textes.entrees, { total: m.evenement.quota.toLocaleString('fr-FR').replace(/[  ]/g, ' ') })}</span></div>
+          <div><b className="affiche" style={{ fontSize: 'var(--t-scan-compteur)' }}>{formaterNombre(entrees, langue)}</b> <span style={{ color: '#B9AE98' }}>{remplir(textes.entrees, { total: formaterNombre(m.evenement.quota, langue) })}</span></div>
           <div className="rangee" style={{ gap: 8, padding: '6px 10px', borderRadius: 12, background: '#2E2A21' }} aria-label={`${textes.signe} : ${signe.nom}`}>
             <span style={{ fontSize: 'var(--t-mini)', color: '#B9AE98' }}>{textes.signe}</span>
             <i style={{ width: 20, height: 20, display: 'inline-block', background: signe.couleur, border: '2px solid #FBF5E6', transform: signe.forme === 'losange' ? 'rotate(45deg)' : undefined }} />
@@ -218,7 +220,7 @@ export function Scanner({ evenementId, porte, textes }: { evenementId: string; p
               ) : null}
             </>
           ) : resultat.type === 'DEJA_SCANNE' ? (
-            <p style={{ fontSize: 'var(--t-scan-texte)', fontWeight: 700 }}>{resultat.premier ? remplir(textes.dejaTexte, { heure: heureCourte(resultat.premier), porte: resultat.porte ? `${textes.porte} ${resultat.porte}` : '' }).replace(/, \.$/, '.') : resultat.publicId}</p>
+            <p style={{ fontSize: 'var(--t-scan-texte)', fontWeight: 700 }}>{resultat.premier ? remplir(textes.dejaTexte, { heure: heureCourte(resultat.premier, langue), porte: resultat.porte ? `${textes.porte} ${resultat.porte}` : '' }).replace(/, \.$/, '.') : resultat.publicId}</p>
           ) : resultat.type === 'INCONNU' ? (
             <p style={{ fontSize: 'var(--t-scan-texte)', fontWeight: 700 }}>{textes.inconnuTexte}</p>
           ) : (

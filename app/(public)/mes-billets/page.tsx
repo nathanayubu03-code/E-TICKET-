@@ -1,25 +1,29 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { MesBillets } from '@/components/billet/MesBillets';
 import { sessionCourante } from '@/lib/auth/session';
 import { billetsDeLAcheteur } from '@/lib/billets/mes-billets';
 import { dateLongue } from '@/lib/fuseaux';
+import { texteEvenement } from '@/lib/langue';
 import { deconnecter } from '../connexion/actions';
 
-export const metadata: Metadata = { title: 'Mes billets', robots: { index: false } };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getTranslations('pages'))('mesBillets'), robots: { index: false } };
+}
 export const dynamic = 'force-dynamic';
 
 export default async function PageMesBillets() {
   const t = await getTranslations();
+  const langue = await getLocale();
   const s = await sessionCourante();
   let serveur = null;
   const passes: { titre: string; info: string }[] = [];
   if (s) {
-    const r = await billetsDeLAcheteur(s);
+    const r = await billetsDeLAcheteur(s, new Date(), langue);
     serveur = r.aVenir;
     for (const b of r.passes) {
       const fuseau = b.evenement.fuseau ?? undefined;
-      passes.push({ titre: b.evenement.titre, info: b.premierScanLe ? t('mesBillets.utiliseLe', { date: dateLongue(b.premierScanLe, fuseau) }) : t('mesBillets.nonUtilise', { date: b.evenement.debutLe ? dateLongue(b.evenement.debutLe, fuseau).split(' à ')[0]! : '' }) });
+      passes.push({ titre: texteEvenement(b.evenement, 'titre', langue), info: b.premierScanLe ? t('mesBillets.utiliseLe', { date: dateLongue(b.premierScanLe, fuseau, langue) }) : t('mesBillets.nonUtilise', { date: b.evenement.debutLe ? dateLongue(b.evenement.debutLe, fuseau, langue).split(/ (?:à|at) /)[0]! : '' }) });
     }
   }
   const tb = await getTranslations('billet');

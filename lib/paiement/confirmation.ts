@@ -3,6 +3,7 @@ import { genererBillets } from '@/lib/billets/generation';
 import { reprendreStock } from '@/lib/commandes';
 import { db, type ModePaiement, type Prisma } from '@/lib/db';
 import { envoyerSms } from '@/lib/sms';
+import { texteEvenement } from '@/lib/langue';
 import { smsBillets, smsPayeeSansPlace } from '@/lib/sms/gabarits';
 import type { StatutNormalise } from './fournisseur';
 
@@ -33,8 +34,9 @@ export async function payerCommande(commandeId: string, mode: ModePaiement, marq
   });
   // SMS après la transaction : un SMS en échec ne défait pas un paiement.
   if (issue === 'payee' || issue === 'payee_sans_place') {
-    const c = await db.order.findUniqueOrThrow({ where: { id: commandeId }, include: { evenement: { select: { titre: true } }, billets: { select: { code: true } } } });
-    await envoyerSms(c.telephone, issue === 'payee' ? 'billets' : 'payee_sans_place', issue === 'payee' ? smsBillets(c.evenement.titre, c.billets.map((b) => b.code)) : smsPayeeSansPlace(c.evenement.titre, c.code));
+    const c = await db.order.findUniqueOrThrow({ where: { id: commandeId }, include: { evenement: { select: { titre: true, titreEn: true } }, billets: { select: { code: true } } } });
+    const titre = texteEvenement(c.evenement, 'titre', c.langue);
+    await envoyerSms(c.telephone, issue === 'payee' ? 'billets' : 'payee_sans_place', issue === 'payee' ? smsBillets(titre, c.billets.map((b) => b.code), c.langue) : smsPayeeSansPlace(titre, c.code, c.langue));
     await auditer({ action: issue === 'payee' ? 'commande.payee' : 'commande.payee_sans_place', entite: 'Order', entiteId: commandeId, apres: { mode, billets: c.billets.length } });
   }
   return issue;

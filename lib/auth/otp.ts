@@ -2,6 +2,7 @@ import { createHmac, randomInt, timingSafeEqual } from 'node:crypto';
 import { db, type ObjetOtp } from '@/lib/db';
 import { env, estStaging } from '@/lib/env';
 import { limiter } from '@/lib/limites';
+import { smsCodeOtp } from '@/lib/sms/gabarits';
 import { envoyerSms } from '@/lib/sms';
 
 export const OTP_DUREE_MS = 5 * 60_000;
@@ -14,7 +15,7 @@ const hacher = (telephone: string, code: string) => createHmac('sha256', env().S
 export type ResultatEnvoiOtp = { ok: true; renvoiDans: number; codeTest?: string } | { ok: false; raison: 'trop_tot' | 'trop_de_demandes' | 'sms_indisponible'; renvoiDans?: number };
 
 /** Envoie un code à 6 chiffres. Renvoi possible après 45 s, 5 codes par heure et par numéro. */
-export async function envoyerOtp(telephone: string, objet: ObjetOtp, ip: string): Promise<ResultatEnvoiOtp> {
+export async function envoyerOtp(telephone: string, objet: ObjetOtp, ip: string, langue?: string): Promise<ResultatEnvoiOtp> {
   const dernier = await db.otpCode.findFirst({ where: { telephone, objet }, orderBy: { creeLe: 'desc' } });
   if (dernier) {
     const ecoule = (Date.now() - dernier.creeLe.getTime()) / 1000;
@@ -26,7 +27,7 @@ export async function envoyerOtp(telephone: string, objet: ObjetOtp, ip: string)
   const code = String(randomInt(0, 1_000_000)).padStart(6, '0');
   await db.otpCode.updateMany({ where: { telephone, objet, utiliseLe: null }, data: { utiliseLe: new Date() } });
   await db.otpCode.create({ data: { telephone, objet, codeHash: hacher(telephone, code), expireLe: new Date(Date.now() + OTP_DUREE_MS) } });
-  const envoye = await envoyerSms(telephone, 'otp', `e-Ticket RDC : votre code est ${code}. Il expire dans 5 minutes. Ne le donnez à personne.`, { masquer: true });
+  const envoye = await envoyerSms(telephone, 'otp', smsCodeOtp(code, langue), { masquer: true });
   if (!envoye) return { ok: false, raison: 'sms_indisponible' };
   return { ok: true, renvoiDans: OTP_RENVOI_S, ...(estStaging() ? { codeTest: code } : {}) };
 }

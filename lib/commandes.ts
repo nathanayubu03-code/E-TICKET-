@@ -1,6 +1,7 @@
 import { commission } from './argent';
 import { codeCommande, genererBillets } from './billets/generation';
 import { db, type Prisma } from './db';
+import { langueSure } from './langue';
 import { parametre, tauxCourant } from './parametres';
 
 export const RESERVATION_MS = 10 * 60_000;
@@ -56,7 +57,7 @@ async function remisePromo(tx: Prisma.TransactionClient, code: string, evenement
  * jamais par lecture puis écriture. Les commandes d'un même numéro pour un même événement
  * sont sérialisées par un verrou consultatif, pour que la limite par personne tienne.
  */
-export async function creerCommande(p: { telephone: string; userId: string | null; evenementId: string; lignes: Ligne[]; codePromo?: string | null }) {
+export async function creerCommande(p: { telephone: string; userId: string | null; evenementId: string; lignes: Ligne[]; codePromo?: string | null; langue?: string }) {
   if (p.lignes.length === 0) throw new CommandeRefusee({ code: 'ligne_invalide' });
   const maintenant = new Date();
   const [limiteGlobale, commissionGlobale, taux] = await Promise.all([parametre('limite_billets'), parametre('commission_bps'), tauxCourant()]);
@@ -103,7 +104,7 @@ export async function creerCommande(p: { telephone: string; userId: string | nul
 
     const commande = await tx.order.create({
       data: {
-        code, telephone: p.telephone, userId: p.userId, evenementId: e.id,
+        code, telephone: p.telephone, userId: p.userId, evenementId: e.id, langue: langueSure(p.langue),
         sousTotalCdf: sousTotal, remiseCdf: remise, totalCdf: total, commissionBps: bps, commissionCdf: com, netOrganisateurCdf: total - com,
         tauxUsdId: taux?.id ?? null, reserveJusquau: new Date(maintenant.getTime() + RESERVATION_MS),
         lignes: { create: lignes },

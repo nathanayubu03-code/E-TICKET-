@@ -12,6 +12,23 @@ function fichiers(d: string): string[] {
 }
 
 describe('traductions', () => {
+  it("l'anglais est complet : chaque clé française existe en anglais, non vide, sans clé en trop", () => {
+    const en = JSON.parse(readFileSync('messages/en.json', 'utf8')) as Arbre;
+    const valeurs = new Map<string, string>();
+    const parcourir = (a: Arbre, p = '') => { for (const [k, v] of Object.entries(a)) { if (typeof v === 'string') valeurs.set(p + k, v); else parcourir(v, `${p}${k}.`); } };
+    parcourir(en);
+    const manquantes = [...clesFr].filter((k) => !valeurs.get(k)?.trim());
+    const enTrop = [...valeurs.keys()].filter((k) => !clesFr.has(k));
+    expect(manquantes, 'clés françaises absentes ou vides en anglais').toEqual([]);
+    expect(enTrop, 'clés anglaises inconnues en français').toEqual([]);
+    // Les variables {x} et les balises <b> doivent être les mêmes dans les deux langues.
+    const frVal = new Map<string, string>();
+    const parcourirFr = (a: Arbre, p = '') => { for (const [k, v] of Object.entries(a)) { if (typeof v === 'string') frVal.set(p + k, v); else parcourirFr(v, `${p}${k}.`); } };
+    parcourirFr(fr);
+    const jetons = (s: string) => [...s.matchAll(/\{(\w+)[,}]|<(\w+)>/g)].map((m) => m[1] ?? `<${m[2]}>`).sort().join(' ');
+    for (const [k, v] of frVal) expect(jetons(valeurs.get(k) ?? ''), `variables de ${k}`).toBe(jetons(v));
+  });
+
   it('le lingala et le swahili ne contiennent que des clés du français, sans traduction vide', () => {
     for (const l of ['ln', 'sw']) {
       const a = JSON.parse(readFileSync(`messages/${l}.json`, 'utf8')) as Arbre;

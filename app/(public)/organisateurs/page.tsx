@@ -4,7 +4,9 @@ import { env } from '@/lib/env';
 import { formaterTelephone, normaliserTelephone } from '@/lib/telephone';
 import { ecart } from '@/lib/style';
 
-export const metadata: Metadata = { title: 'Organisateurs' };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getTranslations('pages'))('organisateurs') };
+}
 
 export default async function PageOrganisateurs() {
   const t = await getTranslations('accueil');

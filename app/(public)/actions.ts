@@ -1,6 +1,7 @@
 'use server';
 
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
+import { langueSure } from '@/lib/langue';
 import { z } from 'zod';
 import { db } from '@/lib/db';
 import { exigerLimites, TropDeDemandes } from '@/lib/limites';
@@ -33,7 +34,7 @@ export async function sAbonnerAlertes(_e: EtatFormulaire, formData: FormData): P
   const ville = r.data.ville ? await db.city.findUnique({ where: { slug: r.data.ville } }) : null;
   const deja = await db.smsAlertSubscription.findFirst({ where: { telephone, villeId: ville?.id ?? null, desinscritLe: null } });
   if (!deja) {
-    await db.smsAlertSubscription.create({ data: { telephone, villeId: ville?.id ?? null, consentementLe: new Date(), texteConsentement: t('alertes.consentement') } });
+    await db.smsAlertSubscription.create({ data: { telephone, villeId: ville?.id ?? null, consentementLe: new Date(), texteConsentement: t('alertes.consentement'), langue: langueSure(await getLocale()) } });
   }
   return { ok: true, message: t('alertes.succes') };
 }
@@ -70,6 +71,6 @@ export async function rejoindreListeAttente(_e: EtatFormulaire, formData: FormDa
   }
   const evt = await db.event.findFirst({ where: { id: evenementId, statut: { in: ['PUBLIE', 'COMPLET'] } }, select: { id: true } });
   if (!evt) return { ok: false, message: t('commun.erreurInconnue') };
-  await db.waitlistEntry.upsert({ where: { evenementId_telephone: { evenementId: evt.id, telephone } }, update: {}, create: { evenementId: evt.id, telephone, consentementLe: new Date() } });
+  await db.waitlistEntry.upsert({ where: { evenementId_telephone: { evenementId: evt.id, telephone } }, update: { langue: langueSure(await getLocale()) }, create: { evenementId: evt.id, telephone, consentementLe: new Date(), langue: langueSure(await getLocale()) } });
   return { ok: true, message: t('evenement.listeAttenteOk') };
 }

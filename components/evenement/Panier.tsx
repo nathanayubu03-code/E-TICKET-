@@ -13,7 +13,7 @@ export interface TextesPanier {
 
 const remplir = (modele: string, v: Record<string, string | number>) => modele.replace(/\{(\w+)\}/g, (_, k: string) => String(v[k] ?? ''));
 
-export function Panier({ slug, types, max, taux, textes }: { slug: string; types: TypePanier[]; max: number; taux: number | null; textes: TextesPanier }) {
+export function Panier({ slug, types, max, taux, langue, textes }: { slug: string; types: TypePanier[]; max: number; taux: number | null; langue?: string; textes: TextesPanier }) {
   const [q, setQ] = useState<Record<string, number>>({});
   const total = Object.values(q).reduce((a, b) => a + b, 0);
   const montant = types.reduce((s, c) => s + (q[c.id] ?? 0) * c.prixCdf, 0);
@@ -22,7 +22,7 @@ export function Panier({ slug, types, max, taux, textes }: { slug: string; types
     return `/achat/nouveau?e=${encodeURIComponent(slug)}&l=${encodeURIComponent(lignes)}`;
   }, [q, slug, types]);
   const change = (id: string, delta: number) => setQ((avant) => ({ ...avant, [id]: Math.max(0, (avant[id] ?? 0) + delta) }));
-  const dollars = usd(montant, taux);
+  const dollars = usd(montant, taux, langue);
 
   return (
     <aside className="panneau pile panier" style={ecart(14)} aria-labelledby="t-billets">
@@ -48,7 +48,7 @@ export function Panier({ slug, types, max, taux, textes }: { slug: string; types
                 {badge}
               </div>
               <div className="rangee entre">
-                <div className="prix"><b style={{ fontSize: 'var(--t-prix)' }}>{cdf(c.prixCdf, textes.gratuit)}</b>{usd(c.prixCdf, taux) ? <span className="doux" style={{ fontSize: 'var(--t-petit)' }}>{usd(c.prixCdf, taux)}</span> : null}</div>
+                <div className="prix"><b style={{ fontSize: 'var(--t-prix)' }}>{cdf(c.prixCdf, textes.gratuit, langue)}</b>{usd(c.prixCdf, taux, langue) ? <span className="doux" style={{ fontSize: 'var(--t-petit)' }}>{usd(c.prixCdf, taux, langue)}</span> : null}</div>
                 <div className="compteur">
                   <button type="button" disabled={n === 0} aria-label={remplir(textes.retirer, { nom: c.nom })} onClick={() => change(c.id, -1)}><Icone nom="minus" taille={22} epaisseur={2.6} /></button>
                   <output aria-live="polite" aria-label={remplir(textes.quantite, { nom: c.nom })}>{n}</output>
@@ -63,7 +63,7 @@ export function Panier({ slug, types, max, taux, textes }: { slug: string; types
       <div className="total rangee entre" aria-live="polite">
         <div className="prix">
           <span className="doux">{total === 0 ? textes.aucunChoisi : remplir(total > 1 ? textes.plusieursBillets : textes.unBillet, { n: total })}</span>
-          <b style={{ fontSize: 'var(--t-montant)' }}>{cdf(montant, '0 CDF')}</b>
+          <b style={{ fontSize: 'var(--t-montant)' }}>{cdf(montant, '0 CDF', langue)}</b>
           {dollars ? <span className="doux">{dollars}</span> : null}
         </div>
       </div>

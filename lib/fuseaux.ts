@@ -1,22 +1,24 @@
-// Toutes les dates sont stockées en UTC et affichées dans le fuseau de la ville de l'événement.
+// Toutes les dates sont stockées en UTC et affichées dans le fuseau de la ville de l'événement,
+// au format de la langue choisie (anglais : en-GB ; lingala et swahili : format français).
+import { localeFormat } from '@/i18n/config';
 
 export const FUSEAU_DEFAUT = 'Africa/Kinshasa';
 
-function parties(date: Date, fuseau: string, options: Intl.DateTimeFormatOptions) {
-  return Object.fromEntries(new Intl.DateTimeFormat('fr-FR', { timeZone: fuseau, ...options }).formatToParts(date).map((p) => [p.type, p.value]));
+function parties(date: Date, fuseau: string, options: Intl.DateTimeFormatOptions, langue?: string) {
+  return Object.fromEntries(new Intl.DateTimeFormat(localeFormat(langue), { timeZone: fuseau, ...options }).formatToParts(date).map((p) => [p.type, p.value]));
 }
 
 const majuscule = (s: string) => (s ? s[0]!.toUpperCase() + s.slice(1) : s);
 
-/** « Sam. 14 nov. · 20:00 » */
-export function dateCourte(date: Date, fuseau = FUSEAU_DEFAUT): string {
-  const p = parties(date, fuseau, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+/** « Sam. 14 nov. · 20:00 », en anglais « Sat 14 Nov · 20:00 » */
+export function dateCourte(date: Date, fuseau = FUSEAU_DEFAUT, langue?: string): string {
+  const p = parties(date, fuseau, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }, langue);
   return `${majuscule(p.weekday ?? '')} ${p.day} ${p.month} · ${p.hour}:${p.minute}`;
 }
 
 /** Jour et mois pour le tampon : { jour: '14', mois: 'nov.' } */
-export function tampon(date: Date, fuseau = FUSEAU_DEFAUT): { jour: string; mois: string } {
-  const p = parties(date, fuseau, { day: 'numeric', month: 'short' });
+export function tampon(date: Date, fuseau = FUSEAU_DEFAUT, langue?: string): { jour: string; mois: string } {
+  const p = parties(date, fuseau, { day: 'numeric', month: 'short' }, langue);
   return { jour: p.day ?? '', mois: p.month ?? '' };
 }
 
@@ -32,10 +34,10 @@ export function jourMois(date: Date, fuseau = FUSEAU_DEFAUT): string {
   return `${p.day}/${p.month}`;
 }
 
-/** « 14 nov. 2026 à 20:00 » */
-export function dateLongue(date: Date, fuseau = FUSEAU_DEFAUT): string {
-  const p = parties(date, fuseau, { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
-  return `${p.day} ${p.month} ${p.year} à ${p.hour}:${p.minute}`;
+/** « 14 nov. 2026 à 20:00 », en anglais « 14 Nov 2026 at 20:00 » */
+export function dateLongue(date: Date, fuseau = FUSEAU_DEFAUT, langue?: string): string {
+  const p = parties(date, fuseau, { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }, langue);
+  return `${p.day} ${p.month} ${p.year} ${langue === 'en' ? 'at' : 'à'} ${p.hour}:${p.minute}`;
 }
 
 /**

@@ -258,7 +258,10 @@
     "horsLigne": "Enregistré sur ce téléphone · marche sans internet",
     "qrAria": "QR code du billet {id} entouré de son motif vivant",
     "annule": "Billet annulé",
-    "utilise": "Billet déjà utilisé"
+    "utilise": "Billet déjà utilisé",
+    "categorie": "Catégorie",
+    "pdfTitre": "Billet {id}",
+    "pdfMention": "1 billet = 1 entrée. Le billet vivant sur téléphone reste le plus sûr à l'entrée."
   },
   "mesBillets": {
     "titre": "Mes billets",
@@ -330,5 +333,42 @@
     "billetsTexte": "Vos billets s'ouvrent même sans internet une fois enregistrés sur votre téléphone. Vous les retrouvez dans « Mes billets » en vous connectant avec votre numéro, ou avec le lien reçu par SMS. À l'entrée, montez la luminosité et montrez l'écran.",
     "remboursementTitre": "Remboursement",
     "remboursementTexte": "Remboursement seulement si l'événement est annulé."
+  },
+  "categories": {
+    "concert": {
+      "un": "Concert",
+      "plusieurs": "Concerts"
+    },
+    "football": {
+      "un": "Football",
+      "plusieurs": "Football"
+    },
+    "festival": {
+      "un": "Festival",
+      "plusieurs": "Festivals"
+    },
+    "conference": {
+      "un": "Conférence",
+      "plusieurs": "Conférences"
+    },
+    "spectacle": {
+      "un": "Spectacle",
+      "plusieurs": "Spectacles"
+    }
+  },
+  "pages": {
+    "billet": "Billet",
+    "alertes": "Alertes SMS",
+    "conditions": "Conditions",
+    "connexion": "Connexion",
+    "achat": "Achat",
+    "mesBillets": "Mes billets",
+    "agent": "Payer chez un agent",
+    "organisateurs": "Organisateurs",
+    "aide": "Aide",
+    "horsLigne": "Pas de connexion",
+    "confidentialite": "Confidentialité",
+    "scanner": "Scanner",
+    "francaisSeulement": "Cette page n'existe qu'en français."
   }
 }

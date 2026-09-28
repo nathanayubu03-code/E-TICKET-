@@ -46,8 +46,8 @@ export async function validerReclamation(reclamationId: string, agent: Acteur): 
 export async function refuserReclamation(reclamationId: string, agent: Acteur, motif: string): Promise<boolean> {
   const pris = await db.manualPaymentClaim.updateMany({ where: { id: reclamationId, statut: 'EN_ATTENTE' }, data: { statut: 'REFUSEE', traiteParId: agent.id, traiteLe: new Date(), motifRefus: motif.slice(0, 300) } });
   if (pris.count === 0) return false;
-  const r = await db.manualPaymentClaim.findUniqueOrThrow({ where: { id: reclamationId }, include: { commande: { select: { code: true, telephone: true } } } });
-  await envoyerSms(r.commande.telephone, 'reclamation_refusee', smsReclamationRefusee(r.commande.code));
+  const r = await db.manualPaymentClaim.findUniqueOrThrow({ where: { id: reclamationId }, include: { commande: { select: { code: true, telephone: true, langue: true } } } });
+  await envoyerSms(r.commande.telephone, 'reclamation_refusee', smsReclamationRefusee(r.commande.code, r.commande.langue));
   await auditer({ acteur: agent, action: 'paiement_manuel.refuser', entite: 'ManualPaymentClaim', entiteId: reclamationId, apres: { motif } });
   return true;
 }

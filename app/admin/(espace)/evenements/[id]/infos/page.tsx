@@ -29,6 +29,12 @@ export default async function EtapeInfos({ params }: { params: Promise<{ id: str
           </select>
         </Champ>
         <Champ nom="description" label="Description"><textarea id="description" name="description" className="champ-zone" defaultValue={e.description ?? ''} maxLength={5000} rows={6} /></Champ>
+        <fieldset className="pile" style={{ gap: 12, border: '2px dashed var(--trait)', borderRadius: 14, padding: 14 }}>
+          <legend style={{ fontWeight: 700, padding: '0 6px' }}>Version anglaise (facultatif)</legend>
+          <p className="aide-champ">Affichée aux visiteurs qui ont choisi EN. Laissée vide, le site affiche le français. Aucune traduction automatique.</p>
+          <Champ nom="titreEn" label="Titre en anglais"><input id="titreEn" name="titreEn" lang="en" className="champ-texte" defaultValue={e.titreEn ?? ''} maxLength={140} /></Champ>
+          <Champ nom="descriptionEn" label="Description en anglais"><textarea id="descriptionEn" name="descriptionEn" lang="en" className="champ-zone" defaultValue={e.descriptionEn ?? ''} maxLength={5000} rows={5} /></Champ>
+        </fieldset>
       </FormAuto>
     </section>
   );

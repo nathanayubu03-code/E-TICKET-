@@ -142,4 +142,14 @@ describe('paiement Mobile Money', () => {
     expect((await sim.verifierStatut(await ref('+243971239999'))).statut).toBe('EN_ATTENTE');
     expect((await sim.verifierStatut(null)).statut).toBe('EN_ATTENTE');
   });
+  it('commande passée en anglais : SMS des billets en anglais, avec le titre anglais', async () => {
+    const e = await evenement();
+    await db.event.update({ where: { id: e.id }, data: { titreEn: 'River concert' } });
+    const c = await creerCommande({ telephone: '+243971000555', userId: null, evenementId: e.id, lignes: [{ typeId: e.typesBillet[0]!.id, quantite: 1 }], langue: 'en' });
+    expect(c.langue).toBe('en');
+    const d = await demanderPaiement({ commandeId: c.id, telephone: '+243971000555', operateur: 'AIRTEL', nouvelle: false });
+    await traiterWebhook('simulation', webhook((d as { paiementId: string }).paiementId, 'REUSSI', 25000));
+    const sms = await db.smsLog.findFirstOrThrow({ where: { telephone: '+243971000555', gabarit: 'billets' } });
+    expect(sms.contenu).toMatch(/^e-Ticket RDC: payment received, your tickets for River concert are ready/);
+  });
 });

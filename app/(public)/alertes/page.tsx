@@ -5,7 +5,9 @@ import { FormDesabonnement } from '@/components/public/FormDesabonnement';
 import { villesEtCategoriesPubliques } from '@/lib/evenements';
 import { ecart } from '@/lib/style';
 
-export const metadata: Metadata = { title: 'Alertes SMS' };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getTranslations('pages'))('alertes') };
+}
 
 export default async function PageAlertes() {
   const t = await getTranslations();

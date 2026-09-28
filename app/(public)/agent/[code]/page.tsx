@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { FormAgent } from '@/components/achat/FormAgent';
 import { commandeDeLAcheteur } from '@/lib/achat';
 import { cdf } from '@/lib/argent';
@@ -10,7 +10,9 @@ import { parametre } from '@/lib/parametres';
 import { ecart } from '@/lib/style';
 import { chiffresNationaux, formaterTelephone, normaliserTelephone } from '@/lib/telephone';
 
-export const metadata: Metadata = { title: 'Payer chez un agent', robots: { index: false } };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getTranslations('pages'))('agent'), robots: { index: false } };
+}
 export const dynamic = 'force-dynamic';
 
 function Riche({ texte }: { texte: string }) {
@@ -25,6 +27,7 @@ export default async function PageAgent({ params }: { params: Promise<{ code: st
   if (!c) notFound();
   if (c.statut === 'PAYEE') redirect(`/achat/${code}`);
   const t = await getTranslations('agent');
+  const langue = await getLocale();
   const numeros = await parametre('numeros_marchands');
   const disponibles = OPERATEURS.filter((o) => numeros[o.k] && normaliserTelephone(numeros[o.k]!));
   return (
@@ -37,10 +40,10 @@ export default async function PageAgent({ params }: { params: Promise<{ code: st
               <div className="pile" style={ecart(8, { padding: 18, border: '2px solid var(--encre)', borderRadius: 18, boxShadow: '3px 3px 0 var(--ombre)' })}>
                 <span className="doux" style={{ fontWeight: 700 }}>{t('code')}</span>
                 <span className="montant">{c.code}</span>
-                <span className="affiche" style={{ fontSize: 'var(--t-montant)' }}>{cdf(c.totalCdf)}</span>
+                <span className="affiche" style={{ fontSize: 'var(--t-montant)' }}>{cdf(c.totalCdf, undefined, langue)}</span>
               </div>
               <ol className="liste-num">
-                {[t.raw('etape1') as string, t('etape2'), t('etape3')].map((g, i) => <li key={i}><span>{i + 1}</span><span><Riche texte={g.replace('{montant}', cdf(c.totalCdf))} /></span></li>)}
+                {[t.raw('etape1') as string, t('etape2'), t('etape3')].map((g, i) => <li key={i}><span>{i + 1}</span><span><Riche texte={g.replace('{montant}', cdf(c.totalCdf, undefined, langue))} /></span></li>)}
               </ol>
               <div className="pile" style={ecart(8)}>
                 {disponibles.map((o) => (

@@ -1,17 +1,21 @@
 import type { Metadata } from 'next';
+import { getLocale, getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { Contact, Editeur } from '@/components/legal/Editeur';
 import { ecart } from '@/lib/style';
 
-export const metadata: Metadata = { title: 'Confidentialité' };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getTranslations('pages'))('confidentialite') };
+}
 
 // Texte en français simple, fidèle à ce que fait l'application. Points à faire valider par un juriste :
 // voir docs/legal-a-valider.md. Le français fait foi.
-export default function Confidentialite() {
+export default async function Confidentialite() {
   return (
     <main className="conteneur">
       <article className="panneau pile" style={ecart(18, { maxWidth: 820, marginInline: 'auto', lineHeight: 1.6 })}>
         <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>Confidentialité</h1>
+        {(await getLocale()) !== 'fr' ? <p className="note note-info" >{(await getTranslations('pages'))('francaisSeulement')}</p> : null}
         <p>Cette page explique quelles données e-Ticket RDC utilise, pourquoi, avec qui elles sont partagées et comment exercer vos droits. Elle s&apos;applique au site, à l&apos;application installée sur téléphone et au scanner des contrôleurs.</p>
         <Editeur />
 

@@ -1,10 +1,13 @@
 import type { Metadata } from 'next';
+import { getLocale, getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { Contact, Editeur } from '@/components/legal/Editeur';
 import { parametre } from '@/lib/parametres';
 import { ecart } from '@/lib/style';
 
-export const metadata: Metadata = { title: 'Conditions' };
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getTranslations('pages'))('conditions') };
+}
 
 // Conditions d'utilisation et de vente, en français simple. Points à faire valider par un juriste :
 // voir docs/legal-a-valider.md. Le français fait foi.
@@ -14,6 +17,7 @@ export default async function Conditions() {
     <main className="conteneur">
       <article className="panneau pile" style={ecart(18, { maxWidth: 820, marginInline: 'auto', lineHeight: 1.6 })}>
         <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>Conditions</h1>
+        {(await getLocale()) !== 'fr' ? <p className="note note-info" >{(await getTranslations('pages'))('francaisSeulement')}</p> : null}
         <p>Ces conditions s&apos;appliquent à l&apos;utilisation d&apos;e-Ticket RDC et à tout achat de billet sur le site ou l&apos;application.</p>
         <Editeur />
 
