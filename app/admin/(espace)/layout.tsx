@@ -21,6 +21,7 @@ const LIENS = [
   { href: '/admin/sms', texte: 'SMS envoyés' },
   { href: '/admin/parametres', texte: 'Paramètres' },
   { href: '/admin/audit', texte: "Journal d'audit" },
+  { href: '/admin/compte', texte: 'Mon compte' },
 ];
 
 export default async function LayoutAdmin({ children }: { children: React.ReactNode }) {

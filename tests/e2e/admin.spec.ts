@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { connecterAdmin, viderEvenements } from './aide';
+import { connecterAdmin, dernierCode, viderEvenements } from './aide';
 import { db } from '../../lib/db';
 
 test.describe.configure({ mode: 'serial' });
@@ -125,4 +125,49 @@ test('formulaire à sauvegarde automatique : un choix enregistré au clic reste 
   const orga = await db.organizer.findFirstOrThrow({ where: { nom: 'Organisateur conservé' } });
   await expect(page.getByLabel('Organisateur')).toHaveValue(orga.id);
   expect((await db.event.findFirstOrThrow({ where: { titre: 'Brouillon sauvegarde' } })).organisateurId).toBe(orga.id);
+});
+
+test('mon compte : changer le nom affiché et le mot de passe, puis se reconnecter avec le nouveau', async ({ page }) => {
+  const { hacherMotDePasse } = await import('../../lib/auth/motdepasse');
+  const telephone = '+243990000055';
+  await db.user.upsert({ where: { telephone }, update: { roles: ['ADMIN'], nom: 'Ancien nom', motDePasse: await hacherMotDePasse('AncienMotDePasse-2026') }, create: { telephone, nom: 'Ancien nom', roles: ['ADMIN'], motDePasse: await hacherMotDePasse('AncienMotDePasse-2026') } });
+  const connexion = async (mdp: string) => {
+    await db.rateLimit.deleteMany({});
+    await db.otpCode.deleteMany({ where: { telephone } });
+    const depuis = new Date();
+    await page.goto('/admin/connexion');
+    await page.getByLabel('Numéro').fill(telephone.slice(4));
+    await page.getByLabel('Mot de passe').fill(mdp);
+    await page.getByRole('button', { name: 'Continuer' }).click();
+    return depuis;
+  };
+  const depuis = await connexion('AncienMotDePasse-2026');
+  await page.getByLabel('Code reçu par SMS').fill(await dernierCode(telephone, depuis));
+  await page.getByRole('button', { name: 'Valider le code' }).click();
+  await page.waitForURL((u) => u.pathname === '/admin');
+
+  await page.getByRole('link', { name: 'Mon compte' }).click();
+  await page.getByLabel('Nom', { exact: true }).fill('NATHAN');
+  await page.getByRole('button', { name: 'Enregistrer' }).click();
+  await expect(page.getByText('Nom enregistré.')).toBeVisible();
+  expect((await db.user.findUniqueOrThrow({ where: { telephone } })).nom).toBe('NATHAN');
+
+  // Mot de passe trop court refusé, puis changement réussi.
+  await page.getByLabel('Mot de passe actuel').fill('AncienMotDePasse-2026');
+  await page.getByLabel('Nouveau mot de passe', { exact: true }).fill('Court1');
+  await page.getByLabel('Confirmer le nouveau mot de passe').fill('Court1');
+  await page.getByRole('button', { name: 'Changer le mot de passe' }).click();
+  await expect(page.getByText('12 caractères minimum, avec au moins une lettre et un chiffre.').first()).toBeVisible();
+  await page.getByLabel('Nouveau mot de passe', { exact: true }).fill('NouveauMotDePasse-2026');
+  await page.getByLabel('Confirmer le nouveau mot de passe').fill('NouveauMotDePasse-2026');
+  await page.getByRole('button', { name: 'Changer le mot de passe' }).click();
+  await expect(page.getByText(/Mot de passe changé/)).toBeVisible();
+
+  await page.getByRole('button', { name: 'Se déconnecter' }).click();
+  await connexion('AncienMotDePasse-2026');
+  await expect(page.getByText('Numéro ou mot de passe incorrect.')).toBeVisible();
+  const d2 = await connexion('NouveauMotDePasse-2026');
+  await page.getByLabel('Code reçu par SMS').fill(await dernierCode(telephone, d2));
+  await page.getByRole('button', { name: 'Valider le code' }).click();
+  await page.waitForURL((u) => u.pathname === '/admin');
 });
