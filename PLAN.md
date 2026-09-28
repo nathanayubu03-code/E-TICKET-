@@ -725,6 +725,7 @@ Mesure demandée (docs/billet.md) : sur une image fixe, ZXing en JavaScript (rep
 Après la livraison :
 
 - [x] `APP_ENV` à trois valeurs (development, staging, production). Staging : simulation autorisée, bandeau rouge fixe, code OTP affiché sous le champ (acheteur et administrateur). Production : simulation refusée, `NEXT_PUBLIC_SITE_URL` obligatoire et hors `vercel.app`. Paiement simulé remis par `after()` et retrouvé par la vérification planifiée, pour tenir sur Vercel. Débordement horizontal de l'accueil vide en 360 px corrigé (existait déjà). Tests : 84 Vitest, 31 Playwright (24 e2e, 7 staging). Guide : `docs/deploiement.md`, section 9. Captures : `docs/captures/staging/`.
+- [x] Partie 0 (rangement) : origine de `claude/gallant-darwin-2skblq` (branche par défaut du dépôt, maquette seule) et réglage Vercel de la branche de production documentés dans `docs/deploiement.md`, section 10. Aucune branche supprimée.
 
 
 ## Vérification finale (27/09/2026)

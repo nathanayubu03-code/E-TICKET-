@@ -138,3 +138,18 @@ Le paiement simulé répond selon la fin du numéro de paiement : `…0000` refu
 ### Passer de la version de test à la production
 
 Ne transformez pas le projet de test en production : créez le projet de production (sections 1 à 6) avec sa propre base et ses propres secrets. Si `APP_ENV=production` est posée avec `simulation` ou sans domaine définitif, l'application refuse de démarrer et le journal du déploiement donne la raison exacte.
+
+## 10. Branche de production du projet Vercel
+
+Le dépôt a deux branches :
+
+- `claude/gallant-darwin-2skblq` : la toute première branche, créée par une session précédente pour publier la maquette du designer (identité visuelle, puis site statique avec le motif Kuba). C'est la **branche par défaut du dépôt sur GitHub**, donc celle que Vercel a choisie comme branche de production quand le projet a été importé. Elle ne contient que la maquette, pas l'application.
+- `claude/funny-lovelace-ynyp3e` : l'application complète. Elle part de la branche précédente (ses deux commits sont les premiers de l'historique) et ajoute tout le reste. La PR vers `claude/gallant-darwin-2skblq` est ouverte, sans fusion.
+
+Pour que Vercel déploie l'application à chaque push :
+
+1. Vercel, projet `e-ticket`, **Settings**, **Environments**, ligne **Production**, bloc **Branch Tracking** (sur les anciennes interfaces : **Settings**, **Git**, **Production Branch**).
+2. Remplacez `claude/gallant-darwin-2skblq` par `claude/funny-lovelace-ynyp3e`, puis **Save**.
+3. Chaque push sur `claude/funny-lovelace-ynyp3e` produit alors un déploiement de production, avec les variables de l'environnement Production. `vercel --prod` depuis un poste reste possible et donne le même résultat.
+
+Aucune branche n'a besoin d'être supprimée. Plus tard, pour une seule branche, deux options : fusionner la PR dans `claude/gallant-darwin-2skblq` (l'historique est linéaire, la fusion est une simple avance rapide), ou faire de `claude/funny-lovelace-ynyp3e` la branche par défaut du dépôt dans GitHub (Settings, Branches). Ces deux choix vous reviennent.
