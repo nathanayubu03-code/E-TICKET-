@@ -18,7 +18,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ publicId
   const langue = await getLocale();
   const t = await getTranslations('billet');
   const pdf = await pdfBillet({
-    publicId: b.publicId, code: b.code, categorie: b.typeBillet.nom, titulaire: b.titulaire, entree: b.entree, prixPayeCdf: b.prixPayeCdf,
+    publicId: b.publicId, code: b.code, categorie: b.typeBillet.nom, titulaire: b.titulaire, entree: b.entree, prixPaye: b.prixPaye, devise: b.devise,
     evenement: { code: b.evenement.code, titre: texteEvenement(b.evenement, 'titre', langue), sousTitre: b.evenement.sousTitre, debutLe: b.evenement.debutLe, fuseau: b.evenement.ville?.fuseau ?? b.evenement.fuseau, lieu: b.evenement.lieu?.nom ?? '', ville: b.evenement.ville?.nom ?? '' },
   }, { titre: t('pdfTitre', { id: b.publicId }), numero: t('numero'), categorie: t('categorie'), prixPaye: t('prixPaye'), titulaire: t('titulaire'), entree: t('entree'), mention: t('pdfMention') }, langue);
   return new Response(new Uint8Array(pdf), { headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': `attachment; filename="billet-${b.publicId}.pdf"`, 'Cache-Control': 'private, no-store' } });

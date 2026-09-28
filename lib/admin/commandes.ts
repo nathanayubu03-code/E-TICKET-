@@ -2,6 +2,7 @@ import { auditer, type Acteur } from '@/lib/audit';
 import { libererStock } from '@/lib/commandes';
 import { db, type Prisma } from '@/lib/db';
 import { envoyerSms } from '@/lib/sms';
+import { montant } from '@/lib/argent';
 import { texteEvenement } from '@/lib/langue';
 import { smsBillets } from '@/lib/sms/gabarits';
 
@@ -45,7 +46,7 @@ export async function marquerRemboursee(commandeId: string, acteur: Acteur, note
 export async function renvoyerSmsBillets(commandeId: string, acteur: Acteur): Promise<string> {
   const c = await db.order.findUniqueOrThrow({ where: { id: commandeId }, include: { evenement: { select: { titre: true, titreEn: true } }, billets: { where: { statut: { not: 'ANNULE' } }, select: { code: true } } } });
   if (c.statut !== 'PAYEE' || !c.billets.length) return 'Aucun billet valide à renvoyer.';
-  const ok = await envoyerSms(c.telephone, 'billets', smsBillets(texteEvenement(c.evenement, 'titre', c.langue), c.billets.map((b) => b.code), c.langue));
+  const ok = await envoyerSms(c.telephone, 'billets', smsBillets(texteEvenement(c.evenement, 'titre', c.langue), c.billets.map((b) => b.code), c.langue, c.total > 0 ? montant(c.total, c.devise, c.langue) : undefined));
   await auditer({ acteur, action: 'commande.renvoyer_sms', entite: 'Order', entiteId: commandeId, apres: { ok } });
   return ok ? 'SMS renvoyé.' : "Le SMS n'est pas parti : voir « SMS envoyés ».";
 }

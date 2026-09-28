@@ -4,12 +4,12 @@ import { FormListeAttente } from '@/components/evenement/FormListeAttente';
 import { Panier, type TypePanier } from '@/components/evenement/Panier';
 import { Couverture } from '@/components/public/Couverture';
 import { Icone } from '@/components/ui/Icone';
-import { cdf } from '@/lib/argent';
+import { prixDouble } from '@/lib/argent';
 import { nomCategorie } from '@/lib/categorie';
 import type { EvenementDetail } from '@/lib/evenements';
 import { texteEvenement } from '@/lib/langue';
 import { dateCourte, dateLongue, heure, tampon } from '@/lib/fuseaux';
-import { parametre, tauxCourant } from '@/lib/parametres';
+import { parametre } from '@/lib/parametres';
 import { ecart } from '@/lib/style';
 
 const COULEURS_PROGRAMME = ['#FFD21F', '#1E8FFF', '#C8102E'];
@@ -21,13 +21,13 @@ function initiales(nom: string) {
 export async function VueEvenement({ e, apercu = false }: { e: EvenementDetail; apercu?: boolean }) {
   const t = await getTranslations();
   const langue = await getLocale();
-  const [taux, maxGlobal] = await Promise.all([tauxCourant(), parametre('limite_billets')]);
+  const maxGlobal = await parametre('limite_billets');
   const max = e.limiteParPersonne ?? maxGlobal;
   const fuseau = e.ville?.fuseau ?? e.fuseau ?? undefined;
   const date = e.debutLe ? tampon(e.debutLe, fuseau, langue) : null;
   const maintenant = new Date();
   const types: TypePanier[] = e.typesBillet.map((tb) => ({
-    id: tb.id, nom: tb.nom, description: tb.description, prixCdf: tb.prixCdf, restant: tb.restant, limiteParCommande: tb.limiteParCommande,
+    id: tb.id, nom: tb.nom, description: tb.description, prixCdf: tb.prixCdf, prixUsd: tb.prixUsd, restant: tb.restant, limiteParCommande: tb.limiteParCommande,
     etat: tb.venteDebutLe && tb.venteDebutLe > maintenant ? 'pasEncore' : tb.venteFinLe && tb.venteFinLe < maintenant ? 'termine' : 'ouvert',
     ouvertureTexte: tb.venteDebutLe ? t('evenement.pasEncore', { date: dateLongue(tb.venteDebutLe, fuseau, langue) }) : undefined,
   }));
@@ -106,7 +106,7 @@ export async function VueEvenement({ e, apercu = false }: { e: EvenementDetail; 
           <aside className="panneau pile panier" style={ecart(14)}>
             <h2 className="titre-section">{t('evenement.vosBillets')}</h2>
             <p className="note note-info">Aperçu : le panier est désactivé.</p>
-            {e.typesBillet.map((tb) => <div key={tb.id} className="categorie-billet"><h3>{tb.nom}</h3><b>{cdf(tb.prixCdf)}</b><span className="doux">{tb.restant} / {tb.quota}</span></div>)}
+            {e.typesBillet.map((tb) => <div key={tb.id} className="categorie-billet"><h3>{tb.nom}</h3><b>{prixDouble(tb.prixCdf, tb.prixUsd, langue)}</b><span className="doux">{tb.restant} / {tb.quota}</span></div>)}
           </aside>
         ) : e.statut === 'ANNULE' || e.statut === 'TERMINE' ? (
           <aside className="panneau pile panier" style={ecart(14)}>
@@ -123,7 +123,6 @@ export async function VueEvenement({ e, apercu = false }: { e: EvenementDetail; 
             slug={e.slug}
             types={types}
             max={max}
-            taux={taux?.cdfParUsd ?? null}
             langue={langue}
             textes={{
               vosBillets: t('evenement.vosBillets'), maxParPersonne: t.raw('evenement.maxParPersonne') as string, epuise: t('evenement.epuise'),

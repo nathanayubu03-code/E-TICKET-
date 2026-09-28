@@ -135,7 +135,7 @@ describe('paiement Mobile Money', () => {
   });
   it('simulation : la vérification planifiée retrouve l’issue quand le webhook se perd (staging sur Vercel)', async () => {
     const sim = new SimulationProvider();
-    const cmd = { paiementId: 'p1', codeCommande: 'C1', montantCdf: 1000, cleIdempotence: 'c:1' };
+    const cmd = { paiementId: 'p1', codeCommande: 'C1', montant: 1000, devise: 'CDF' as const, cleIdempotence: 'c:1' };
     const ref = async (tel: string) => (await sim.initier(cmd, tel, 'AIRTEL')).referenceOperateur;
     expect((await sim.verifierStatut(await ref('+243971230001'))).statut).toBe('REUSSI');
     expect((await sim.verifierStatut(await ref('+243971230000'))).statut).toBe('ECHOUE');
@@ -150,6 +150,6 @@ describe('paiement Mobile Money', () => {
     const d = await demanderPaiement({ commandeId: c.id, telephone: '+243971000555', operateur: 'AIRTEL', nouvelle: false });
     await traiterWebhook('simulation', webhook((d as { paiementId: string }).paiementId, 'REUSSI', 25000));
     const sms = await db.smsLog.findFirstOrThrow({ where: { telephone: '+243971000555', gabarit: 'billets' } });
-    expect(sms.contenu).toMatch(/^e-Ticket RDC: payment received, your tickets for River concert are ready/);
+    expect(sms.contenu).toMatch(/^e-Ticket RDC: payment received \(25,000 CDF\), your tickets for River concert are ready/);
   });
 });

@@ -1,6 +1,6 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import QRCode from 'qrcode';
-import { cdf } from '@/lib/argent';
+import { montant, type Devise } from '@/lib/argent';
 import { dateCourte } from '@/lib/fuseaux';
 import { contenuQR } from './qr';
 
@@ -8,7 +8,7 @@ import { contenuQR } from './qr';
 export interface LibellesPdf { titre: string; numero: string; categorie: string; prixPaye: string; titulaire: string; entree: string; mention: string }
 
 interface DonneesPdf {
-  publicId: string; code: string; categorie: string; titulaire: string | null; entree: string | null; prixPayeCdf: number;
+  publicId: string; code: string; categorie: string; titulaire: string | null; entree: string | null; prixPaye: number; devise: Devise;
   evenement: { code: string; titre: string; sousTitre: string | null; debutLe: Date | null; fuseau: string | null; lieu: string; ville: string };
 }
 
@@ -52,7 +52,7 @@ export async function pdfBillet(b: DonneesPdf, l: LibellesPdf, langue?: string):
   }
 
   const lignes: [string, string][] = [
-    [l.numero, b.publicId], [l.categorie, b.categorie], [l.prixPaye, cdf(b.prixPayeCdf, undefined, langue)],
+    [l.numero, b.publicId], [l.categorie, b.categorie], [l.prixPaye, montant(b.prixPaye, b.devise, langue)],
     ...(b.titulaire ? [[l.titulaire, b.titulaire] as [string, string]] : []), ...(b.entree ? [[l.entree, b.entree] as [string, string]] : []),
   ];
   let y = y0 - 24;

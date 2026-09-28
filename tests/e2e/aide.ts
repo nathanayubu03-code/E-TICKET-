@@ -10,7 +10,7 @@ export async function viderEvenements() {
   await db.user.deleteMany({ where: { NOT: { roles: { has: 'SUPERADMIN' } } } });
 }
 
-export async function creerEvenement(p: { titre: string; ville?: string; cat?: string; dansJours?: number; types?: { nom: string; prix: number; quota: number; restant?: number }[]; statut?: 'PUBLIE' | 'COMPLET' | 'BROUILLON'; slug?: string; sousTitre?: string; genre?: string; description?: string; programme?: { heure: string; titre: string; detail?: string }[] }) {
+export async function creerEvenement(p: { titre: string; ville?: string; cat?: string; dansJours?: number; types?: { nom: string; prix: number; prixUsd?: number | null; quota: number; restant?: number }[]; statut?: 'PUBLIE' | 'COMPLET' | 'BROUILLON'; slug?: string; sousTitre?: string; genre?: string; description?: string; programme?: { heure: string; titre: string; detail?: string }[] }) {
   const admin = await db.user.findFirstOrThrow({ where: { roles: { has: 'SUPERADMIN' } } });
   const ville = await db.city.findUniqueOrThrow({ where: { nom: p.ville ?? 'Kinshasa' } });
   const cat = await db.category.findUniqueOrThrow({ where: { slug: p.cat ?? 'concert' } });
@@ -23,7 +23,7 @@ export async function creerEvenement(p: { titre: string; ville?: string; cat?: s
       programme: p.programme ? { create: p.programme.map((x, i) => ({ ...x, ordre: i })) } : undefined, statut: p.statut ?? 'PUBLIE', publieLe: new Date(),
       categorieId: cat.id, lieuId: lieu.id, villeId: ville.id, fuseau: ville.fuseau, debutLe: debut, ouverturePortesLe: new Date(debut.getTime() - 7200_000),
       selAffichage: randomBytes(16).toString('hex'), creeParId: admin.id,
-      typesBillet: { create: (p.types ?? [{ nom: 'Standard', prix: 10000, quota: 100 }]).map((t, i) => ({ nom: t.nom, prixCdf: t.prix, quota: t.quota, restant: t.restant ?? t.quota, ordre: i })) },
+      typesBillet: { create: (p.types ?? [{ nom: 'Standard', prix: 10000, quota: 100 }]).map((t, i) => ({ nom: t.nom, prixCdf: t.prix, prixUsd: t.prixUsd ?? null, quota: t.quota, restant: t.restant ?? t.quota, ordre: i })) },
     },
     include: { typesBillet: true },
   });

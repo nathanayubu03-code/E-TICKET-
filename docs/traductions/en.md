@@ -10,7 +10,7 @@ Hors de ce fichier, aussi à relire :
 - le PDF du billet (clés `billet.*` ci-dessous) ;
 - les pages Conditions et Confidentialité restent en français (texte juridique à faire valider par un juriste avant toute traduction) ; un visiteur en anglais voit la mention `pages.francaisSeulement`.
 
-328 textes.
+334 textes.
 
 ## commun
 
@@ -22,8 +22,6 @@ Hors de ce fichier, aussi à relire :
 | `commun.reessayer` | Réessayer | Try again |
 | `commun.gratuit` | Gratuit | Free |
 | `commun.surInscription` | sur inscription | registration required |
-| `commun.environUsd` | ≈ {montant} USD | ≈ {montant} USD |
-| `commun.tauxIndicatif` | taux indicatif du {date} | indicative rate of {date} |
 | `commun.cdf` | {montant} CDF | {montant} CDF |
 | `commun.des` | Dès | From |
 | `commun.fermer` | Fermer | Close |
@@ -103,7 +101,7 @@ Hors de ce fichier, aussi à relire :
 | `accueil.attenteTexte` | Concerts, matchs, festivals, conférences et spectacles : dès qu'un événement est ouvert à la vente, il s'affiche sur cette page. | Concerts, matches, festivals, talks and shows: as soon as tickets go on sale, the event shows up on this page. |
 | `accueil.etapesTitre` | Payer avec Mobile Money, en 3 étapes | Pay with Mobile Money in 3 steps |
 | `accueil.etape1Titre` | Choisissez vos billets | Pick your tickets |
-| `accueil.etape1Texte` | Prix en CDF, avec l'équivalent en USD. {max} billets maximum par personne. | Prices in CDF, with the USD equivalent. Up to {max} tickets per person. |
+| `accueil.etape1Texte` | Prix en CDF, et en USD quand l'organisateur le propose. {max} billets maximum par personne. | Prices in CDF, and in USD when the organizer offers it. Up to {max} tickets per person. |
 | `accueil.etape2Titre` | Validez sur votre téléphone | Confirm on your phone |
 | `accueil.etape2Texte` | Un message de votre opérateur s'affiche. Vous tapez votre code secret dedans. Nous ne le demandons jamais. | A message from your mobile operator pops up. You type your PIN in it. We never ask for it. |
 | `accueil.etape3Titre` | Montrez votre billet | Show your ticket |
@@ -227,7 +225,7 @@ Hors de ce fichier, aussi à relire :
 | `achat.minuteurAria` | Temps restant pour valider | Time left to confirm |
 | `achat.attenteTitre` | Validez sur votre téléphone | Confirm on your phone |
 | `achat.messageVa` | Ce message va s'afficher : | This message will appear: |
-| `achat.bulleLigne1` | Payer {montant} CDF à E-TICKET RDC ? | Pay {montant} CDF to E-TICKET RDC? |
+| `achat.bulleLigne1` | Payer {montant} à E-TICKET RDC ? | Pay {montant} to E-TICKET RDC? |
 | `achat.bulleLigne2` | Entrez votre code secret : | Enter your PIN: |
 | `achat.attente1` | Attendez le message {operateur} sur ce téléphone. | Wait for the {operateur} message on this phone. |
 | `achat.attente2` | Vérifiez le montant : <b>{montant}</b>. | Check the amount: <b>{montant}</b>. |
@@ -266,6 +264,14 @@ Hors de ce fichier, aussi à relire :
 | `achat.commandeIntrouvable` | Commande introuvable. | Order not found. |
 | `achat.reessayer` | Réessayer | Try again |
 | `achat.codeTest` | Code de test : {code} | Test code: {code} |
+| `achat.choisirDevise` | Devise du paiement | Payment currency |
+| `achat.payerEnCdf` | Payer en CDF | Pay in CDF |
+| `achat.payerEnUsd` | Payer en USD | Pay in USD |
+| `achat.deviseAide` | Votre portefeuille Mobile Money en {devise} sera débité. | Your {devise} Mobile Money wallet will be charged. |
+| `achat.attenteTitreMontant` | Validez {montant} sur votre téléphone | Confirm {montant} on your phone |
+| `achat.deviseIndisponible` | Le paiement en USD n'est pas possible pour ces billets : payez en CDF. | USD payment isn't available for these tickets: please pay in CDF. |
+| `achat.deviseOperateur` | {operateur} n'accepte pas cette devise. Choisissez un autre opérateur. | {operateur} doesn't accept this currency. Please choose another operator. |
+| `achat.deviseEnCours` | Une demande de paiement est déjà en cours dans l'autre devise. Validez-la ou attendez 2 minutes avant de changer de devise. | A payment request is already pending in the other currency. Confirm it, or wait 2 minutes before switching currency. |
 
 ## agent
 

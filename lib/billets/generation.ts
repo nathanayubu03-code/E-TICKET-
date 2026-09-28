@@ -36,7 +36,7 @@ export async function genererBillets(tx: Prisma.TransactionClient, commandeId: s
   for (const l of commande.lignes) {
     for (let i = 0; i < l.quantite; i++) {
       const code = codeAleatoire128();
-      donnees.push({ publicId: identifiantBillet(), code, codeEmpreinte: empreinteCode(code), commandeId, evenementId: commande.evenementId, typeBilletId: l.typeBilletId, prixPayeCdf: l.prixUnitaireCdf });
+      donnees.push({ publicId: identifiantBillet(), code, codeEmpreinte: empreinteCode(code), commandeId, evenementId: commande.evenementId, typeBilletId: l.typeBilletId, prixPaye: l.prixUnitaire, devise: commande.devise });
     }
   }
   await tx.ticket.createMany({ data: donnees });

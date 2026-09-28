@@ -93,16 +93,22 @@ test('tableau de bord sans vente : zéros lisibles, aucun graphique fictif', asy
   await expect(page.locator('.admin-contenu svg, .admin-contenu canvas')).toHaveCount(0);
 });
 
-test('taux indicatif saisi par le super-administrateur : USD affiché sur la page événement', async ({ page }) => {
+test('prix en USD saisi par l’administrateur : les deux prix sur la page événement, sans équivalent calculé', async ({ page }) => {
   await viderEvenements();
   const { creerEvenement } = await import('./aide');
-  const e = await creerEvenement({ titre: 'Avec taux', types: [{ nom: 'Standard', prix: 28500, quota: 10 }] });
-  await connecterAdmin(page, '/admin/parametres');
-  await page.getByLabel('CDF pour 1 USD').fill('2850');
-  await page.getByRole('button', { name: 'Enregistrer le taux' }).click();
-  await expect(page.getByText('1 USD = 2850 CDF')).toBeVisible();
+  const e = await creerEvenement({ titre: 'Avec dollars', types: [{ nom: 'Standard', prix: 28500, quota: 10 }, { nom: 'VIP', prix: 60000, quota: 5 }] });
   await page.goto(`/evenements/${e.slug}`);
-  await expect(page.getByText('≈ 10 USD')).toBeVisible();
+  await expect(page.getByText('28 500 CDF', { exact: true })).toBeVisible();
+  await expect(page.getByText(/≈|USD/)).toHaveCount(0);
+  await connecterAdmin(page, `/admin/evenements/${e.id}/billets`);
+  const bloc = page.getByRole('region', { name: 'Standard' });
+  await bloc.getByLabel('Prix en USD (facultatif)').fill('10,50');
+  await bloc.getByRole('button', { name: 'Enregistrer' }).click();
+  await expect(bloc.getByText(/Brouillon enregistré à/)).toBeVisible();
+  expect((await db.ticketType.findFirstOrThrow({ where: { nom: 'Standard', evenementId: e.id } })).prixUsd).toBe(1050);
+  await page.goto(`/evenements/${e.slug}`);
+  await expect(page.getByText('28 500 CDF · 10,50 USD')).toBeVisible();
+  await expect(page.getByText('60 000 CDF', { exact: true })).toBeVisible(); // VIP sans prix USD : CDF seul
 });
 
 test('formulaire à sauvegarde automatique : un choix enregistré au clic reste affiché et en base', async ({ page }) => {

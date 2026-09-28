@@ -1,6 +1,6 @@
 import { BoutonAction } from '@/components/admin/BoutonAction';
 import { LIBELLES_COMMANDE } from '@/lib/admin/libelles';
-import { cdf } from '@/lib/argent';
+import { montant } from '@/lib/argent';
 import { aUnRole, ROLES_EDITION } from '@/lib/auth/roles';
 import { exigerRole } from '@/lib/auth/session';
 import { db, type Prisma, type StatutCommande } from '@/lib/db';
@@ -33,7 +33,7 @@ export default async function Commandes({ searchParams }: { searchParams: Promis
         <section className="note note-danger" style={{ display: 'block' }} aria-labelledby="t-prio">
           <h2 id="t-prio" style={{ fontSize: 'var(--t-chapo)', marginBottom: 6 }}>À rembourser en priorité : payées sans place</h2>
           <ul style={{ margin: 0, paddingLeft: 20 }}>{sansPlace.map((c) => (
-            <li key={c.id} className="rangee envelopper" style={{ gap: 10 }}>{c.code} · {c.evenement.titre} · {cdf(c.totalCdf)} · {formaterTelephone(c.telephone)}{edition ? <BoutonAction classe="lien-bouton" libelle="Marquer remboursée" confirmation="Le remboursement a-t-il bien été envoyé sur le compte Mobile Money de l'acheteur ?" action={rembourser.bind(null, c.id)} /> : null}</li>
+            <li key={c.id} className="rangee envelopper" style={{ gap: 10 }}>{c.code} · {c.evenement.titre} · {montant(c.total, c.devise)} · {formaterTelephone(c.telephone)}{edition ? <BoutonAction classe="lien-bouton" libelle="Marquer remboursée" confirmation="Le remboursement a-t-il bien été envoyé sur le compte Mobile Money de l'acheteur ?" action={rembourser.bind(null, c.id)} /> : null}</li>
           ))}</ul>
         </section>
       ) : null}
@@ -49,8 +49,8 @@ export default async function Commandes({ searchParams }: { searchParams: Promis
             <span className="badge badge-neutre">{LIBELLES_COMMANDE[c.statut]}</span>
           </div>
           <div className="lignes">
-            {c.lignes.map((l) => <div key={l.id}><span>{l.quantite} × {l.typeBillet.nom}</span><span>{cdf(l.quantite * l.prixUnitaireCdf)}</span></div>)}
-            <div style={{ fontWeight: 700 }}><span>Total</span><span>{cdf(c.totalCdf)}</span></div>
+            {c.lignes.map((l) => <div key={l.id}><span>{l.quantite} × {l.typeBillet.nom}</span><span>{montant(l.quantite * l.prixUnitaire, c.devise)}</span></div>)}
+            <div style={{ fontWeight: 700 }}><span>Total</span><span>{montant(c.total, c.devise)}</span></div>
           </div>
           {c.billets.length ? <p className="doux">Billets : {c.billets.map((b) => `${b.publicId} (${b.statut.toLowerCase()})`).join(', ')}</p> : null}
           {c.paiements[0] ? <p className="doux">Dernier paiement : {c.paiements[0].statut} · {c.paiements[0].referenceOperateur ?? 'sans référence'}</p> : null}

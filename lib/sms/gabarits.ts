@@ -6,12 +6,13 @@ import { env } from '@/lib/env';
 const site = () => env().NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ?? '';
 const en = (langue?: string) => langue === 'en';
 
-export function smsBillets(titre: string, codes: string[], langue?: string): string {
+/** `paye` : montant payé avec sa devise (« 10 USD »), pour que l'acheteur sache quel portefeuille a été débité. */
+export function smsBillets(titre: string, codes: string[], langue?: string, paye?: string): string {
   const base = site();
   const liens = base ? codes.map((c) => `${base}/b/${c}`).join(' ') : '';
   return en(langue)
-    ? `e-Ticket RDC: payment received, your tickets for ${titre} are ready.${liens ? ' ' + liens : ' Open "My tickets" on the website.'}`
-    : `e-Ticket RDC : paiement reçu, vos billets pour ${titre} sont prêts.${liens ? ' ' + liens : ' Ouvrez « Mes billets » sur le site.'}`;
+    ? `e-Ticket RDC: payment received${paye ? ` (${paye})` : ''}, your tickets for ${titre} are ready.${liens ? ' ' + liens : ' Open "My tickets" on the website.'}`
+    : `e-Ticket RDC : paiement reçu${paye ? ` (${paye})` : ''}, vos billets pour ${titre} sont prêts.${liens ? ' ' + liens : ' Ouvrez « Mes billets » sur le site.'}`;
 }
 
 export const smsPayeeSansPlace = (titre: string, code: string, langue?: string) => en(langue)

@@ -12,6 +12,7 @@ import { db, Prisma, type StatutEvenement } from '@/lib/db';
 import { localVersUtc } from '@/lib/fuseaux';
 import { ipClient } from '@/lib/requete';
 import { alerterNouvelEvenement, prevenirListeAttente } from '@/lib/sms/diffusion';
+import { lireDollars } from '@/lib/argent';
 import { deposerOriginal, genererVariantes, type FormatAffiche, type Position } from '@/lib/stockage/affiche';
 
 export interface EtatAction { ok: boolean; message?: string; erreurs?: Record<string, string>; sauveLe?: string }
@@ -112,6 +113,13 @@ const schemaType = z.object({
   nom: texte(80).min(1, 'Nom requis'),
   description: optionnel(200),
   prixCdf: entier(0, 100_000_000),
+  // Dollars saisis (« 10 », « 10,50 ») → centimes. Vide : pas de paiement en USD pour cette catégorie.
+  prixUsd: z.string().optional().transform((v, ctx) => {
+    if (!v?.trim()) return null;
+    const c = lireDollars(v);
+    if (c === null || c > 10_000_000) { ctx.addIssue({ code: 'custom', message: 'Montant en dollars, par exemple 10 ou 10,50' }); return z.NEVER; }
+    return c;
+  }),
   quota: entier(1, 1_000_000),
   venteDebut: z.string().optional(),
   venteFin: z.string().optional(),

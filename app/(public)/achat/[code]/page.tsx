@@ -9,12 +9,12 @@ import { EnregistrerBillets } from '@/components/billet/EnregistrerBillets';
 import { textesBillet } from '@/components/billet/textes';
 import { Icone } from '@/components/ui/Icone';
 import { commandeDeLAcheteur } from '@/lib/achat';
-import { cdf, usd } from '@/lib/argent';
+import { montant as formater } from '@/lib/argent';
 import { sessionCourante } from '@/lib/auth/session';
 import { billetsHorsLigne } from '@/lib/billets/hors-ligne';
 import { contenuQR, dessinQR } from '@/lib/billets/qr';
-import { db } from '@/lib/db';
-import { dateCourte, jourMois } from '@/lib/fuseaux';
+import { montantsPossibles, type MontantsCommande } from '@/lib/commandes';
+import { dateCourte } from '@/lib/fuseaux';
 import { texteEvenement } from '@/lib/langue';
 import { OPERATEURS } from '@/lib/operateurs';
 import { parametre } from '@/lib/parametres';
@@ -44,7 +44,7 @@ export default async function PageAchat({ params }: { params: Promise<{ code: st
   const entete = (
     <div className="panneau pile" style={ecart(10, { padding: '16px 20px' })}>
       <div className="rangee entre envelopper">
-        <b>{t('achat.resume', { titre: texteEvenement(e, 'titre', langue), billets: t('evenement.nbBillets', { n: nb }), montant: cdf(c.totalCdf, undefined, langue) })}</b>
+        <b>{t('achat.resume', { titre: texteEvenement(e, 'titre', langue), billets: t('evenement.nbBillets', { n: nb }), montant: formater(c.total, c.devise, langue) })}</b>
         <span className="doux">{libelleEtape}</span>
       </div>
       <div className="progression" aria-hidden="true">{[1, 2, 3, 4].map((n) => <span key={n} className={n <= etape ? 'fait' : undefined} />)}</div>
@@ -66,7 +66,7 @@ export default async function PageAchat({ params }: { params: Promise<{ code: st
           <BilletVivant
             key={b.id}
             arrive={i === 0}
-            billet={{ publicId: b.publicId, categorie: b.typeBillet.nom, titulaire: b.titulaire, entree: b.entree, prix: cdf(b.prixPayeCdf, t('commun.gratuit'), langue) }}
+            billet={{ publicId: b.publicId, categorie: b.typeBillet.nom, titulaire: b.titulaire, entree: b.entree, prix: formater(b.prixPaye, b.devise, langue, t('commun.gratuit')) }}
             evenement={{ titre: texteEvenement(e, 'titre', langue), sousTitre: e.sousTitre, quand, lieu, selAffichage: e.selAffichage }}
             qr={dessinQR(contenuQR(e.code, b.code))}
             textes={await textesBillet({ titre: texteEvenement(e, 'titre', langue), categorie: b.typeBillet.nom, publicId: b.publicId })}
@@ -98,29 +98,30 @@ export default async function PageAchat({ params }: { params: Promise<{ code: st
       </section>
     );
   } else {
-    const [taux, numeros] = await Promise.all([c.tauxUsdId ? db.exchangeRate.findUnique({ where: { id: c.tauxUsdId } }) : null, parametre('numeros_marchands')]);
-    const dollars = usd(c.totalCdf, taux?.cdfParUsd);
+    const [possibles, numerosCdf, numerosUsd] = await Promise.all([montantsPossibles(c.id), parametre('numeros_marchands'), parametre('numeros_marchands_usd')]);
     const p = c.paiements[0];
-    const lignes = [
-      ...c.lignes.map((l) => ({ libelle: `${l.quantite} × ${l.typeBillet.nom}`, montant: cdf(l.quantite * l.prixUnitaireCdf, undefined, langue) })),
-      ...(c.remiseCdf ? [{ libelle: t('achat.remise'), montant: `- ${cdf(c.remiseCdf, undefined, langue)}` }] : []),
-      { libelle: t('achat.fraisService'), montant: '0 CDF' },
-      { libelle: t('achat.total'), montant: cdf(c.totalCdf, undefined, langue), gras: true },
-    ];
+    // Détail de la commande dans chaque devise possible : montants calculés à partir des prix saisis, jamais convertis.
+    const offre = (m: MontantsCommande) => ({
+      montant: formater(m.total, m.devise, langue),
+      lignes: [
+        ...c.lignes.map((l) => ({ libelle: `${l.quantite} × ${l.typeBillet.nom}`, montant: formater(l.quantite * m.prixUnitaires.get(l.id)!, m.devise, langue) })),
+        ...(m.remise ? [{ libelle: t('achat.remise'), montant: `- ${formater(m.remise, m.devise, langue)}` }] : []),
+        { libelle: t('achat.fraisService'), montant: formater(0, m.devise, langue) },
+        { libelle: t('achat.total'), montant: formater(m.total, m.devise, langue), gras: true },
+      ],
+    });
     const textes = Object.fromEntries(CLES_TEXTES_PAIEMENT.map((k) => [k, t.raw(`achat.${k}`) as string])) as TextesPaiement;
     contenu = (
       <ParcoursPaiement
         code={c.code}
-        total={c.totalCdf}
-        montant={cdf(c.totalCdf, undefined, langue)}
-        dollars={dollars && taux ? `${dollars} · ${t('commun.tauxIndicatif', { date: jourMois(taux.effectifLe) })}` : null}
-        lignes={lignes}
+        offres={{ CDF: offre(possibles!.CDF), USD: possibles!.USD ? offre(possibles!.USD) : null }}
+        deviseInitiale={c.devise}
         operateurs={[...OPERATEURS]}
         chiffresInitiaux={chiffresNationaux(p?.telephone ?? c.telephone)}
         vueInitiale={p?.statut === 'EN_ATTENTE' || p?.statut === 'INITIE' ? 'attente' : 'paiement'}
         debutPaiement={p && (p.statut === 'EN_ATTENTE' || p.statut === 'INITIE') ? p.creeLe.getTime() : null}
         operateurInitial={p?.operateur ?? null}
-        agentHref={Object.keys(numeros).length > 0 ? `/agent/${c.code}` : null}
+        agentHref={Object.keys(numerosCdf).length + Object.keys(numerosUsd).length > 0 ? `/agent/${c.code}` : null}
         textes={textes}
       />
     );

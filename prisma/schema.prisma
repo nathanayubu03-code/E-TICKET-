@@ -256,6 +256,13 @@ model EventScheduleItem {
   @@index([evenementId, ordre])
 }
 
+/// Devise d'un montant. Tous les montants sont des entiers dans la plus petite unité :
+/// francs pour le CDF, centimes pour l'USD. Les deux ne sont jamais additionnés ni convertis.
+enum Devise {
+  CDF
+  USD
+}
+
 model TicketType {
   id                String          @id @default(cuid())
   evenementId       String
@@ -263,6 +270,7 @@ model TicketType {
   nom               String
   description       String?
   prixCdf           Int
+  prixUsd           Int? // centimes ; vide : pas de paiement en USD pour cette catégorie
   quota             Int
   restant           Int // décrémenté atomiquement à la réservation
   venteDebutLe      DateTime?
@@ -277,36 +285,37 @@ model TicketType {
 }
 
 model Order {
-  id                 String               @id @default(cuid())
-  code               String               @unique // ET-XXXXXX
-  telephone          String
-  userId             String?
-  user               User?                @relation(fields: [userId], references: [id])
-  evenementId        String
-  evenement          Event                @relation(fields: [evenementId], references: [id])
-  statut             StatutCommande       @default(EN_ATTENTE)
-  mode               ModePaiement?
-  sousTotalCdf       Int
-  remiseCdf          Int                  @default(0)
-  totalCdf           Int
-  commissionBps      Int
-  commissionCdf      Int
-  netOrganisateurCdf Int
-  tauxUsdId          String?
-  langue             String               @default("fr") // langue de l'acheteur : SMS et PDF
-  reserveJusquau     DateTime
-  stockLibere        Boolean              @default(false)
-  payeeLe            DateTime?
-  annuleeLe          DateTime?
-  rembourseeLe       DateTime?
-  rembourseeParId    String?
-  noteRemboursement  String?
-  creeLe             DateTime             @default(now())
-  lignes             OrderItem[]
-  paiements          Payment[]
-  reclamations       ManualPaymentClaim[]
-  billets            Ticket[]
-  promo              PromoRedemption?
+  id                String               @id @default(cuid())
+  code              String               @unique // ET-XXXXXX
+  telephone         String
+  userId            String?
+  user              User?                @relation(fields: [userId], references: [id])
+  evenementId       String
+  evenement         Event                @relation(fields: [evenementId], references: [id])
+  statut            StatutCommande       @default(EN_ATTENTE)
+  mode              ModePaiement?
+  devise            Devise               @default(CDF) // tous les montants de la commande sont dans cette devise
+  sousTotal         Int
+  remise            Int                  @default(0)
+  total             Int
+  commissionBps     Int
+  montantCommission Int
+  netOrganisateur   Int
+  tauxUsdId         String?
+  langue            String               @default("fr") // langue de l'acheteur : SMS et PDF
+  reserveJusquau    DateTime
+  stockLibere       Boolean              @default(false)
+  payeeLe           DateTime?
+  annuleeLe         DateTime?
+  rembourseeLe      DateTime?
+  rembourseeParId   String?
+  noteRemboursement String?
+  creeLe            DateTime             @default(now())
+  lignes            OrderItem[]
+  paiements         Payment[]
+  reclamations      ManualPaymentClaim[]
+  billets           Ticket[]
+  promo             PromoRedemption?
 
   @@index([telephone, creeLe])
   @@index([statut, reserveJusquau])
@@ -314,13 +323,13 @@ model Order {
 }
 
 model OrderItem {
-  id              String     @id @default(cuid())
-  commandeId      String
-  commande        Order      @relation(fields: [commandeId], references: [id], onDelete: Cascade)
-  typeBilletId    String
-  typeBillet      TicketType @relation(fields: [typeBilletId], references: [id])
-  quantite        Int
-  prixUnitaireCdf Int
+  id           String     @id @default(cuid())
+  commandeId   String
+  commande     Order      @relation(fields: [commandeId], references: [id], onDelete: Cascade)
+  typeBilletId String
+  typeBillet   TicketType @relation(fields: [typeBilletId], references: [id])
+  quantite     Int
+  prixUnitaire Int // dans la devise de la commande
 
   @@index([commandeId])
 }
@@ -332,7 +341,8 @@ model Payment {
   fournisseur        String
   operateur          Operateur
   telephone          String
-  montantCdf         Int
+  montant            Int
+  devise             Devise         @default(CDF)
   cleIdempotence     String         @unique
   referenceOperateur String?        @unique
   statut             StatutPaiement @default(INITIE)
@@ -370,7 +380,8 @@ model ManualPaymentClaim {
   operateur            Operateur
   referenceTransaction String // normalisée : majuscules, sans espaces
   telephonePayeur      String
-  montantCdf           Int
+  montant              Int
+  devise               Devise            @default(CDF)
   statut               StatutReclamation @default(EN_ATTENTE)
   traiteParId          String?
   traiteLe             DateTime?
@@ -394,7 +405,8 @@ model Ticket {
   typeBillet    TicketType   @relation(fields: [typeBilletId], references: [id])
   titulaire     String?
   entree        String?
-  prixPayeCdf   Int
+  prixPaye      Int
+  devise        Devise       @default(CDF)
   statut        StatutBillet @default(VALIDE)
   premierScanLe DateTime?
   premierePorte String?
@@ -456,7 +468,8 @@ model PromoCode {
   id                 String            @id @default(cuid())
   code               String            @unique
   type               TypePromo
-  valeur             Int // points de base si pourcentage, CDF si montant
+  valeur             Int // points de base si pourcentage, montant dans `devise` sinon
+  devise             Devise? // montant fixe seulement ; vide pour un pourcentage (s'applique aux deux devises)
   evenementId        String?
   evenement          Event?            @relation(fields: [evenementId], references: [id])
   quota              Int?
@@ -476,7 +489,7 @@ model PromoRedemption {
   commandeId String    @unique
   commande   Order     @relation(fields: [commandeId], references: [id], onDelete: Cascade)
   telephone  String
-  remiseCdf  Int
+  remise     Int // dans la devise de la commande
   creeLe     DateTime  @default(now())
 
   @@index([promoId, telephone])
@@ -548,7 +561,8 @@ model Payout {
   organisateur         Organizer  @relation(fields: [organisateurId], references: [id])
   evenementId          String
   evenement            Event      @relation(fields: [evenementId], references: [id])
-  montantCdf           Int
+  montant              Int
+  devise               Devise     @default(CDF)
   operateur            Operateur?
   referenceTransaction String
   effectueLe           DateTime

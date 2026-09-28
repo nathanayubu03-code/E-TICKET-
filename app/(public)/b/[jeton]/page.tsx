@@ -6,7 +6,7 @@ import { BilletVivant } from '@/components/billet/BilletVivant';
 import { EnregistrerBillets } from '@/components/billet/EnregistrerBillets';
 import { textesBillet } from '@/components/billet/textes';
 import { Icone } from '@/components/ui/Icone';
-import { cdf } from '@/lib/argent';
+import { montant } from '@/lib/argent';
 import { billetsHorsLigne } from '@/lib/billets/hors-ligne';
 import { contenuQR, dessinQR } from '@/lib/billets/qr';
 import { db } from '@/lib/db';
@@ -33,7 +33,7 @@ export default async function BilletParLien({ params }: { params: Promise<{ jeto
       <div className="pile" style={ecart(14, { maxWidth: 420, marginInline: 'auto' })}>
         {b.statut === 'VALIDE' ? <EnregistrerBillets billets={await billetsHorsLigne([b.id], langue)} /> : null}
         <BilletVivant
-          billet={{ publicId: b.publicId, categorie: b.typeBillet.nom, titulaire: b.titulaire, entree: b.entree, prix: cdf(b.prixPayeCdf, t('commun.gratuit'), langue) }}
+          billet={{ publicId: b.publicId, categorie: b.typeBillet.nom, titulaire: b.titulaire, entree: b.entree, prix: montant(b.prixPaye, b.devise, langue, t('commun.gratuit')) }}
           evenement={{ titre: texteEvenement(e, 'titre', langue), sousTitre: e.sousTitre, quand: e.debutLe ? dateCourte(e.debutLe, e.ville?.fuseau ?? undefined, langue) : '', lieu: [e.lieu?.nom, e.ville?.nom].filter(Boolean).join(', '), selAffichage: e.selAffichage }}
           qr={b.statut === 'ANNULE' ? null : dessinQR(contenuQR(e.code, b.code))}
           textes={await textesBillet({ titre: texteEvenement(e, 'titre', langue), categorie: b.typeBillet.nom, publicId: b.publicId })}

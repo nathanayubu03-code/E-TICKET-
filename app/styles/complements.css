@@ -142,3 +142,18 @@
 @layer components {
   .test-typo-colonne .operateurs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* Choix de la devise, juste avant le choix de l'opérateur : deux gros boutons. */
+@layer components {
+  .choix-devise { border: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .choix-devise legend { font-weight: 700; margin-bottom: 8px; }
+  .choix-devise > span { grid-column: 1 / -1; }
+  .choix-devise .devise { min-height: 72px; padding: 12px; border-radius: 16px; border: 2px solid var(--encre); background: var(--surface); color: var(--encre); display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; cursor: pointer; text-align: left; box-shadow: 3px 3px 0 var(--ombre); }
+  .choix-devise .devise b { font-size: var(--t-bouton); }
+  .choix-devise .devise span { font-family: var(--affiche); font-weight: var(--titre-graisse); font-size: var(--t-prix); white-space: nowrap; }
+  .choix-devise .devise[aria-pressed="true"], .choix-devise .devise[aria-current="true"] { background: var(--soleil); color: #14120E; border-width: 3px; }
+  .choix-devise .devise:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+}
+@layer components {
+  .choix-devise a.devise { text-decoration: none; }
+}

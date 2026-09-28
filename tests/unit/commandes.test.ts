@@ -45,7 +45,7 @@ describe('commandes et réservation', () => {
   it('calcule montants et commission de l’organisateur, en entiers CDF', async () => {
     const e = await evenement([{ prix: 150000, quota: 10 }, { prix: 50000, quota: 10 }]);
     const c = await creerCommande({ telephone: tel(1), userId: null, evenementId: e.id, lignes: [{ typeId: e.typesBillet[0]!.id, quantite: 1 }, { typeId: e.typesBillet[1]!.id, quantite: 2 }] });
-    expect(c).toMatchObject({ sousTotalCdf: 250000, totalCdf: 250000, commissionBps: 800, commissionCdf: 20000, netOrganisateurCdf: 230000, statut: 'EN_ATTENTE' });
+    expect(c).toMatchObject({ sousTotal: 250000, total: 250000, commissionBps: 800, montantCommission: 20000, netOrganisateur: 230000, statut: 'EN_ATTENTE' });
     expect(c.code).toMatch(/^ET-[A-Z0-9]{6}$/);
     expect(c.reserveJusquau.getTime() - Date.now()).toBeGreaterThan(9 * 60_000);
   });
@@ -80,7 +80,7 @@ describe('commandes et réservation', () => {
     const e = await evenement([{ prix: 10000, quota: 50 }]);
     await db.promoCode.create({ data: { code: 'RENTREE', type: 'POURCENTAGE', valeur: 2500, quota: 1, evenementId: e.id } });
     const c = await creerCommande({ telephone: tel(5), userId: null, evenementId: e.id, lignes: [{ typeId: e.typesBillet[0]!.id, quantite: 2 }], codePromo: 'rentree' });
-    expect(c).toMatchObject({ sousTotalCdf: 20000, remiseCdf: 5000, totalCdf: 15000 });
+    expect(c).toMatchObject({ sousTotal: 20000, remise: 5000, total: 15000 });
     await expect(creerCommande({ telephone: tel(6), userId: null, evenementId: e.id, lignes: [{ typeId: e.typesBillet[0]!.id, quantite: 1 }], codePromo: 'RENTREE' })).rejects.toMatchObject({ erreur: { code: 'promo_invalide' } });
     expect((await db.ticketType.findUniqueOrThrow({ where: { id: e.typesBillet[0]!.id } })).restant).toBe(48);
   });

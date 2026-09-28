@@ -1,3 +1,4 @@
+import { montant } from '@/lib/argent';
 import { auditer } from '@/lib/audit';
 import { genererBillets } from '@/lib/billets/generation';
 import { reprendreStock } from '@/lib/commandes';
@@ -36,7 +37,7 @@ export async function payerCommande(commandeId: string, mode: ModePaiement, marq
   if (issue === 'payee' || issue === 'payee_sans_place') {
     const c = await db.order.findUniqueOrThrow({ where: { id: commandeId }, include: { evenement: { select: { titre: true, titreEn: true } }, billets: { select: { code: true } } } });
     const titre = texteEvenement(c.evenement, 'titre', c.langue);
-    await envoyerSms(c.telephone, issue === 'payee' ? 'billets' : 'payee_sans_place', issue === 'payee' ? smsBillets(titre, c.billets.map((b) => b.code), c.langue) : smsPayeeSansPlace(titre, c.code, c.langue));
+    await envoyerSms(c.telephone, issue === 'payee' ? 'billets' : 'payee_sans_place', issue === 'payee' ? smsBillets(titre, c.billets.map((b) => b.code), c.langue, c.total > 0 ? montant(c.total, c.devise, c.langue) : undefined) : smsPayeeSansPlace(titre, c.code, c.langue));
     await auditer({ action: issue === 'payee' ? 'commande.payee' : 'commande.payee_sans_place', entite: 'Order', entiteId: commandeId, apres: { mode, billets: c.billets.length } });
   }
   return issue;
@@ -54,7 +55,7 @@ export async function appliquerStatut(paiementId: string, statut: StatutNormalis
       const pris = await tx.payment.updateMany({ where: { id: paiementId, statut: { not: 'REUSSI' } }, data: { statut: 'REUSSI', statutBrut: brut, confirmeLe: new Date(), ...(referenceOperateur ? { referenceOperateur } : {}), prochaineVerifLe: null } });
       return pris.count === 1;
     });
-    if (issue === 'double_paiement') await auditer({ action: 'paiement.double', entite: 'Payment', entiteId: paiementId, apres: { commandeId: p.commandeId, montantCdf: p.montantCdf } });
+    if (issue === 'double_paiement') await auditer({ action: 'paiement.double', entite: 'Payment', entiteId: paiementId, apres: { commandeId: p.commandeId, montant: p.montant } });
     return issue;
   }
   const pris = await db.payment.updateMany({ where: { id: paiementId, statut: { in: ['INITIE', 'EN_ATTENTE'] } }, data: { statut, statutBrut: brut, prochaineVerifLe: null } });

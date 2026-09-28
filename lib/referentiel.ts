@@ -38,7 +38,8 @@ export const FUSEAUX = ['Africa/Kinshasa', 'Africa/Lubumbashi'] as const;
 export const PARAMETRES_DEFAUT = {
   commission_bps: 1000, // 10 %
   limite_billets: 4,
-  numeros_marchands: {} as Record<string, string>, // opérateur -> numéro, saisi par un administrateur
+  numeros_marchands: {} as Record<string, string>, // opérateur -> numéro marchand pour les paiements en CDF
+  numeros_marchands_usd: {} as Record<string, string>, // opérateur -> numéro marchand pour les paiements en USD (peut différer)
 } as const;
 
 export const BORNES_COMMISSION_BPS = { min: 0, max: 3000 } as const;

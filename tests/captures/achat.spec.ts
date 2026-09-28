@@ -28,7 +28,7 @@ for (const largeur of [360, 1280] as const) {
       await page.evaluate(() => document.fonts.ready);
       await page.screenshot({ path: `${DOSSIER}/achat-paiement-${largeur}-${theme}.png`, fullPage: true });
       await page.getByRole('button', { name: /^Payer / }).click();
-      await page.getByRole('heading', { name: 'Validez sur votre téléphone' }).waitFor();
+      await page.getByRole('heading', { name: /^Validez .* sur votre téléphone$/ }).waitFor();
       await page.screenshot({ path: `${DOSSIER}/achat-attente-${largeur}-${theme}.png`, fullPage: true });
       await page.getByRole('heading', { name: "C'est bon ! Vos billets sont prêts." }).waitFor({ timeout: 30_000 });
       await page.waitForTimeout(800);

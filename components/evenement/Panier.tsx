@@ -2,10 +2,10 @@
 
 import { useMemo, useState } from 'react';
 import { Icone } from '@/components/ui/Icone';
-import { cdf, usd } from '@/lib/argent';
+import { montant as formater, prixDouble } from '@/lib/argent';
 import { ecart } from '@/lib/style';
 
-export interface TypePanier { id: string; nom: string; description: string | null; prixCdf: number; restant: number; limiteParCommande: number | null; etat: 'ouvert' | 'pasEncore' | 'termine'; ouvertureTexte?: string }
+export interface TypePanier { id: string; nom: string; description: string | null; prixCdf: number; prixUsd: number | null; restant: number; limiteParCommande: number | null; etat: 'ouvert' | 'pasEncore' | 'termine'; ouvertureTexte?: string }
 export interface TextesPanier {
   vosBillets: string; maxParPersonne: string; epuise: string; plusQue: string; disponible: string; venteTerminee: string;
   retirer: string; ajouter: string; quantite: string; limite: string; aucunChoisi: string; unBillet: string; plusieursBillets: string; continuer: string; gratuit: string;
@@ -13,7 +13,7 @@ export interface TextesPanier {
 
 const remplir = (modele: string, v: Record<string, string | number>) => modele.replace(/\{(\w+)\}/g, (_, k: string) => String(v[k] ?? ''));
 
-export function Panier({ slug, types, max, taux, langue, textes }: { slug: string; types: TypePanier[]; max: number; taux: number | null; langue?: string; textes: TextesPanier }) {
+export function Panier({ slug, types, max, langue, textes }: { slug: string; types: TypePanier[]; max: number; langue?: string; textes: TextesPanier }) {
   const [q, setQ] = useState<Record<string, number>>({});
   const total = Object.values(q).reduce((a, b) => a + b, 0);
   const montant = types.reduce((s, c) => s + (q[c.id] ?? 0) * c.prixCdf, 0);
@@ -22,7 +22,9 @@ export function Panier({ slug, types, max, taux, langue, textes }: { slug: strin
     return `/achat/nouveau?e=${encodeURIComponent(slug)}&l=${encodeURIComponent(lignes)}`;
   }, [q, slug, types]);
   const change = (id: string, delta: number) => setQ((avant) => ({ ...avant, [id]: Math.max(0, (avant[id] ?? 0) + delta) }));
-  const dollars = usd(montant, taux, langue);
+  // Total en USD seulement si chaque catégorie choisie a un prix en USD : jamais de conversion.
+  const choisis = types.filter((c) => (q[c.id] ?? 0) > 0);
+  const dollars = choisis.length > 0 && montant > 0 && choisis.every((c) => c.prixUsd !== null) ? formater(choisis.reduce((s, c) => s + (q[c.id] ?? 0) * c.prixUsd!, 0), 'USD', langue) : null;
 
   return (
     <aside className="panneau pile panier" style={ecart(14)} aria-labelledby="t-billets">
@@ -48,7 +50,7 @@ export function Panier({ slug, types, max, taux, langue, textes }: { slug: strin
                 {badge}
               </div>
               <div className="rangee entre">
-                <div className="prix"><b style={{ fontSize: 'var(--t-prix)' }}>{cdf(c.prixCdf, textes.gratuit, langue)}</b>{usd(c.prixCdf, taux, langue) ? <span className="doux" style={{ fontSize: 'var(--t-petit)' }}>{usd(c.prixCdf, taux, langue)}</span> : null}</div>
+                <div className="prix"><b style={{ fontSize: 'var(--t-prix)' }}>{prixDouble(c.prixCdf, c.prixUsd, langue, textes.gratuit)}</b></div>
                 <div className="compteur">
                   <button type="button" disabled={n === 0} aria-label={remplir(textes.retirer, { nom: c.nom })} onClick={() => change(c.id, -1)}><Icone nom="minus" taille={22} epaisseur={2.6} /></button>
                   <output aria-live="polite" aria-label={remplir(textes.quantite, { nom: c.nom })}>{n}</output>
@@ -63,7 +65,7 @@ export function Panier({ slug, types, max, taux, langue, textes }: { slug: strin
       <div className="total rangee entre" aria-live="polite">
         <div className="prix">
           <span className="doux">{total === 0 ? textes.aucunChoisi : remplir(total > 1 ? textes.plusieursBillets : textes.unBillet, { n: total })}</span>
-          <b style={{ fontSize: 'var(--t-montant)' }}>{cdf(montant, '0 CDF', langue)}</b>
+          <b style={{ fontSize: 'var(--t-montant)' }}>{formater(montant, 'CDF', langue)}</b>
           {dollars ? <span className="doux">{dollars}</span> : null}
         </div>
       </div>

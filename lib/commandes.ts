@@ -1,8 +1,8 @@
-import { commission } from './argent';
+import { commission, type Devise } from './argent';
 import { codeCommande, genererBillets } from './billets/generation';
 import { db, type Prisma } from './db';
 import { langueSure } from './langue';
-import { parametre, tauxCourant } from './parametres';
+import { parametre } from './parametres';
 
 export const RESERVATION_MS = 10 * 60_000;
 export const RESERVATION_MANUELLE_MS = 2 * 3600_000;
@@ -14,7 +14,8 @@ export type ErreurCommande =
   | { code: 'plus_assez'; typeId: string }
   | { code: 'limite_personne'; max: number }
   | { code: 'limite_commande'; typeId: string; max: number }
-  | { code: 'promo_invalide' };
+  | { code: 'promo_invalide' }
+  | { code: 'devise_indisponible' };
 
 export class CommandeRefusee extends Error {
   constructor(public erreur: ErreurCommande) { super(erreur.code); }
@@ -47,8 +48,70 @@ async function remisePromo(tx: Prisma.TransactionClient, code: string, evenement
   } else {
     await tx.promoCode.update({ where: { id: promo.id }, data: { utilise: { increment: 1 } } });
   }
-  const remise = promo.type === 'POURCENTAGE' ? Math.floor((sousTotal * promo.valeur) / 10000) : Math.min(promo.valeur, sousTotal);
-  return { promo, remise };
+  return { promo, remise: remiseDansDevise(promo, sousTotal, 'CDF') };
+}
+
+/**
+ * Remise d'un code promo dans une devise. Un pourcentage s'applique aux deux devises ; un montant fixe
+ * seulement dans sa propre devise (un code de 1 000 CDF ne donne rien sur un paiement en USD).
+ */
+export function remiseDansDevise(promo: { type: 'POURCENTAGE' | 'MONTANT'; valeur: number; devise: Devise | null }, sousTotal: number, devise: Devise): number {
+  if (promo.type === 'POURCENTAGE') return Math.floor((sousTotal * promo.valeur) / 10000);
+  return (promo.devise ?? 'CDF') === devise ? Math.min(promo.valeur, sousTotal) : 0;
+}
+
+export interface MontantsCommande { devise: Devise; sousTotal: number; remise: number; total: number; montantCommission: number; netOrganisateur: number; prixUnitaires: Map<string, number> }
+
+/**
+ * Montants d'une commande dans une devise, à partir des prix saisis pour chaque catégorie.
+ * null si une catégorie du panier n'a pas de prix dans cette devise : pas de conversion.
+ */
+export function montantsDansDevise(
+  c: { commissionBps: number; lignes: { id: string; quantite: number; typeBillet: { prixCdf: number; prixUsd: number | null } }[]; promo: { promo: { type: 'POURCENTAGE' | 'MONTANT'; valeur: number; devise: Devise | null } } | null },
+  devise: Devise,
+): MontantsCommande | null {
+  const prixUnitaires = new Map<string, number>();
+  let sousTotal = 0;
+  for (const l of c.lignes) {
+    const prix = devise === 'CDF' ? l.typeBillet.prixCdf : l.typeBillet.prixUsd;
+    if (prix === null || prix === undefined) return null;
+    prixUnitaires.set(l.id, prix);
+    sousTotal += prix * l.quantite;
+  }
+  const remise = c.promo ? remiseDansDevise(c.promo.promo, sousTotal, devise) : 0;
+  const total = sousTotal - remise;
+  const com = commission(total, c.commissionBps);
+  return { devise, sousTotal, remise, total, montantCommission: com, netOrganisateur: total - com, prixUnitaires };
+}
+
+const inclusionMontants = { lignes: { include: { typeBillet: { select: { prixCdf: true, prixUsd: true } } } }, promo: { include: { promo: { select: { type: true, valeur: true, devise: true } } } } } as const;
+
+/** Les montants de la commande dans chaque devise possible (USD absent si une catégorie n'a pas de prix USD). */
+export async function montantsPossibles(commandeId: string): Promise<{ CDF: MontantsCommande; USD: MontantsCommande | null } | null> {
+  const c = await db.order.findUnique({ where: { id: commandeId }, include: inclusionMontants });
+  if (!c) return null;
+  return { CDF: montantsDansDevise(c, 'CDF')!, USD: montantsDansDevise(c, 'USD') };
+}
+
+/**
+ * Passe une commande en attente dans une autre devise, juste avant le paiement : recalcule les prix
+ * unitaires, la remise, le total et la commission. Refusé si une catégorie n'a pas de prix dans cette
+ * devise, ou si un paiement est déjà en cours (le montant demandé à l'opérateur ne doit pas changer).
+ */
+export async function choisirDevise(commandeId: string, devise: Devise): Promise<{ ok: true } | { ok: false; raison: 'devise_indisponible' | 'paiement_en_cours' | 'commande_indisponible' }> {
+  return db.$transaction(async (tx) => {
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`devise:${commandeId}`}))`;
+    const c = await tx.order.findUnique({ where: { id: commandeId }, include: { ...inclusionMontants, paiements: { where: { statut: { in: ['INITIE', 'EN_ATTENTE'] } }, select: { id: true } }, reclamations: { where: { statut: 'EN_ATTENTE' }, select: { id: true } } } });
+    if (!c || c.statut !== 'EN_ATTENTE') return { ok: false as const, raison: 'commande_indisponible' as const };
+    if (c.devise === devise) return { ok: true as const };
+    if (c.paiements.length || c.reclamations.length) return { ok: false as const, raison: 'paiement_en_cours' as const };
+    const m = montantsDansDevise(c, devise);
+    if (!m) return { ok: false as const, raison: 'devise_indisponible' as const };
+    for (const l of c.lignes) await tx.orderItem.update({ where: { id: l.id }, data: { prixUnitaire: m.prixUnitaires.get(l.id)! } });
+    if (c.promo) await tx.promoRedemption.update({ where: { commandeId }, data: { remise: m.remise } });
+    await tx.order.update({ where: { id: commandeId }, data: { devise, sousTotal: m.sousTotal, remise: m.remise, total: m.total, montantCommission: m.montantCommission, netOrganisateur: m.netOrganisateur } });
+    return { ok: true as const };
+  });
 }
 
 /**
@@ -60,7 +123,7 @@ async function remisePromo(tx: Prisma.TransactionClient, code: string, evenement
 export async function creerCommande(p: { telephone: string; userId: string | null; evenementId: string; lignes: Ligne[]; codePromo?: string | null; langue?: string }) {
   if (p.lignes.length === 0) throw new CommandeRefusee({ code: 'ligne_invalide' });
   const maintenant = new Date();
-  const [limiteGlobale, commissionGlobale, taux] = await Promise.all([parametre('limite_billets'), parametre('commission_bps'), tauxCourant()]);
+  const [limiteGlobale, commissionGlobale] = await Promise.all([parametre('limite_billets'), parametre('commission_bps')]);
 
   return db.$transaction(async (tx) => {
     await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`commande:${p.telephone}:${p.evenementId}`}))`;
@@ -85,7 +148,7 @@ export async function creerCommande(p: { telephone: string; userId: string | nul
       const pris = await tx.ticketType.updateMany({ where: { id: t.id, restant: { gte: l.quantite } }, data: { restant: { decrement: l.quantite } } });
       if (pris.count === 0) throw new CommandeRefusee({ code: 'plus_assez', typeId: t.id });
       sousTotal += t.prixCdf * l.quantite;
-      lignes.push({ typeBillet: { connect: { id: t.id } }, quantite: l.quantite, prixUnitaireCdf: t.prixCdf });
+      lignes.push({ typeBillet: { connect: { id: t.id } }, quantite: l.quantite, prixUnitaire: t.prixCdf });
     }
 
     let remise = 0;
@@ -105,10 +168,10 @@ export async function creerCommande(p: { telephone: string; userId: string | nul
     const commande = await tx.order.create({
       data: {
         code, telephone: p.telephone, userId: p.userId, evenementId: e.id, langue: langueSure(p.langue),
-        sousTotalCdf: sousTotal, remiseCdf: remise, totalCdf: total, commissionBps: bps, commissionCdf: com, netOrganisateurCdf: total - com,
-        tauxUsdId: taux?.id ?? null, reserveJusquau: new Date(maintenant.getTime() + RESERVATION_MS),
+        sousTotal: sousTotal, remise: remise, total: total, commissionBps: bps, montantCommission: com, netOrganisateur: total - com,
+        reserveJusquau: new Date(maintenant.getTime() + RESERVATION_MS),
         lignes: { create: lignes },
-        ...(promoId ? { promo: { create: { promoId, telephone: p.telephone, remiseCdf: remise } } } : {}),
+        ...(promoId ? { promo: { create: { promoId, telephone: p.telephone, remise: remise } } } : {}),
       },
     });
 

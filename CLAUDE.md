@@ -25,8 +25,10 @@
 
 ## Argent
 
-- Tous les montants sont des entiers en CDF (`Int`). L'USD est un affichage indicatif calculé avec le dernier taux saisi par un administrateur (« taux indicatif du JJ/MM »). Jamais de taux codé en dur.
-- Commission en points de base (1000 = 10 %), figée sur la commande à sa création.
+- Deux devises, CDF et USD (enum `Devise`). Tous les montants sont des entiers dans la plus petite unité : francs pour le CDF, centimes pour l'USD. Chaque commande, paiement, réclamation, billet, remise et reversement porte sa devise. Jamais de conversion ni de taux : le prix USD d'une catégorie est saisi par l'administrateur (facultatif), sinon la catégorie ne se paie qu'en CDF.
+- CDF et USD ne s'additionnent jamais : tableau de bord, reversements et export séparent les devises. Formatage : `montant(n, devise, langue)` et `prixDouble()` de `lib/argent.ts`.
+- Changement de devise d'une commande : uniquement par `choisirDevise()` (`lib/commandes.ts`), refusé pendant un paiement en cours. Devises acceptées par opérateur : `lib/operateurs.ts`.
+- Commission en points de base (1000 = 10 %), figée sur la commande à sa création, calculée dans la devise de la commande.
 
 ## Paiement, SMS, stockage
 

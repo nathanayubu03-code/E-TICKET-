@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { Icone } from '@/components/ui/Icone';
-import { cdf, usd } from '@/lib/argent';
+import { prixDouble } from '@/lib/argent';
 import { nomCategorie } from '@/lib/categorie';
 import type { EvenementListe } from '@/lib/evenements';
 import { texteEvenement } from '@/lib/langue';
@@ -9,7 +9,7 @@ import { dateCourte, heure, tampon } from '@/lib/fuseaux';
 import { ecart } from '@/lib/style';
 import type { Variantes } from './Couverture';
 
-export async function BlocUne({ e, taux }: { e: EvenementListe; taux: number | null }) {
+export async function BlocUne({ e }: { e: EvenementListe }) {
   const t = await getTranslations();
   const langue = await getLocale();
   const fuseau = e.ville?.fuseau ?? e.fuseau ?? undefined;
@@ -17,7 +17,6 @@ export async function BlocUne({ e, taux }: { e: EvenementListe; taux: number | n
   const v = (e.afficheVariantes as Variantes | null)?.['16x9'];
   const rare = e.typesBillet.filter((x) => x.restant > 0 && x.restant <= 20).sort((a, b) => a.restant - b.restant)[0];
   const plusieursPrix = new Set(e.typesBillet.map((x) => x.prixCdf)).size > 1;
-  const dollars = usd(e.prixMin, taux, langue);
   return (
     <article className="panneau une">
       <div className="bandeau">
@@ -45,8 +44,7 @@ export async function BlocUne({ e, taux }: { e: EvenementListe; taux: number | n
         <div className="rangee entre">
           <div className="prix">
             {plusieursPrix && e.prixMin > 0 ? <span style={{ fontSize: 'var(--t-petit)' }}>{t('commun.des')}</span> : null}
-            <b>{cdf(e.prixMin, t('commun.gratuit'), langue)}</b>
-            {dollars ? <span>{dollars}</span> : null}
+            <b>{prixDouble(e.prixMin, e.prixMinUsd, langue, t('commun.gratuit'))}</b>
           </div>
           <Link className="btn btn-principal btn-grand" href={`/evenements/${e.slug}`}>{t('accueil.reserver')}</Link>
         </div>

@@ -27,7 +27,7 @@ test('administration : tableau de bord vide et rempli, commandes, reversements, 
   for (const [i, [op, t, q]] of ([['MPESA', 0, 2], ['AIRTEL', 1, 3], ['ORANGE', 1, 1], ['AFRIMONEY', 0, 1]] as const).entries()) {
     const tel = `+2439710100${i}${i}`;
     const c = await creerCommande({ telephone: tel, userId: null, evenementId: e.id, lignes: [{ typeId: e.typesBillet[t]!.id, quantite: q }] });
-    await db.payment.create({ data: { commandeId: c.id, fournisseur: 'capture', operateur: op, telephone: tel, montantCdf: c.totalCdf, cleIdempotence: `${c.id}:0`, statut: 'REUSSI' } });
+    await db.payment.create({ data: { commandeId: c.id, fournisseur: 'capture', operateur: op, telephone: tel, montant: c.total, cleIdempotence: `${c.id}:0`, statut: 'REUSSI' } });
     await payerCommande(c.id, 'MOBILE_MONEY');
   }
   await capturer(page, '/admin', 'tableau-de-bord');

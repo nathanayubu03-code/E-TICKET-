@@ -10,7 +10,7 @@ import { referentiel, viderBase } from './aide-db';
 
 async function venteDe(prix: number, qte: number, tel: string, evenementId: string, typeId: string) {
   const c = await creerCommande({ telephone: tel, userId: null, evenementId, lignes: [{ typeId, quantite: qte }] });
-  await db.payment.create({ data: { commandeId: c.id, fournisseur: 'test', operateur: 'MPESA', telephone: tel, montantCdf: c.totalCdf, cleIdempotence: `${c.id}:0`, statut: 'REUSSI', referenceOperateur: `REF-${c.code}` } });
+  await db.payment.create({ data: { commandeId: c.id, fournisseur: 'test', operateur: 'MPESA', telephone: tel, montant: c.total, cleIdempotence: `${c.id}:0`, statut: 'REUSSI', referenceOperateur: `REF-${c.code}` } });
   await payerCommande(c.id, 'MOBILE_MONEY');
   return c;
 }
@@ -20,7 +20,7 @@ describe('tableau de bord, reversements, exports', () => {
   afterAll(async () => { await db.$disconnect(); });
 
   it('base vide : des zéros, pas de valeur fictive', async () => {
-    expect(await totaux({})).toEqual({ commandes: 0, billets: 0, brut: 0, commission: 0, net: 0 });
+    expect(await totaux({})).toEqual({ commandes: 0, billets: 0, parDevise: { CDF: { brut: 0, commission: 0, net: 0 }, USD: { brut: 0, commission: 0, net: 0 } } });
     expect(await parOperateur({})).toEqual([]);
     expect(await parCategorie({})).toEqual([]);
     expect(await reversementsDus()).toEqual([]);
@@ -34,11 +34,12 @@ describe('tableau de bord, reversements, exports', () => {
     await venteDe(20000, 2, '+243811000001', e.id, t);
     await venteDe(20000, 1, '+243811000002', e.id, t);
     const tot = await totaux({});
-    expect(tot).toEqual({ commandes: 2, billets: 3, brut: 60000, commission: 6000, net: 54000 });
-    expect(await parOperateur({})).toEqual([{ nom: 'M-Pesa', fond: '#007A3D', montant: 60000 }]);
-    await db.payout.create({ data: { organisateurId: orga.id, evenementId: e.id, montantCdf: 50000, referenceTransaction: 'VIR-1', effectueLe: new Date(), saisiParId: admin.id } });
+    expect(tot).toEqual({ commandes: 2, billets: 3, parDevise: { CDF: { brut: 60000, commission: 6000, net: 54000 }, USD: { brut: 0, commission: 0, net: 0 } } });
+    expect(await parOperateur({})).toEqual([{ nom: 'M-Pesa', fond: '#007A3D', devise: 'CDF', montant: 60000 }]);
+    await db.payout.create({ data: { organisateurId: orga.id, evenementId: e.id, montant: 50000, referenceTransaction: 'VIR-1', effectueLe: new Date(), saisiParId: admin.id } });
     const [r] = await reversementsDus();
-    expect(r).toMatchObject({ net: 54000, verse: 50000, reste: 4000 });
+    expect(r!.soldes.CDF).toMatchObject({ net: 54000, verse: 50000, reste: 4000 });
+    expect(r!.devises).toEqual(['CDF']);
     const fichier = await exportVentes(e.id, { telephonesComplets: false });
     const classeur = new ExcelJS.Workbook();
     await classeur.xlsx.load(fichier as unknown as ArrayBuffer);

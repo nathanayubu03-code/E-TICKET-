@@ -34,6 +34,16 @@ Montants : entiers en CDF. L'USD n'est qu'un affichage indicatif au taux saisi p
 
 Contrainte métier : les agrégateurs en RDC ne partagent pas les revenus automatiquement. Tout arrive sur le compte marchand d'e-Ticket ; la commission est figée sur chaque commande ; les reversements aux organisateurs sont enregistrés ensuite dans l'administration.
 
+## Devises (CDF ou USD)
+
+- Chaque catégorie de billet a un prix en CDF (obligatoire) et un prix en USD (facultatif), saisis par l'administrateur. Aucune conversion automatique.
+- Montants en entiers dans la plus petite unité : francs pour le CDF, centimes pour l'USD. Chaque commande, paiement, réclamation, billet et reversement porte sa devise. Le tableau de bord, les reversements et l'export Excel séparent toujours CDF et USD.
+- La commande est réservée en CDF. Sur l'écran de paiement, l'acheteur choisit « Payer en CDF » ou « Payer en USD » (bouton USD seulement si chaque catégorie du panier a un prix USD). `choisirDevise` (`lib/commandes.ts`) recalcule alors prix unitaires, remise, total et commission ; refusé si un paiement est déjà en cours.
+- La demande envoyée au fournisseur (`CommandeAPayer.devise`) et le webhook (`EvenementWebhook.devise`) portent la devise ; un webhook dans une autre devise que celle du paiement est refusé comme un montant différent.
+- Devises acceptées par opérateur : `lib/operateurs.ts` (`devises`, `devisesAConfirmer`). CDF et USD partout tant que l'agrégateur n'a pas répondu (question 5). Un opérateur qui n'accepte pas la devise choisie est masqué.
+- Codes promo : un pourcentage s'applique aux deux devises ; un montant fixe seulement dans sa devise.
+- Paiement chez un agent : deux jeux de numéros marchands (paramètres `numeros_marchands` et `numeros_marchands_usd`). L'agent voit la devise et le montant attendus.
+
 ## Paiement chez un agent
 
 L'acheteur reçoit son code de commande (`ET-XXXXXX`) et les numéros marchands saisis dans Paramètres, envoie le montant exact, puis saisit la référence de transaction reçue par SMS de son opérateur. La réservation passe à 2 heures. Un AGENT valide ou refuse dans `/admin/paiements/manuels`. Une référence ne sert qu'une fois (contrainte unique opérateur + référence).
@@ -60,7 +70,7 @@ La réponse arrive par un webhook signé (HMAC avec `SIMULATION_WEBHOOK_SECRET`)
 2. Authentification : clé API, jeton OAuth, certificat client ? Durée de vie des jetons, renouvellement.
 3. Idempotence : acceptez-vous une clé d'idempotence ou une référence marchande unique ? Que se passe-t-il si la même référence est envoyée deux fois ?
 4. Pouvons-nous transmettre notre propre référence (identifiant de paiement) et la retrouvez-vous dans le webhook et l'API de statut ?
-5. Devise : les montants en CDF sont-ils acceptés pour les quatre opérateurs ? Montants minimum et maximum par transaction.
+5. Quelles devises acceptez-vous pour chaque opérateur en RDC, et les frais sont-ils les mêmes en CDF et en USD ? Montants minimum et maximum par transaction et par devise. Le montant USD s'envoie-t-il en dollars avec décimales ou en centimes ?
 6. Format du numéro attendu (`+243…`, `243…`, `0…`).
 7. Délai d'expiration de la demande côté opérateur.
 

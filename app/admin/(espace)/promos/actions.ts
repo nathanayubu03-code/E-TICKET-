@@ -14,7 +14,8 @@ export async function creerPromo(_e: EtatAction, formData: FormData): Promise<Et
   const s = await exigerRole(ROLES_EDITION);
   const r = z.object({
     code: z.string().trim().toUpperCase().regex(/^[A-Z0-9-]{3,30}$/, '3 à 30 lettres, chiffres ou tirets'),
-    type: z.enum(['POURCENTAGE', 'MONTANT']),
+    // Montant fixe : dans une devise précise. Pourcentage : s'applique aux paiements en CDF comme en USD.
+    type: z.enum(['POURCENTAGE', 'MONTANT_CDF', 'MONTANT_USD']),
     valeur: z.coerce.number().positive('Valeur requise'),
     evenementId: z.string().optional(),
     quota: z.string().optional().transform((v) => (v ? Number(v) : null)).refine((v) => v === null || (Number.isInteger(v) && v > 0), 'Entier positif'),
@@ -24,11 +25,14 @@ export async function creerPromo(_e: EtatAction, formData: FormData): Promise<Et
   if (!r.success) return { ok: false, erreurs: Object.fromEntries(r.error.issues.map((i) => [String(i.path[0]), i.message])) };
   const d = r.data;
   if (d.type === 'POURCENTAGE' && d.valeur > 100) return { ok: false, erreurs: { valeur: '100 % maximum' } };
-  const valeur = d.type === 'POURCENTAGE' ? Math.round(d.valeur * 100) : Math.round(d.valeur);
+  const type = d.type === 'POURCENTAGE' ? 'POURCENTAGE' as const : 'MONTANT' as const;
+  const devise = d.type === 'MONTANT_CDF' ? 'CDF' as const : d.type === 'MONTANT_USD' ? 'USD' as const : null;
+  // Pourcentage en points de base, CDF en francs entiers, USD en centimes.
+  const valeur = d.type === 'POURCENTAGE' ? Math.round(d.valeur * 100) : d.type === 'MONTANT_USD' ? Math.round(d.valeur * 100) : Math.round(d.valeur);
   const jour = (v?: string, h = '00:00') => (v ? localVersUtc(v, h, 'Africa/Kinshasa') : null);
   try {
-    const p = await db.promoCode.create({ data: { code: d.code, type: d.type, valeur, evenementId: d.evenementId || null, quota: d.quota, debutLe: jour(d.debut), finLe: jour(d.fin, '23:59'), limiteParTelephone: d.limiteParTelephone } });
-    await auditer({ acteur: s.user, action: 'promo.creer', entite: 'PromoCode', entiteId: p.id, apres: { code: p.code, type: p.type, valeur: p.valeur } });
+    const p = await db.promoCode.create({ data: { code: d.code, type, devise, valeur, evenementId: d.evenementId || null, quota: d.quota, debutLe: jour(d.debut), finLe: jour(d.fin, '23:59'), limiteParTelephone: d.limiteParTelephone } });
+    await auditer({ acteur: s.user, action: 'promo.creer', entite: 'PromoCode', entiteId: p.id, apres: { code: p.code, type: p.type, valeur: p.valeur, devise: p.devise } });
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') return { ok: false, erreurs: { code: 'Ce code existe déjà' } };
     throw e;

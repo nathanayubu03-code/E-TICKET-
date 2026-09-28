@@ -10,7 +10,7 @@ import { EtatVide } from '@/components/public/EtatVide';
 import { FormAlerteSms } from '@/components/public/FormAlerteSms';
 import { Icone } from '@/components/ui/Icone';
 import { evenementsPublics, villesEtCategoriesPubliques } from '@/lib/evenements';
-import { parametre, tauxCourant } from '@/lib/parametres';
+import { parametre } from '@/lib/parametres';
 import { ecart } from '@/lib/style';
 
 export const dynamic = 'force-dynamic';
@@ -32,13 +32,11 @@ export default async function Accueil({ searchParams }: { searchParams: Params }
   const sp = await searchParams;
   const t = await getTranslations();
   const filtres = { ville: sp.ville || undefined, cat: sp.cat || undefined, q: sp.q?.slice(0, 80) || undefined };
-  const [tous, { villes, categories }, taux, max] = await Promise.all([
+  const [tous, { villes, categories }, max] = await Promise.all([
     evenementsPublics(),
     villesEtCategoriesPubliques(),
-    tauxCourant(),
     parametre('limite_billets'),
   ]);
-  const cdfParUsd = taux?.cdfParUsd ?? null;
   const textesAlerte = {
     titre: t('alertes.titre'), texte: t('alertes.texte'), numero: t('alertes.numero'), placeholder: t('telephone.placeholder'),
     ville: t('alertes.ville'), toutesVilles: t('alertes.toutesVilles'), consentement: t('alertes.consentement'), envoyer: t('alertes.envoyer'),
@@ -77,7 +75,7 @@ export default async function Accueil({ searchParams }: { searchParams: Params }
   return (
     <main className="conteneur">
       <section className="heros" aria-label={t('accueil.aLaUneAria')}>
-        <BlocUne e={une} taux={cdfParUsd} />
+        <BlocUne e={une} />
         <ApercuBillet e={une} />
       </section>
 
@@ -122,7 +120,7 @@ export default async function Accueil({ searchParams }: { searchParams: Params }
               </h2>
             </div>
             {liste.length > 0 ? (
-              <div className="grille">{liste.map((e) => <CarteEvenement key={e.id} e={e} taux={cdfParUsd} />)}</div>
+              <div className="grille">{liste.map((e) => <CarteEvenement key={e.id} e={e} />)}</div>
             ) : (
               <EtatVide titre={t('accueil.videTitre')} texte={t('accueil.videTexte')}>
                 <Link className="btn btn-principal" href="/#evenements">{t('accueil.effacerFiltres')}</Link>

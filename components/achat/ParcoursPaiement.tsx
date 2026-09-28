@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { payer } from '@/app/(public)/achat/actions';
 import { Icone } from '@/components/ui/Icone';
+import type { Devise } from '@/lib/argent';
 import { operateurDuNumero, type InfoOperateur } from '@/lib/operateurs';
 import { formaterChiffres } from '@/lib/telephone';
 import { ecart } from '@/lib/style';
@@ -24,15 +25,25 @@ function Riche({ gabarit, v = {} }: { gabarit: string; v?: Record<string, string
 }
 
 
-export function ParcoursPaiement({ code, total, montant, dollars, lignes, operateurs, chiffresInitiaux, vueInitiale, debutPaiement, operateurInitial, agentHref, textes }: {
-  code: string; total: number; montant: string; dollars: string | null; lignes: { libelle: string; montant: string; gras?: boolean }[];
+/** Montant et détail d'une commande dans une devise, calculés par le serveur à partir des prix saisis. */
+export interface OffreDevise { montant: string; lignes: { libelle: string; montant: string; gras?: boolean }[] }
+
+export function ParcoursPaiement({ code, offres, deviseInitiale, operateurs, chiffresInitiaux, vueInitiale, debutPaiement, operateurInitial, agentHref, textes }: {
+  code: string; offres: { CDF: OffreDevise; USD: OffreDevise | null }; deviseInitiale: Devise;
   operateurs: InfoOperateur[]; chiffresInitiaux: string; vueInitiale: 'paiement' | 'attente'; debutPaiement: number | null; operateurInitial: string | null;
   agentHref: string | null; textes: TextesPaiement;
 }) {
   const router = useRouter();
   const detecte = operateurDuNumero(chiffresInitiaux);
   const [vue, setVue] = useState<Vue>(vueInitiale);
-  const [op, setOp] = useState<InfoOperateur>(operateurs.find((o) => o.k === operateurInitial) ?? detecte ?? operateurs[0]!);
+  // Le bouton USD n'existe que si chaque catégorie du panier a un prix en USD (offres.USD non nul).
+  const [devise, setDevise] = useState<Devise>(deviseInitiale === 'USD' && offres.USD ? 'USD' : 'CDF');
+  const offre = (devise === 'USD' ? offres.USD : null) ?? offres.CDF;
+  const { montant, lignes } = offre;
+  // Un opérateur qui n'accepte pas la devise choisie disparaît du choix.
+  const proposes = operateurs.filter((o) => o.devises.includes(devise));
+  const [choixOp, setOp] = useState<InfoOperateur>(operateurs.find((o) => o.k === operateurInitial) ?? detecte ?? operateurs[0]!);
+  const op = proposes.some((o) => o.k === choixOp.k) ? choixOp : (proposes[0] ?? choixOp);
   const [chiffres, setChiffres] = useState(chiffresInitiaux);
   const [debut, setDebut] = useState<number | null>(debutPaiement);
   const [maintenant, setMaintenant] = useState<number>(() => debutPaiement ?? 0);
@@ -80,7 +91,7 @@ export function ParcoursPaiement({ code, total, montant, dollars, lignes, operat
 
   const lancer = (nouvelle: boolean) => demarrer(async () => {
     setErreur(null);
-    const r = await payer(code, op.k, chiffres, nouvelle);
+    const r = await payer(code, op.k, chiffres, nouvelle, devise);
     if (!r.ok) {
       setErreur(r.message);
       if (r.expire) router.refresh();
@@ -98,9 +109,21 @@ export function ParcoursPaiement({ code, total, montant, dollars, lignes, operat
   if (vue === 'paiement') {
     return (
       <section className="panneau pile" style={ecart(18)} aria-labelledby="t-pay">
+        {offres.USD ? (
+          <fieldset className="choix-devise">
+            <legend>{textes.choisirDevise}</legend>
+            {(['CDF', 'USD'] as const).map((d) => (
+              <button key={d} type="button" className="devise" aria-pressed={devise === d} onClick={() => { setDevise(d); setErreur(null); }}>
+                <b>{d === 'CDF' ? textes.payerEnCdf : textes.payerEnUsd}</b>
+                <span>{(d === 'CDF' ? offres.CDF : offres.USD!).montant}</span>
+              </button>
+            ))}
+            <span className="doux" style={{ fontSize: 'var(--t-petit)' }}>{remplir(textes.deviseAide, { devise })}</span>
+          </fieldset>
+        ) : null}
         <h1 id="t-pay" ref={titre} tabIndex={-1} className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>{textes.payerAvec}</h1>
         <div className="operateurs" role="group" aria-label={textes.operateurAria}>
-          {operateurs.map((o) => (
+          {proposes.map((o) => (
             <button key={o.k} type="button" className="operateur" aria-pressed={o.k === op.k} style={{ background: o.fond, color: o.texte }} onClick={() => setOp(o)}>
               <span className="losanges" aria-hidden="true"><i style={{ background: o.texte }} /><i style={{ border: `2px solid ${o.texte}` }} /></span>
               <span><b>{o.nom}</b><br /><small>{operateurDuNumero(chiffres)?.k === o.k ? remplir(textes.detecte, { prefixe: chiffres.slice(0, 2) }) : o.prefixes.slice(0, 3).map((p) => p.slice(1)).join(' · ')}</small></span>
@@ -115,8 +138,7 @@ export function ParcoursPaiement({ code, total, montant, dollars, lignes, operat
         </div>
         <div className="pile" style={ecart(8, { padding: 18, border: '2px solid var(--encre)', borderRadius: 18, boxShadow: '3px 3px 0 var(--ombre)' })}>
           <span className="doux" style={{ fontWeight: 700 }}>{textes.montantExact}</span>
-          <span className="montant">{montant}</span>
-          {dollars ? <span className="doux">{dollars}</span> : null}
+          <span className="montant" data-devise={devise}>{montant}</span>
           <div className="lignes">
             {lignes.map((l, i) => <div key={i} style={l.gras ? { fontWeight: 700 } : undefined}><span>{l.libelle}</span><span>{l.montant}</span></div>)}
           </div>
@@ -124,7 +146,7 @@ export function ParcoursPaiement({ code, total, montant, dollars, lignes, operat
         <div className="rangee" style={{ alignItems: 'flex-start', gap: 10 }}><Icone nom="shieldOk" taille={22} /><span>{textes.securite} <b>{textes.securiteGras}</b></span></div>
         {erreur ? <p className="note note-danger" role="alert">{erreur}</p> : null}
         <button className="btn btn-principal btn-grand" type="button" disabled={enCours || chiffres.length !== 9} onClick={() => lancer(false)}>{remplir(textes.payer, { montant })}</button>
-        {agentHref ? <Link className="lien-bouton" href={agentHref} style={{ alignSelf: 'center' }}>{textes.payerAgent}</Link> : null}
+        {agentHref ? <Link className="lien-bouton" href={`${agentHref}?devise=${devise}`} style={{ alignSelf: 'center' }}>{textes.payerAgent}</Link> : null}
       </section>
     );
   }
@@ -140,10 +162,10 @@ export function ParcoursPaiement({ code, total, montant, dollars, lignes, operat
             </svg>
             <div className="temps"><b>{mmss}</b><span className="doux">{textes.pourValider}</span></div>
           </div>
-          <h1 id="t-att" ref={titre} tabIndex={-1} className="affiche" style={{ fontSize: 'var(--t-titre-page)', textAlign: 'center' }}>{textes.attenteTitre}</h1>
+          <h1 id="t-att" ref={titre} tabIndex={-1} className="affiche" style={{ fontSize: 'var(--t-titre-page)', textAlign: 'center' }}>{remplir(textes.attenteTitreMontant, { montant })}</h1>
           <div className="pile" style={ecart(8)}>
             <span className="doux" style={{ fontWeight: 700 }}>{textes.messageVa}</span>
-            <div className="bulle-ussd">{nomOp}<br />{remplir(textes.bulleLigne1, { montant: total })}<br />{textes.bulleLigne2}<br /><u>&nbsp;</u></div>
+            <div className="bulle-ussd">{nomOp}<br />{remplir(textes.bulleLigne1, { montant })}<br />{textes.bulleLigne2}<br /><u>&nbsp;</u></div>
           </div>
           <ol className="liste-num">
             {[textes.attente1, textes.attente2, textes.attente3].map((g, i) => <li key={i}><span>{i + 1}</span><span><Riche gabarit={g!} v={{ operateur: nomOp, montant }} /></span></li>)}
@@ -213,7 +235,7 @@ export function ParcoursPaiement({ code, total, montant, dollars, lignes, operat
       </div>
 
       {vue !== 'recu' && agentHref ? (
-        <Link id="agent" className="agent" href={agentHref}>
+        <Link id="agent" className="agent" href={`${agentHref}?devise=${devise}`}>
           <Icone nom="user" taille={26} />
           <span style={{ flex: 1 }}><b style={{ fontSize: 'var(--t-texte)', display: 'block' }}>{textes.agentTitre}</b><span className="doux"><Riche gabarit={textes.agentTexte} v={{ code }} /></span></span>
         </Link>

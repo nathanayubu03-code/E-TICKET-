@@ -14,17 +14,18 @@ const selectionListe = {
   categorie: { select: { slug: true, nom: true, icone: true, fond: true, texte: true } },
   ville: { select: { nom: true, slug: true, fuseau: true } },
   lieu: { select: { nom: true } },
-  typesBillet: { select: { prixCdf: true, quota: true, restant: true, nom: true }, orderBy: { ordre: 'asc' } },
+  typesBillet: { select: { prixCdf: true, prixUsd: true, quota: true, restant: true, nom: true }, orderBy: { ordre: 'asc' } },
 } satisfies Prisma.EventSelect;
 
 export type EvenementListe = Prisma.EventGetPayload<{ select: typeof selectionListe }> & {
-  prixMin: number; restantTotal: number; complet: boolean; nomsTypes: string[];
+  /** Prix de la catégorie la moins chère, en CDF, et son prix USD s'il est saisi (jamais calculé). */
+  prixMin: number; prixMinUsd: number | null; restantTotal: number; complet: boolean; nomsTypes: string[];
 };
 
 function enrichir(e: Prisma.EventGetPayload<{ select: typeof selectionListe }>): EvenementListe {
-  const prix = e.typesBillet.map((t) => t.prixCdf);
+  const moinsChere = [...e.typesBillet].sort((a, b) => a.prixCdf - b.prixCdf)[0];
   const restantTotal = e.typesBillet.reduce((s, t) => s + t.restant, 0);
-  return { ...e, prixMin: prix.length ? Math.min(...prix) : 0, restantTotal, complet: e.statut === 'COMPLET' || (e.typesBillet.length > 0 && restantTotal === 0), nomsTypes: e.typesBillet.map((t) => t.nom) };
+  return { ...e, prixMin: moinsChere?.prixCdf ?? 0, prixMinUsd: moinsChere?.prixUsd ?? null, restantTotal, complet: e.statut === 'COMPLET' || (e.typesBillet.length > 0 && restantTotal === 0), nomsTypes: e.typesBillet.map((t) => t.nom) };
 }
 
 export interface Filtres { ville?: string; cat?: string; q?: string }

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { cdf } from '@/lib/argent';
+import { montant } from '@/lib/argent';
 import { exigerRole } from '@/lib/auth/session';
 import { db, type StatutPaiement } from '@/lib/db';
 import { dateLongue } from '@/lib/fuseaux';
@@ -30,7 +30,7 @@ export default async function JournalPaiements({ searchParams }: { searchParams:
           <tbody>{paiements.map((p) => (
             <tr key={p.id}>
               <td>{dateLongue(p.creeLe)}</td><td><Link href={`/admin/commandes?q=${p.commande.code}`}>{p.commande.code}</Link></td><td>{infoOperateur(p.operateur).nom}</td>
-              <td>{masquerTelephone(p.telephone)}</td><td>{cdf(p.montantCdf)}</td>
+              <td>{masquerTelephone(p.telephone)}</td><td>{montant(p.montant, p.devise)}</td>
               <td><span className={`badge ${CLASSES[p.statut]}`}>{p.statut}</span>{p.statutBrut ? <div className="doux" style={{ fontSize: 'var(--t-mini)' }}>{p.statutBrut}</div> : null}</td>
               <td style={{ fontSize: 'var(--t-mini)' }}>{p.referenceOperateur ?? '·'}</td>
             </tr>

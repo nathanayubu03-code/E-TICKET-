@@ -20,9 +20,10 @@ export async function declarerPaiementManuel(p: { commandeId: string; operateur:
     return await db.$transaction(async (tx) => {
       await tx.$executeRaw`SELECT 1 FROM "Order" WHERE "id" = ${p.commandeId} FOR UPDATE`;
       const c = await tx.order.findUniqueOrThrow({ where: { id: p.commandeId } });
-      if (!(c.statut === 'EN_ATTENTE' || c.statut === 'EXPIREE') || c.totalCdf <= 0) return { ok: false, raison: 'commande_indisponible' } as const;
+      if (!(c.statut === 'EN_ATTENTE' || c.statut === 'EXPIREE') || c.total <= 0) return { ok: false, raison: 'commande_indisponible' } as const;
       if (c.stockLibere && !(await reprendreStock(tx, c.id))) return { ok: false, raison: 'plus_de_place' } as const;
-      await tx.manualPaymentClaim.create({ data: { commandeId: c.id, operateur: p.operateur, referenceTransaction: reference, telephonePayeur: p.telephonePayeur, montantCdf: c.totalCdf } });
+      // Montant et devise attendus : ceux de la commande (devise choisie juste avant, voir choisirDevise).
+      await tx.manualPaymentClaim.create({ data: { commandeId: c.id, operateur: p.operateur, referenceTransaction: reference, telephonePayeur: p.telephonePayeur, montant: c.total, devise: c.devise } });
       await tx.order.update({ where: { id: c.id }, data: { statut: 'EN_ATTENTE', stockLibere: false, mode: 'MANUEL', reserveJusquau: new Date(Date.now() + RESERVATION_MANUELLE_MS) } });
       return { ok: true } as const;
     });
@@ -39,7 +40,7 @@ export async function validerReclamation(reclamationId: string, agent: Acteur): 
     const pris = await tx.manualPaymentClaim.updateMany({ where: { id: reclamationId, statut: 'EN_ATTENTE' }, data: { statut: 'VALIDEE', traiteParId: agent.id, traiteLe: new Date() } });
     return pris.count === 1;
   });
-  await auditer({ acteur: agent, action: 'paiement_manuel.valider', entite: 'ManualPaymentClaim', entiteId: reclamationId, apres: { issue, reference: r.referenceTransaction, montantCdf: r.montantCdf } });
+  await auditer({ acteur: agent, action: 'paiement_manuel.valider', entite: 'ManualPaymentClaim', entiteId: reclamationId, apres: { issue, reference: r.referenceTransaction, montant: r.montant } });
   return issue;
 }
 

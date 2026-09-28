@@ -8,11 +8,12 @@ import { ecart } from '@/lib/style';
 
 type Etat = { ok: boolean; message?: string; erreurs?: Record<string, string> };
 
-export function FormAgent({ code, operateurs, chiffres, textes }: { code: string; operateurs: InfoOperateur[]; chiffres: string; textes: Record<'operateur' | 'reference' | 'referenceAide' | 'numeroPayeur' | 'envoyer' | 'placeholder', string> }) {
+export function FormAgent({ code, devise, operateurs, chiffres, textes }: { code: string; devise: 'CDF' | 'USD'; operateurs: InfoOperateur[]; chiffres: string; textes: Record<'operateur' | 'reference' | 'referenceAide' | 'numeroPayeur' | 'envoyer' | 'placeholder', string> }) {
   const [etat, action, enCours] = useActionState<Etat, FormData>(declarerAgent.bind(null, code), { ok: false });
   if (etat.ok) return <p className="note note-succes" role="status">{etat.message}</p>;
   return (
     <form action={action} className="pile" style={ecart(14)} noValidate>
+      <input type="hidden" name="devise" value={devise} />
       <div className="champ">
         <label htmlFor="agent-op">{textes.operateur}</label>
         <select id="agent-op" name="operateur" className="champ-select" defaultValue={operateurs[0]?.k}>

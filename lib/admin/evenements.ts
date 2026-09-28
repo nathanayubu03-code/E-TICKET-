@@ -50,7 +50,7 @@ export async function dupliquerEvenement(id: string, creeParId: string) {
       code: await codeEvenementUnique(), slug: await slugUnique(titre), titre, sousTitre: e.sousTitre, genre: e.genre, description: e.description,
       categorieId: e.categorieId, organisateurId: e.organisateurId, lieuId: e.lieuId, villeId: e.villeId, fuseau: e.fuseau,
       infosPratiques: e.infosPratiques, limiteParPersonne: e.limiteParPersonne, selAffichage: nouveauSel(), creeParId, statut: 'BROUILLON',
-      typesBillet: { create: e.typesBillet.map((t) => ({ nom: t.nom, description: t.description, prixCdf: t.prixCdf, quota: t.quota, restant: t.quota, limiteParCommande: t.limiteParCommande, ordre: t.ordre })) },
+      typesBillet: { create: e.typesBillet.map((t) => ({ nom: t.nom, description: t.description, prixCdf: t.prixCdf, prixUsd: t.prixUsd, quota: t.quota, restant: t.quota, limiteParCommande: t.limiteParCommande, ordre: t.ordre })) },
       programme: { create: e.programme.map((p) => ({ heure: p.heure, titre: p.titre, detail: p.detail, ordre: p.ordre })) },
     },
   });

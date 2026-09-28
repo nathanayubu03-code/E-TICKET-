@@ -1,5 +1,6 @@
 // Interface unique des fournisseurs de paiement Mobile Money. Chaque agrégateur ou API directe
 // est un adaptateur. Le choix se fait par PAYMENT_PROVIDER (lib/env.ts). Voir docs/paiement.md.
+import type { Devise } from '@/lib/argent';
 import type { Operateur } from '@/lib/db';
 
 export type StatutNormalise = 'EN_ATTENTE' | 'REUSSI' | 'ECHOUE' | 'EXPIRE';
@@ -7,7 +8,8 @@ export type StatutNormalise = 'EN_ATTENTE' | 'REUSSI' | 'ECHOUE' | 'EXPIRE';
 export interface CommandeAPayer {
   paiementId: string; // notre référence, transmise au fournisseur quand il l'accepte
   codeCommande: string;
-  montantCdf: number; // entier
+  montant: number; // entier, dans la plus petite unité de la devise (francs, centimes)
+  devise: Devise; // la demande envoyée à l'opérateur utilise cette devise
   cleIdempotence: string;
 }
 
@@ -19,7 +21,8 @@ export interface EvenementWebhook {
   paiementId: string | null; // notre référence si le fournisseur la renvoie
   referenceOperateur: string | null;
   statut: StatutNormalise;
-  montantCdf: number | null;
+  montant: number | null;
+  devise: Devise | null; // null si le fournisseur ne la renvoie pas
   brut: string;
 }
 

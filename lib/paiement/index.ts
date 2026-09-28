@@ -1,7 +1,10 @@
 import { createHash } from 'node:crypto';
+import type { Devise } from '@/lib/argent';
 import { auditer } from '@/lib/audit';
+import { choisirDevise } from '@/lib/commandes';
 import { db, Prisma, type Operateur } from '@/lib/db';
 import { env } from '@/lib/env';
+import { infoOperateur } from '@/lib/operateurs';
 import { appliquerStatut } from './confirmation';
 import { PaiementIndisponible, type PaymentProvider, type RequeteBrute } from './fournisseur';
 import { brancherLivraisonSimulation, SIGNATURE_SIMULATION, SimulationProvider } from './simulation';
@@ -25,18 +28,24 @@ export function fournisseurPaiement(): PaymentProvider {
 }
 export function remplacerFournisseurPaiement(f: PaymentProvider | null) { instance = f; }
 
-export type ResultatDemande = { ok: true; paiementId: string } | { ok: false; raison: 'commande_indisponible' | 'reservation_expiree' | 'paiement_indisponible' | 'echec_fournisseur' };
+export type ResultatDemande = { ok: true; paiementId: string } | { ok: false; raison: 'commande_indisponible' | 'reservation_expiree' | 'paiement_indisponible' | 'echec_fournisseur' | 'devise_indisponible' | 'devise_operateur' };
 
 /**
  * Lance une demande de paiement. Un double clic ou un rechargement renvoie la demande en cours
  * (contrainte unique sur la clé d'idempotence). Seul « Renvoyer la demande » (nouvelle = true)
  * crée une nouvelle tentative.
  */
-export async function demanderPaiement(p: { commandeId: string; telephone: string; operateur: Operateur; nouvelle: boolean }): Promise<ResultatDemande> {
+export async function demanderPaiement(p: { commandeId: string; telephone: string; operateur: Operateur; nouvelle: boolean; devise?: Devise }): Promise<ResultatDemande> {
   let fournisseur: PaymentProvider;
   try { fournisseur = fournisseurPaiement(); } catch { return { ok: false, raison: 'paiement_indisponible' }; }
+  if (p.devise) {
+    if (!infoOperateur(p.operateur).devises.includes(p.devise)) return { ok: false, raison: 'devise_operateur' };
+    // Sans effet si la commande est déjà dans cette devise ; refusé si un paiement est en cours dans l'autre.
+    const choix = await choisirDevise(p.commandeId, p.devise);
+    if (!choix.ok && choix.raison === 'devise_indisponible') return { ok: false, raison: 'devise_indisponible' };
+  }
   const c = await db.order.findUnique({ where: { id: p.commandeId }, include: { paiements: { orderBy: { creeLe: 'desc' } } } });
-  if (!c || c.statut !== 'EN_ATTENTE' || c.totalCdf <= 0) return { ok: false, raison: 'commande_indisponible' };
+  if (!c || c.statut !== 'EN_ATTENTE' || c.total <= 0) return { ok: false, raison: 'commande_indisponible' };
   if (c.reserveJusquau < new Date()) return { ok: false, raison: 'reservation_expiree' };
   const enCours = c.paiements.find((x) => x.statut === 'INITIE' || x.statut === 'EN_ATTENTE');
   if (enCours && !p.nouvelle) return { ok: true, paiementId: enCours.id };
@@ -44,7 +53,7 @@ export async function demanderPaiement(p: { commandeId: string; telephone: strin
   const cle = `${c.id}:${c.paiements.length}`;
   let paiement;
   try {
-    paiement = await db.payment.create({ data: { commandeId: c.id, fournisseur: fournisseur.nom, operateur: p.operateur, telephone: p.telephone, montantCdf: c.totalCdf, cleIdempotence: cle } });
+    paiement = await db.payment.create({ data: { commandeId: c.id, fournisseur: fournisseur.nom, operateur: p.operateur, telephone: p.telephone, montant: c.total, devise: c.devise, cleIdempotence: cle } });
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
       const existant = await db.payment.findUniqueOrThrow({ where: { cleIdempotence: cle } });
@@ -53,11 +62,11 @@ export async function demanderPaiement(p: { commandeId: string; telephone: strin
     throw e;
   }
   try {
-    const r = await fournisseur.initier({ paiementId: paiement.id, codeCommande: c.code, montantCdf: c.totalCdf, cleIdempotence: cle }, p.telephone, p.operateur);
+    const r = await fournisseur.initier({ paiementId: paiement.id, codeCommande: c.code, montant: c.total, devise: c.devise, cleIdempotence: cle }, p.telephone, p.operateur);
     await db.payment.update({ where: { id: paiement.id }, data: { statut: r.statut === 'EN_ATTENTE' ? 'EN_ATTENTE' : paiement.statut, referenceOperateur: r.referenceOperateur, statutBrut: r.brut, prochaineVerifLe: new Date(Date.now() + PREMIERE_VERIF_MS) } });
     if (r.statut !== 'EN_ATTENTE') await appliquerStatut(paiement.id, r.statut, r.referenceOperateur, r.brut);
     await db.order.update({ where: { id: c.id }, data: { mode: 'MOBILE_MONEY' } });
-    await auditer({ action: 'paiement.initier', entite: 'Payment', entiteId: paiement.id, apres: { commande: c.code, operateur: p.operateur, montantCdf: c.totalCdf } });
+    await auditer({ action: 'paiement.initier', entite: 'Payment', entiteId: paiement.id, apres: { commande: c.code, operateur: p.operateur, montant: c.total, devise: c.devise } });
     return { ok: true, paiementId: paiement.id };
   } catch (e) {
     await db.payment.update({ where: { id: paiement.id }, data: { statut: 'ECHOUE', motifEchec: e instanceof Error ? e.message.slice(0, 300) : 'erreur' } });
@@ -99,9 +108,9 @@ export async function traiterWebhook(nomFournisseur: string, requete: RequeteBru
     await db.paymentEvent.update({ where: { id: enregistrement.id }, data: { erreur: 'paiement introuvable', traiteLe: new Date() } });
     return { code: 200, message: 'paiement introuvable' };
   }
-  if (evt.montantCdf !== null && evt.montantCdf !== paiement.montantCdf) {
-    await db.paymentEvent.update({ where: { id: enregistrement.id }, data: { paiementId: paiement.id, erreur: `montant différent : ${evt.montantCdf}`, traiteLe: new Date() } });
-    await auditer({ action: 'paiement.montant_different', entite: 'Payment', entiteId: paiement.id, apres: { attendu: paiement.montantCdf, recu: evt.montantCdf } });
+  if ((evt.montant !== null && evt.montant !== paiement.montant) || (evt.devise !== null && evt.devise !== paiement.devise)) {
+    await db.paymentEvent.update({ where: { id: enregistrement.id }, data: { paiementId: paiement.id, erreur: `montant différent : ${evt.montant} ${evt.devise ?? ''}`.trim(), traiteLe: new Date() } });
+    await auditer({ action: 'paiement.montant_different', entite: 'Payment', entiteId: paiement.id, apres: { attendu: paiement.montant, deviseAttendue: paiement.devise, recu: evt.montant, deviseRecue: evt.devise } });
     return { code: 200, message: 'montant différent' };
   }
   const issue = await appliquerStatut(paiement.id, evt.statut, evt.referenceOperateur, evt.brut);

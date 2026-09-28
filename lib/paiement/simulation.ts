@@ -33,7 +33,7 @@ export class SimulationProvider implements PaymentProvider {
     // L'issue est inscrite dans la référence : la vérification planifiée la retrouve si le webhook se perd.
     const reference = `SIM-${commande.paiementId}:${issue === 'REUSSI' ? 'R' : issue === 'ECHOUE' ? 'E' : 'N'}`;
     if (issue && livreur) {
-      const corps = JSON.stringify({ id: `evt-${commande.paiementId}`, reference, paiementId: commande.paiementId, statut: issue, montant: commande.montantCdf, operateur });
+      const corps = JSON.stringify({ id: `evt-${commande.paiementId}`, reference, paiementId: commande.paiementId, statut: issue, montant: commande.montant, devise: commande.devise, operateur });
       const l = livreur;
       const livrer = () => l(corps, signerSimulation(corps));
       const delai = delaiSimulationMs;
@@ -58,8 +58,8 @@ export class SimulationProvider implements PaymentProvider {
     const recu = Buffer.from(entetes.get(SIGNATURE_SIMULATION) ?? '');
     const attendu = Buffer.from(signerSimulation(corps));
     if (recu.length !== attendu.length || !timingSafeEqual(recu, attendu)) return null;
-    const d = JSON.parse(corps) as { id: string; reference: string; paiementId: string; statut: string; montant: number };
-    return { cleDedup: d.id, paiementId: d.paiementId, referenceOperateur: d.reference, statut: this.normaliserStatut(d.statut), montantCdf: d.montant, brut: d.statut };
+    const d = JSON.parse(corps) as { id: string; reference: string; paiementId: string; statut: string; montant: number; devise?: string };
+    return { cleDedup: d.id, paiementId: d.paiementId, referenceOperateur: d.reference, statut: this.normaliserStatut(d.statut), montant: d.montant, devise: d.devise === 'USD' || d.devise === 'CDF' ? d.devise : null, brut: d.statut };
   }
 
   normaliserStatut(brut: string): StatutNormalise {
