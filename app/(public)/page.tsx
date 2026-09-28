@@ -52,7 +52,7 @@ export default async function Accueil({ searchParams }: { searchParams: Params }
             <div className="bandeau"><span className="etiquette">e-Ticket RDC</span></div>
             <div className="corps">
               <h1 id="titre-attente" className="affiche">{t('accueil.attenteTitre')}</h1>
-              <p style={{ fontSize: 18, maxWidth: 560 }}>{t('accueil.attenteTexte')}</p>
+              <p style={{ fontSize: 'var(--t-chapo)', maxWidth: 560 }}>{t('accueil.attenteTexte')}</p>
             </div>
           </article>
           <aside className="panneau pile" style={ecart(14)} aria-labelledby="titre-alerte">
@@ -89,7 +89,7 @@ export default async function Accueil({ searchParams }: { searchParams: Params }
                 <form action="/" method="get" role="search" className="saisie" style={{ minHeight: 48, maxWidth: 340, flex: '1 1 240px' }}>
                   <label className="sr" htmlFor="recherche">{t('accueil.rechercher')}</label>
                   <span className="prefixe" style={{ background: 'transparent', border: 'none', paddingRight: 0 }}><Icone nom="search" /></span>
-                  <input id="recherche" type="search" name="q" defaultValue={filtres.q} placeholder={t('accueil.recherchePlaceholder')} style={{ fontSize: 17, letterSpacing: 0 }} />
+                  <input id="recherche" type="search" name="q" defaultValue={filtres.q} placeholder={t('accueil.recherchePlaceholder')} style={{ fontSize: 'var(--t-texte)', letterSpacing: 0 }} />
                   {filtres.ville ? <input type="hidden" name="ville" value={filtres.ville} /> : null}
                   {filtres.cat ? <input type="hidden" name="cat" value={filtres.cat} /> : null}
                 </form>

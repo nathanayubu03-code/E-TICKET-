@@ -15,7 +15,7 @@ export async function EtapesMobileMoney({ max }: { max: number }) {
         <h2 id="titre-comment" className="titre-section">{t('etapesTitre')}</h2>
         <div className="etapes">
           {etapes.map(([titre, texte], i) => (
-            <div className="etape" key={i}><span className="num">{i + 1}</span><b style={{ fontSize: 18 }}>{titre}</b><p className="doux">{texte}</p></div>
+            <div className="etape" key={i}><span className="num">{i + 1}</span><b style={{ fontSize: 'var(--t-chapo)' }}>{titre}</b><p className="doux">{texte}</p></div>
           ))}
         </div>
         <div className="operateurs-ligne" aria-label={t('operateursAria')}>

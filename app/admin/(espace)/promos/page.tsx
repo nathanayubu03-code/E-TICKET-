@@ -16,9 +16,9 @@ export default async function Promos() {
   ]);
   return (
     <div className="pile" style={{ ['--gap' as string]: '18px' }}>
-      <h1 className="affiche" style={{ fontSize: 44 }}>Codes promo</h1>
+      <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>Codes promo</h1>
       <section className="admin-panneau pile" aria-labelledby="t-np">
-        <h2 id="t-np" className="titre-section" style={{ fontSize: 26 }}>Nouveau code</h2>
+        <h2 id="t-np" className="titre-section">Nouveau code</h2>
         <FormAuto action={creerPromo} auto={false} libelle="Créer le code">
           <div className="grid gap-4 sm:grid-cols-3">
             <Champ nom="code" label="Code"><input id="code" name="code" className="champ-texte" autoCapitalize="characters" maxLength={30} /></Champ>

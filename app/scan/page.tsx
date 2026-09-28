@@ -18,7 +18,7 @@ export default async function ChoixScan() {
   });
   return (
     <main className="scan-ecran" style={{ padding: 16, gap: 16 }}>
-      <h1 className="affiche" style={{ fontSize: 40 }}>{t('titre')}</h1>
+      <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>{t('titre')}</h1>
       <p>{t('choisir')}</p>
       {evts.length === 0 ? <p className="note note-attention">{t('aucun')}</p> : evts.map((e) => (
         <Link key={e.id} href={`/scan/${e.id}`} className="btn btn-grand" style={{ justifyContent: 'space-between', background: '#1A1813', color: '#FBF5E6', borderColor: '#4A4436' }}>

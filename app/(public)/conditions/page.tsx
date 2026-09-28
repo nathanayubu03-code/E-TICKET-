@@ -13,7 +13,7 @@ export default async function Conditions() {
   return (
     <main className="conteneur">
       <article className="panneau pile" style={ecart(18, { maxWidth: 820, marginInline: 'auto', lineHeight: 1.6 })}>
-        <h1 className="affiche" style={{ fontSize: 'clamp(40px,6vw,56px)' }}>Conditions</h1>
+        <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>Conditions</h1>
         <p>Ces conditions s&apos;appliquent à l&apos;utilisation d&apos;e-Ticket RDC et à tout achat de billet sur le site ou l&apos;application.</p>
         <Editeur />
 

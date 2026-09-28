@@ -60,12 +60,12 @@ export function BilletVivant({ billet, evenement, qr, textes, arrive = false, ho
     <article className={`billet${arrive ? ' arrive' : ''}`} aria-label={textes.aria}>
       <div className="tete">
         <div className="rangee entre">
-          <span className="affiche" style={{ fontSize: 20 }}>e-Ticket</span>
+          <span className="affiche" style={{ fontSize: 'var(--t-titre-carte)' }}>e-Ticket</span>
           <span className="badge" style={{ background: '#FFD21F', color: '#14120E' }}>{textes.unePersonne}</span>
         </div>
         <div className="affiche">{evenement.titre}</div>
         {evenement.sousTitre ? <div style={{ fontWeight: 700 }}>{evenement.sousTitre}</div> : null}
-        <div style={{ fontSize: 14 }}>{evenement.quand}<br />{evenement.lieu}</div>
+        <div style={{ fontSize: 'var(--t-petit)' }}>{evenement.quand}<br />{evenement.lieu}</div>
       </div>
       <div className="decoupe"><i /></div>
       <div className="motif">

@@ -28,10 +28,10 @@ export default async function Commandes({ searchParams }: { searchParams: Promis
   ]);
   return (
     <div className="pile" style={{ ['--gap' as string]: '18px' }}>
-      <h1 className="affiche" style={{ fontSize: 44 }}>Commandes et billets</h1>
+      <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>Commandes et billets</h1>
       {sansPlace.length > 0 ? (
         <section className="note note-danger" style={{ display: 'block' }} aria-labelledby="t-prio">
-          <h2 id="t-prio" style={{ fontSize: 18, marginBottom: 6 }}>À rembourser en priorité : payées sans place</h2>
+          <h2 id="t-prio" style={{ fontSize: 'var(--t-chapo)', marginBottom: 6 }}>À rembourser en priorité : payées sans place</h2>
           <ul style={{ margin: 0, paddingLeft: 20 }}>{sansPlace.map((c) => (
             <li key={c.id} className="rangee envelopper" style={{ gap: 10 }}>{c.code} · {c.evenement.titre} · {cdf(c.totalCdf)} · {formaterTelephone(c.telephone)}{edition ? <BoutonAction classe="lien-bouton" libelle="Marquer remboursée" confirmation="Le remboursement a-t-il bien été envoyé sur le compte Mobile Money de l'acheteur ?" action={rembourser.bind(null, c.id)} /> : null}</li>
           ))}</ul>
@@ -45,7 +45,7 @@ export default async function Commandes({ searchParams }: { searchParams: Promis
       {!where ? <p className="doux">Entrez un numéro de téléphone, un code de commande ou un code de billet.</p> : commandes.length === 0 ? <div className="admin-panneau"><p>Aucune commande trouvée.</p></div> : commandes.map((c) => (
         <section key={c.id} className="admin-panneau pile" style={{ ['--gap' as string]: '10px' }} aria-label={c.code}>
           <div className="rangee entre envelopper">
-            <div><b style={{ fontSize: 20 }}>{c.code}</b> · {c.evenement.titre}<div className="doux">{formaterTelephone(c.telephone)} · créée le {dateLongue(c.creeLe, c.evenement.fuseau ?? undefined)}</div></div>
+            <div><b style={{ fontSize: 'var(--t-titre-carte)' }}>{c.code}</b> · {c.evenement.titre}<div className="doux">{formaterTelephone(c.telephone)} · créée le {dateLongue(c.creeLe, c.evenement.fuseau ?? undefined)}</div></div>
             <span className="badge badge-neutre">{LIBELLES_COMMANDE[c.statut]}</span>
           </div>
           <div className="lignes">

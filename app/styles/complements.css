@@ -6,13 +6,13 @@
   .champ-texte, .champ-select, .champ-zone {
     width: 100%; min-height: 52px; padding: 0 14px;
     border: 2px solid var(--encre); border-radius: 14px;
-    background: var(--surface); color: var(--encre); font-size: 17px;
+    background: var(--surface); color: var(--encre); font-size: var(--t-texte);
   }
   .champ-zone { min-height: 120px; padding: 12px 14px; line-height: 1.5; resize: vertical; }
   .champ-texte:focus, .champ-select:focus, .champ-zone:focus { outline: none; border-color: var(--focus); box-shadow: 0 0 0 3px var(--focus-halo); }
   .champ-texte[aria-invalid="true"], .champ-zone[aria-invalid="true"] { border-color: var(--danger); }
-  .erreur-champ { color: var(--danger); font-size: 15px; font-weight: 700; }
-  .aide-champ { color: var(--encre-douce); font-size: 14px; }
+  .erreur-champ { color: var(--danger); font-size: var(--t-petit); font-weight: 700; }
+  .aide-champ { color: var(--encre-douce); font-size: var(--t-petit); }
   .case { display: flex; gap: 12px; align-items: flex-start; min-height: 48px; cursor: pointer; }
   .case input { width: 24px; height: 24px; flex: none; margin-top: 2px; accent-color: var(--encre); }
   .piege { position: absolute !important; left: -10000px !important; width: 1px; height: 1px; overflow: hidden; }
@@ -33,9 +33,9 @@
   .admin-panneau { background: var(--surface); border: 2px solid var(--encre); border-radius: 16px; padding: 20px; }
   .kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
   .kpi { background: var(--surface); border: 2px solid var(--encre); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 4px; }
-  .kpi b { font-family: var(--affiche); font-weight: 900; font-stretch: 80%; font-size: 34px; line-height: 1; }
-  .tableau { width: 100%; border-collapse: collapse; font-size: 15px; }
-  .tableau th { text-align: left; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--encre-douce); padding: 10px 12px; border-bottom: 2px solid var(--encre); }
+  .kpi b { font-family: var(--affiche); font-weight: var(--titre-graisse); font-stretch: var(--titre-largeur); font-size: var(--t-kpi); line-height: 1; }
+  .tableau { width: 100%; border-collapse: collapse; font-size: var(--t-tableau); }
+  .tableau th { text-align: left; font-size: var(--t-mini); letter-spacing: 0.04em; text-transform: uppercase; color: var(--encre-douce); padding: 10px 12px; border-bottom: 2px solid var(--encre); }
   .tableau td { padding: 12px; border-bottom: 1px solid var(--trait); vertical-align: top; }
   .tableau-cadre { overflow-x: auto; border: 2px solid var(--encre); border-radius: 16px; background: var(--surface); }
   .onglets-admin { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -43,7 +43,7 @@
   .onglets-admin a[aria-current="page"] { background: var(--encre); border-color: var(--encre); color: var(--fond); }
   .etapes-assistant { display: flex; flex-wrap: wrap; gap: 6px; counter-reset: pas; }
   .etapes-assistant a { counter-increment: pas; min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 12px; border: 2px solid var(--trait); color: var(--encre); text-decoration: none; background: var(--surface); }
-  .etapes-assistant a::before { content: counter(pas); width: 24px; height: 24px; border-radius: 50%; background: var(--surface-2); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; }
+  .etapes-assistant a::before { content: counter(pas); width: 24px; height: 24px; border-radius: 50%; background: var(--surface-2); display: inline-flex; align-items: center; justify-content: center; font-size: var(--t-mini); }
   .etapes-assistant a[aria-current="step"] { border-color: var(--encre); box-shadow: 3px 3px 0 var(--ombre); }
   .etapes-assistant a[aria-current="step"]::before { background: var(--soleil); color: #14120E; }
 
@@ -56,7 +56,7 @@
   .scan-ligne { position: absolute; left: 16%; right: 16%; height: 4px; border-radius: 2px; background: #FFD21F; animation: scan-ligne 2.4s ease-in-out infinite; }
   @keyframes scan-ligne { 0% { top: 14%; } 50% { top: 84%; } 100% { top: 14%; } }
   .scan-resultat { position: fixed; inset: 0; z-index: 40; display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 24px; }
-  .scan-resultat h1 { font-family: var(--affiche); font-weight: 900; font-stretch: 70%; font-size: 68px; line-height: 0.9; letter-spacing: 0.01em; }
+  .scan-resultat h1 { font-family: var(--affiche); font-weight: var(--titre-graisse); font-stretch: var(--titre-largeur); font-size: var(--t-scan-resultat); line-height: 0.9; letter-spacing: 0.01em; }
   .scan-valide { background: #0B7A3E; color: #FFFFFF; }
   .scan-refuse { background: #C8102E; color: #FFFFFF; }
   .scan-deja { background: #F08A00; color: #14120E; }
@@ -116,7 +116,7 @@
   .bandeau-test {
     position: fixed; top: 0; left: 0; right: 0; z-index: 1000; min-height: var(--h-test);
     display: flex; align-items: center; justify-content: center; padding: 6px 16px; text-align: center;
-    background: #C8102E; color: #FFFFFF; font-weight: 700; font-size: 14px; line-height: 1.3;
+    background: #C8102E; color: #FFFFFF; font-weight: 700; font-size: var(--t-petit); line-height: 1.3;
     border-bottom: 2px solid #14120E;
   }
   html[data-app-env="staging"] body { padding-top: var(--h-test); }
@@ -124,12 +124,21 @@
   html[data-app-env="staging"] .panier, html[data-app-env="staging"] .mb-grille aside { top: calc(92px + var(--h-test)) !important; }
   html[data-app-env="staging"] .scan-ecran { min-height: calc(100dvh - var(--h-test)); }
   html[data-app-env="staging"] .scan-resultat { top: var(--h-test); }
-  .code-test { padding: 10px 14px; border-radius: 12px; border: 2px dashed #C8102E; background: var(--danger-doux); color: var(--danger); font-size: 16px; }
-  .code-test b { font-family: var(--affiche); font-weight: 900; font-size: 24px; letter-spacing: 0.12em; margin-left: 6px; }
+  .code-test { padding: 10px 14px; border-radius: 12px; border: 2px dashed #C8102E; background: var(--danger-doux); color: var(--danger); font-size: var(--t-texte); }
+  .code-test b { font-family: var(--affiche); font-weight: var(--titre-graisse); font-size: var(--t-otp); letter-spacing: 0.12em; margin-left: 6px; }
 }
 
 /* Accueil vide en 360 px : la colonne unique de .heros (1fr) prenait la largeur minimale du formulaire
    d'alerte SMS et débordait de 52 px. minmax(0, 1fr) la tient dans l'écran. */
 @layer components {
   @media (max-width: 900px) { .heros { grid-template-columns: minmax(0, 1fr); } }
+}
+
+/* Page /test-typo (development et staging) : trois colonnes de 360 px. */
+@layer components {
+  .test-typo-grille { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+  .test-typo-colonne { width: 360px; max-width: 100%; gap: 16px; }
+}
+@layer components {
+  .test-typo-colonne .operateurs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

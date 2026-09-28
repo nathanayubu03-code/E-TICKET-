@@ -36,7 +36,7 @@ export default async function BilletParLien({ params }: { params: Promise<{ jeto
           horsLigne={b.statut === 'VALIDE'}
           etat={b.statut === 'ANNULE' ? t('billet.annule') : b.statut === 'UTILISE' ? t('billet.utilise') : undefined}
         />
-        <p className="panneau doux" style={{ padding: '14px 16px', fontSize: 15, boxShadow: 'none' }}>{t('mesBillets.conseil')}</p>
+        <p className="panneau doux" style={{ padding: '14px 16px', fontSize: 'var(--t-texte)', boxShadow: 'none' }}>{t('mesBillets.conseil')}</p>
         {b.statut !== 'ANNULE' ? <a className="btn btn-principal btn-grand" href={`/api/billets/${b.publicId}/pdf?jeton=${b.code}`}><Icone nom="download" taille={22} />{t('achat.telechargerPdf')}</a> : null}
         <Link className="lien-bouton" href="/mes-billets" style={{ alignSelf: 'center' }}>{t('achat.voirTous')}</Link>
       </div>

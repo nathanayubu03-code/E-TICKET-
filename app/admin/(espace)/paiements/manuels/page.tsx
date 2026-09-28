@@ -17,14 +17,14 @@ export default async function PaiementsManuels() {
   ]);
   return (
     <div className="pile" style={{ ['--gap' as string]: '18px' }}>
-      <h1 className="affiche" style={{ fontSize: 44 }}>Paiements manuels à valider</h1>
+      <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>Paiements manuels à valider</h1>
       <p className="doux">Vérifiez dans le relevé du compte marchand que le montant exact est arrivé avec cette référence avant de valider. Une référence ne peut servir qu&apos;une fois.</p>
       {aTraiter.length === 0 ? <div className="admin-panneau"><p>Aucun paiement manuel en attente.</p></div> : (
         <div className="tableau-cadre"><table className="tableau">
           <thead><tr><th>Déclaré</th><th>Commande</th><th>Opérateur</th><th>Référence</th><th>Payé depuis</th><th>Montant attendu</th><th>Décision</th></tr></thead>
           <tbody>{aTraiter.map((r) => (
             <tr key={r.id}>
-              <td>{dateLongue(r.creeLe)}</td><td><b>{r.commande.code}</b><div className="doux" style={{ fontSize: 13 }}>{r.commande.evenement.titre}</div></td>
+              <td>{dateLongue(r.creeLe)}</td><td><b>{r.commande.code}</b><div className="doux" style={{ fontSize: 'var(--t-mini)' }}>{r.commande.evenement.titre}</div></td>
               <td>{infoOperateur(r.operateur).nom}</td><td><b style={{ letterSpacing: '0.04em' }}>{r.referenceTransaction}</b></td>
               <td>{formaterTelephone(r.telephonePayeur)}</td><td>{cdf(r.montantCdf)}</td>
               <td style={{ minWidth: 200 }}><ActionsReclamation valider={valider.bind(null, r.id)} refuser={refuser.bind(null, r.id)} /></td>
@@ -32,7 +32,7 @@ export default async function PaiementsManuels() {
           ))}</tbody>
         </table></div>
       )}
-      <h2 className="titre-section" style={{ fontSize: 26 }}>Derniers traités</h2>
+      <h2 className="titre-section">Derniers traités</h2>
       {traites.length === 0 ? <p className="doux">Aucun.</p> : (
         <div className="tableau-cadre"><table className="tableau">
           <thead><tr><th>Traité</th><th>Commande</th><th>Référence</th><th>Décision</th></tr></thead>

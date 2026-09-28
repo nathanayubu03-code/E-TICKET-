@@ -27,12 +27,12 @@ export async function BlocUne({ e, taux }: { e: EvenementListe; taux: number | n
       <div className="corps">
         <span style={{ fontWeight: 700 }}>{[e.categorie?.nom.replace(/s$/, ''), e.genre].filter(Boolean).join(' · ')}</span>
         <h1 className="affiche">{e.titre}</h1>
-        {e.sousTitre ? <p style={{ fontSize: 18 }}>{e.sousTitre}</p> : null}
+        {e.sousTitre ? <p style={{ fontSize: 'var(--t-chapo)' }}>{e.sousTitre}</p> : null}
         <div className="meta">
           {e.debutLe ? <span><Icone nom="cal" />{dateCourte(e.debutLe, fuseau)}</span> : null}
           <span><Icone nom="pin" />{[e.lieu?.nom, e.ville?.nom].filter(Boolean).join(', ')}</span>
         </div>
-        {e.description ? <p className="ligne-clamp" style={{ fontSize: 17, maxWidth: 520 }}>{e.description}</p> : null}
+        {e.description ? <p className="ligne-clamp" style={{ fontSize: 'var(--t-texte)', maxWidth: 520 }}>{e.description}</p> : null}
         <div className="rangee envelopper" style={ecart(8)}>
           {e.ouverturePortesLe ? <span className="badge" style={{ background: '#FBF5E6', color: '#14120E' }}>{t('accueil.portes', { heure: heure(e.ouverturePortesLe, fuseau) })}</span> : null}
           {e.nomsTypes.length > 1 ? <span className="badge" style={{ background: '#FBF5E6', color: '#14120E' }}>{e.nomsTypes.join(' · ')}</span> : null}
@@ -41,7 +41,7 @@ export async function BlocUne({ e, taux }: { e: EvenementListe; taux: number | n
         </div>
         <div className="rangee entre">
           <div className="prix">
-            {plusieursPrix && e.prixMin > 0 ? <span style={{ fontSize: 14 }}>{t('commun.des')}</span> : null}
+            {plusieursPrix && e.prixMin > 0 ? <span style={{ fontSize: 'var(--t-petit)' }}>{t('commun.des')}</span> : null}
             <b>{cdf(e.prixMin, t('commun.gratuit'))}</b>
             {dollars ? <span>{dollars}</span> : null}
           </div>

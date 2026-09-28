@@ -24,7 +24,7 @@ export default async function ListeEvenements({ searchParams }: { searchParams: 
   return (
     <div className="pile" style={{ ['--gap' as string]: '18px' }}>
       <div className="rangee entre envelopper">
-        <h1 className="affiche" style={{ fontSize: 44 }}>Événements</h1>
+        <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>Événements</h1>
         {edition ? <Link className="btn btn-principal" href="/admin/evenements/nouveau">Créer un événement</Link> : null}
       </div>
       <nav className="onglets-admin" aria-label="Filtrer par statut">
@@ -44,7 +44,7 @@ export default async function ListeEvenements({ searchParams }: { searchParams: 
                 const vendus = e.typesBillet.reduce((a, t) => a + t.quota - t.restant, 0);
                 return (
                   <tr key={e.id}>
-                    <td><Link href={`/admin/evenements/${e.id}/infos`}><b>{e.titre}</b></Link><div className="doux" style={{ fontSize: 13 }}>{e.code}</div></td>
+                    <td><Link href={`/admin/evenements/${e.id}/infos`}><b>{e.titre}</b></Link><div className="doux" style={{ fontSize: 'var(--t-mini)' }}>{e.code}</div></td>
                     <td>{e.debutLe ? dateCourte(e.debutLe, e.fuseau ?? undefined) : '·'}</td>
                     <td>{e.ville?.nom ?? '·'}</td>
                     <td><span className={`badge ${CLASSES_STATUT[e.statut]}`}>{LIBELLES_STATUT[e.statut]}</span></td>

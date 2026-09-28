@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { connecterAdmin, viderEvenements } from './aide';
+import { db } from '../../lib/db';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -102,4 +103,26 @@ test('taux indicatif saisi par le super-administrateur : USD affiché sur la pag
   await expect(page.getByText('1 USD = 2850 CDF')).toBeVisible();
   await page.goto(`/evenements/${e.slug}`);
   await expect(page.getByText('≈ 10 USD')).toBeVisible();
+});
+
+test('formulaire à sauvegarde automatique : un choix enregistré au clic reste affiché et en base', async ({ page }) => {
+  await viderEvenements();
+  await connecterAdmin(page);
+  await page.goto('/admin/organisateurs/nouveau');
+  await page.getByLabel('Nom', { exact: true }).fill('Organisateur conservé');
+  await page.getByRole('button', { name: 'Créer' }).click();
+  await page.waitForURL(/\/admin\/organisateurs\/c/);
+  await page.goto('/admin/evenements/nouveau');
+  await page.getByLabel('Titre').fill('Brouillon sauvegarde');
+  await page.getByLabel('Catégorie').selectOption({ label: 'Concerts' });
+  await page.getByRole('button', { name: 'Créer le brouillon' }).click();
+  await page.waitForURL(/\/infos$/);
+  await page.getByLabel('Organisateur').selectOption({ label: 'Organisateur conservé' });
+  await page.getByRole('button', { name: 'Enregistrer' }).click();
+  await expect(page.getByText(/Brouillon enregistré à/)).toBeVisible();
+  // Au-delà du délai de la sauvegarde automatique (1,5 s) : rien ne doit revenir en arrière.
+  await page.waitForTimeout(2500);
+  const orga = await db.organizer.findFirstOrThrow({ where: { nom: 'Organisateur conservé' } });
+  await expect(page.getByLabel('Organisateur')).toHaveValue(orga.id);
+  expect((await db.event.findFirstOrThrow({ where: { titre: 'Brouillon sauvegarde' } })).organisateurId).toBe(orga.id);
 });

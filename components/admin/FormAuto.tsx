@@ -30,12 +30,21 @@ export function FormAuto({ action, children, auto = true, libelle = 'Enregistrer
   };
 
   return (
-    <form ref={ref} action={(fd) => { setModifie(false); envoyer(fd); }} onChange={planifier} className={className} style={{ ['--gap' as string]: '16px' }} encType={multipart ? 'multipart/form-data' : undefined} noValidate>
+    // onSubmit plutôt que action : React réinitialise un formulaire après une action, ce qui remettait
+    // les anciennes valeurs à l'écran, et la sauvegarde automatique encore programmée renvoyait ces
+    // valeurs périmées (un organisateur choisi était effacé). Le clic annule aussi la minuterie.
+    <form ref={ref} onSubmit={(ev) => {
+      ev.preventDefault();
+      if (minuterie.current) { clearTimeout(minuterie.current); minuterie.current = null; }
+      const fd = new FormData(ev.currentTarget);
+      setModifie(false);
+      demarrer(() => envoyer(fd));
+    }} onChange={planifier} className={className} style={{ ['--gap' as string]: '16px' }} encType={multipart ? 'multipart/form-data' : undefined} noValidate>
       <FormErreurs.Provider value={etat.erreurs ?? {}}>{children}</FormErreurs.Provider>
       {etat.message ? <p className={`note ${etat.ok ? 'note-succes' : 'note-danger'}`} role="status">{etat.message}</p> : null}
       <div className="rangee envelopper">
         <button className="btn btn-principal" type="submit" disabled={enCours}>{libelle}</button>
-        <span className="doux" aria-live="polite" style={{ fontSize: 14 }}>
+        <span className="doux" aria-live="polite" style={{ fontSize: 'var(--t-petit)' }}>
           {enCours ? 'Enregistrement…' : modifie && auto ? 'Modifications en attente…' : etat.sauveLe ? `Brouillon enregistré à ${heureLocale(etat.sauveLe)}` : !etat.ok ? 'Non enregistré : corrigez les champs signalés.' : ''}
         </span>
       </div>

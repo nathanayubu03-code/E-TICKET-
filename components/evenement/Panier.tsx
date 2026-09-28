@@ -44,11 +44,11 @@ export function Panier({ slug, types, max, taux, textes }: { slug: string; types
           return (
             <div key={c.id} className={`categorie-billet${n ? ' choisie' : ''}${epuise || ferme ? ' epuisee' : ''}`}>
               <div className="rangee entre" style={{ alignItems: 'flex-start' }}>
-                <div><h3>{c.nom}</h3>{c.description ? <span className="doux" style={{ fontSize: 14 }}>{c.description}</span> : null}</div>
+                <div><h3>{c.nom}</h3>{c.description ? <span className="doux" style={{ fontSize: 'var(--t-petit)' }}>{c.description}</span> : null}</div>
                 {badge}
               </div>
               <div className="rangee entre">
-                <div className="prix"><b style={{ fontSize: 18 }}>{cdf(c.prixCdf, textes.gratuit)}</b>{usd(c.prixCdf, taux) ? <span className="doux" style={{ fontSize: 14 }}>{usd(c.prixCdf, taux)}</span> : null}</div>
+                <div className="prix"><b style={{ fontSize: 'var(--t-prix)' }}>{cdf(c.prixCdf, textes.gratuit)}</b>{usd(c.prixCdf, taux) ? <span className="doux" style={{ fontSize: 'var(--t-petit)' }}>{usd(c.prixCdf, taux)}</span> : null}</div>
                 <div className="compteur">
                   <button type="button" disabled={n === 0} aria-label={remplir(textes.retirer, { nom: c.nom })} onClick={() => change(c.id, -1)}><Icone nom="minus" taille={22} epaisseur={2.6} /></button>
                   <output aria-live="polite" aria-label={remplir(textes.quantite, { nom: c.nom })}>{n}</output>
@@ -63,7 +63,7 @@ export function Panier({ slug, types, max, taux, textes }: { slug: string; types
       <div className="total rangee entre" aria-live="polite">
         <div className="prix">
           <span className="doux">{total === 0 ? textes.aucunChoisi : remplir(total > 1 ? textes.plusieursBillets : textes.unBillet, { n: total })}</span>
-          <b style={{ fontSize: 26 }}>{cdf(montant, '0 CDF')}</b>
+          <b style={{ fontSize: 'var(--t-montant)' }}>{cdf(montant, '0 CDF')}</b>
           {dollars ? <span className="doux">{dollars}</span> : null}
         </div>
       </div>

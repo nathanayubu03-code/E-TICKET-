@@ -30,7 +30,7 @@
   --attention-doux: #FFE7C2;
   --desactive: #7A705E;
   --motif: url("/motifs/motif-fond.svg");
-  --affiche: var(--font-anybody), "Anybody", "Arial Narrow", sans-serif;
+  --affiche: "Arial Narrow", sans-serif; /* remplacée par l'option de app/styles/typo.css */
   --texte: var(--font-atkinson), "Atkinson Hyperlegible", system-ui, sans-serif;
   color-scheme: light;
 }

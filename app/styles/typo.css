@@ -1,0 +1,65 @@
+/* Échelle typographique (décision du 28/09/2026, plus sobre que la maquette).
+   Toutes les tailles de texte passent par ces jetons : aucune taille en dur dans les composants.
+   Les couleurs, le motif, les rayons et les ombres de la maquette ne changent pas.
+   Les zones tactiles restent à 48 px minimum : seul le texte rapetisse. */
+
+:root {
+  /* Texte */
+  --t-texte: 16px;          /* texte courant, jamais en dessous */
+  --t-chapo: 17px;          /* paragraphe d'introduction */
+  --t-saisie: 18px;         /* champs de saisie : 16 px minimum, sinon iOS zoome */
+  --t-petit: 14px;          /* mentions, légendes */
+  --t-mini: 13px;           /* badges, étiquettes en capitales */
+  --t-logo-badge: 11px;     /* « RDC » dans le logo */
+
+  /* Titres */
+  --t-titre-accueil: clamp(28px, 5vw, 40px);
+  --t-titre-evenement: clamp(26px, 4vw, 36px);
+  --t-titre-page: clamp(26px, 4vw, 34px);
+  --t-titre-section: clamp(20px, 2.5vw, 26px);
+  --t-titre-carte: 20px;    /* carte événement, catégorie de billet, opérateur */
+  --t-titre-billet: clamp(24px, 3vw, 30px);
+  --t-logo: 26px;
+  --t-logo-petit: 22px;
+
+  /* Boutons */
+  --t-bouton: 16px;
+  --h-bouton: 48px;
+  --h-bouton-grand: 52px;
+
+  /* Chiffres */
+  --t-prix: 22px;           /* prix d'une catégorie */
+  --t-montant: 24px;        /* montant à payer, en gras */
+  --t-date-carte: 22px;
+  --t-num: 20px;
+  --t-compteur: 22px;       /* sélecteur de quantité */
+  --t-otp: 26px;
+  --t-kpi: 28px;
+  --t-tableau: 15px;
+  --t-tampon: 28px;
+  /* Lus de loin : restent grands */
+  --t-minuteur: 54px;
+  --t-scan-resultat: 68px;
+  --t-scan-compteur: 36px;
+  --t-scan-grand: 22px;
+  --t-scan-texte: 20px;
+
+  /* Police des titres : réglée par l'option choisie (app/polices/titre.ts) */
+  --titre-graisse: 700;
+  --titre-largeur: 100%;
+  --titre-interligne: 1.08;
+  --titre-espacement: -0.01em;
+}
+
+[data-typo="bricolage"] {
+  --affiche: var(--font-titre-bricolage), "Bricolage Grotesque", system-ui, sans-serif;
+  --titre-graisse: 700; --titre-largeur: 100%; --titre-interligne: 1.06; --titre-espacement: -0.02em;
+}
+[data-typo="unbounded"] {
+  --affiche: var(--font-titre-unbounded), "Unbounded", system-ui, sans-serif;
+  --titre-graisse: 500; --titre-largeur: 100%; --titre-interligne: 1.12; --titre-espacement: -0.01em;
+}
+[data-typo="anybody"] {
+  --affiche: var(--font-titre-anybody), "Anybody", "Arial Narrow", sans-serif;
+  --titre-graisse: 700; --titre-largeur: 90%; --titre-interligne: 1.02; --titre-espacement: -0.005em;
+}

@@ -149,7 +149,7 @@ export function Scanner({ evenementId, porte, textes }: { evenementId: string; p
   if (etatChargement !== 'pret' || !m) {
     return (
       <div className="scan-ecran" style={{ justifyContent: 'center', padding: 24, gap: 16 }}>
-        <h1 className="affiche" style={{ fontSize: 40 }}>{textes.titre}</h1>
+        <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>{textes.titre}</h1>
         {etatChargement === 'chargement' ? <p role="status">{textes.telechargement}</p> : (
           <>
             <p className="note note-danger" role="alert">{textes.listeRequise}</p>
@@ -168,15 +168,15 @@ export function Scanner({ evenementId, porte, textes }: { evenementId: string; p
     <div className="scan-ecran">
       <header className="scan-barre">
         <div className="rangee entre">
-          <div><b style={{ fontSize: 16 }}>{textes.titre}</b><div style={{ fontSize: 14, color: '#B9AE98' }}>{[porte ? `${textes.porte} ${porte}` : null, m.evenement.titre].filter(Boolean).join(' · ')}</div></div>
+          <div><b style={{ fontSize: 'var(--t-texte)' }}>{textes.titre}</b><div style={{ fontSize: 'var(--t-petit)', color: '#B9AE98' }}>{[porte ? `${textes.porte} ${porte}` : null, m.evenement.titre].filter(Boolean).join(' · ')}</div></div>
           <span role="status" className="badge" style={enLigne && attente === 0 ? { background: '#DDF3E4', color: '#0B6B37' } : { background: '#FFD21F', color: '#14120E' }}>
             {!enLigne ? <Icone nom="wifiOff" taille={14} epaisseur={2.6} /> : null}{enLigne && attente === 0 ? textes.enLigne : remplir(textes.horsLigne, { n: attente })}
           </span>
         </div>
         <div className="rangee entre">
-          <div><b className="affiche" style={{ fontSize: 36 }}>{entrees.toLocaleString('fr-FR').replace(/[  ]/g, ' ')}</b> <span style={{ color: '#B9AE98' }}>{remplir(textes.entrees, { total: m.evenement.quota.toLocaleString('fr-FR').replace(/[  ]/g, ' ') })}</span></div>
+          <div><b className="affiche" style={{ fontSize: 'var(--t-scan-compteur)' }}>{entrees.toLocaleString('fr-FR').replace(/[  ]/g, ' ')}</b> <span style={{ color: '#B9AE98' }}>{remplir(textes.entrees, { total: m.evenement.quota.toLocaleString('fr-FR').replace(/[  ]/g, ' ') })}</span></div>
           <div className="rangee" style={{ gap: 8, padding: '6px 10px', borderRadius: 12, background: '#2E2A21' }} aria-label={`${textes.signe} : ${signe.nom}`}>
-            <span style={{ fontSize: 13, color: '#B9AE98' }}>{textes.signe}</span>
+            <span style={{ fontSize: 'var(--t-mini)', color: '#B9AE98' }}>{textes.signe}</span>
             <i style={{ width: 20, height: 20, display: 'inline-block', background: signe.couleur, border: '2px solid #FBF5E6', transform: signe.forme === 'losange' ? 'rotate(45deg)' : undefined }} />
           </div>
         </div>
@@ -188,7 +188,7 @@ export function Scanner({ evenementId, porte, textes }: { evenementId: string; p
       </div>
 
       <div className="pile" style={{ ['--gap' as string]: '10px', padding: 16 }}>
-        <b style={{ fontSize: 18 }}>{textes.placer}</b>
+        <b style={{ fontSize: 'var(--t-chapo)' }}>{textes.placer}</b>
         <span style={{ color: '#B9AE98' }}>{textes.verifierSigne} <b style={{ color: '#FBF5E6' }}>{signe.nom.toLowerCase()}</b>.</span>
         <div className="rangee" style={{ gap: 10 }}>
           <button className="btn" type="button" style={{ flex: 1 }} aria-pressed={lampe} onClick={() => setLampe(!lampe)}>{textes.lampe}</button>
@@ -208,21 +208,21 @@ export function Scanner({ evenementId, porte, textes }: { evenementId: string; p
           <h1>{resultat.type === 'VALIDE' ? textes.valide : resultat.type === 'REFUSE' ? textes.refuse : resultat.type === 'DEJA_SCANNE' ? textes.deja : textes.inconnu}</h1>
           {resultat.type === 'VALIDE' ? (
             <>
-              <p style={{ fontSize: 22, fontWeight: 700 }}>{resultat.categorie}</p>
-              <p style={{ fontSize: 17 }}>{resultat.publicId}</p>
+              <p style={{ fontSize: 'var(--t-scan-grand)', fontWeight: 700 }}>{resultat.categorie}</p>
+              <p style={{ fontSize: 'var(--t-texte)' }}>{resultat.publicId}</p>
               {resultat.publicId ? (
                 <div className="rangee" style={{ gap: 14, alignItems: 'center' }}>
                   <svg viewBox={`0 0 ${11 * CELL} ${11 * CELL}`} width="120" height="120" style={{ borderRadius: 10, flex: 'none' }} aria-hidden="true" dangerouslySetInnerHTML={{ __html: couchesInline(resultat.publicId, { cols: 11, rows: 11, trou: true, phase, souffle: true }) }} />
-                  <p style={{ fontSize: 16 }}><b>{textes.motifAttendu}</b><br />{textes.motifTexte}</p>
+                  <p style={{ fontSize: 'var(--t-texte)' }}><b>{textes.motifAttendu}</b><br />{textes.motifTexte}</p>
                 </div>
               ) : null}
             </>
           ) : resultat.type === 'DEJA_SCANNE' ? (
-            <p style={{ fontSize: 20, fontWeight: 700 }}>{resultat.premier ? remplir(textes.dejaTexte, { heure: heureCourte(resultat.premier), porte: resultat.porte ? `${textes.porte} ${resultat.porte}` : '' }).replace(/, \.$/, '.') : resultat.publicId}</p>
+            <p style={{ fontSize: 'var(--t-scan-texte)', fontWeight: 700 }}>{resultat.premier ? remplir(textes.dejaTexte, { heure: heureCourte(resultat.premier), porte: resultat.porte ? `${textes.porte} ${resultat.porte}` : '' }).replace(/, \.$/, '.') : resultat.publicId}</p>
           ) : resultat.type === 'INCONNU' ? (
-            <p style={{ fontSize: 20, fontWeight: 700 }}>{textes.inconnuTexte}</p>
+            <p style={{ fontSize: 'var(--t-scan-texte)', fontWeight: 700 }}>{textes.inconnuTexte}</p>
           ) : (
-            <p style={{ fontSize: 20, fontWeight: 700 }}>{textes.refuseTexte}</p>
+            <p style={{ fontSize: 'var(--t-scan-texte)', fontWeight: 700 }}>{textes.refuseTexte}</p>
           )}
           <button className="btn btn-grand" type="button" style={{ marginTop: 12, background: '#FFFFFF', color: '#14120E', borderColor: '#14120E' }} onClick={() => setResultat(null)} autoFocus>{textes.suivant}</button>
         </div>

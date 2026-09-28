@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./styles/tokens.css";
+@import "./styles/typo.css";
 @import "./styles/maquette.css";
 @import "./styles/complements.css";
 

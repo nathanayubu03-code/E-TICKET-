@@ -16,7 +16,7 @@ export default async function JournalSms({ searchParams }: { searchParams: Promi
   ]);
   return (
     <div className="pile" style={{ ['--gap' as string]: '18px' }}>
-      <h1 className="affiche" style={{ fontSize: 44 }}>SMS envoyés</h1>
+      <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>SMS envoyés</h1>
       <p className="doux">Fournisseur : <b>{env().SMS_PROVIDER}</b>. Échecs sur 24 h : <b>{echecs}</b>. Les codes de connexion sont masqués.</p>
       <form className="rangee" style={{ maxWidth: 420 }}><input name="tel" type="tel" className="champ-texte" placeholder="Numéro" /><button className="btn" type="submit">Filtrer</button></form>
       {sms.length === 0 ? <div className="admin-panneau"><p>Aucun SMS pour le moment.</p></div> : (
@@ -24,8 +24,8 @@ export default async function JournalSms({ searchParams }: { searchParams: Promi
           <thead><tr><th>Date</th><th>Numéro</th><th>Type</th><th>Statut</th><th>Message</th></tr></thead>
           <tbody>{sms.map((s) => (
             <tr key={s.id}><td>{dateLongue(s.creeLe)}</td><td>{masquerTelephone(s.telephone)}</td><td>{s.gabarit}</td>
-              <td>{s.statut === 'ECHOUE' ? <b style={{ color: 'var(--danger)' }}>Échec</b> : s.statut === 'ENVOYE' ? 'Envoyé' : 'En file'}{s.erreur ? <div className="doux" style={{ fontSize: 12 }}>{s.erreur}</div> : null}</td>
-              <td style={{ fontSize: 13, maxWidth: 420 }}>{s.gabarit === 'otp' ? s.contenu.replace(/\d{6}/, '••••••') : s.contenu}</td></tr>
+              <td>{s.statut === 'ECHOUE' ? <b style={{ color: 'var(--danger)' }}>Échec</b> : s.statut === 'ENVOYE' ? 'Envoyé' : 'En file'}{s.erreur ? <div className="doux" style={{ fontSize: 'var(--t-mini)' }}>{s.erreur}</div> : null}</td>
+              <td style={{ fontSize: 'var(--t-mini)', maxWidth: 420 }}>{s.gabarit === 'otp' ? s.contenu.replace(/\d{6}/, '••••••') : s.contenu}</td></tr>
           ))}</tbody>
         </table></div>
       )}

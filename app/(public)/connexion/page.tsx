@@ -18,8 +18,8 @@ export default async function Connexion({ searchParams }: { searchParams: Promis
     <main className="conteneur">
       <div className="achat pile" style={ecart(18)}>
         <section className="panneau pile" style={ecart(18)} aria-labelledby="t-cx">
-          <h1 id="t-cx" className="affiche" style={{ fontSize: 'clamp(36px,6vw,52px)' }}>{t('titre')}</h1>
-          <p className="doux" style={{ fontSize: 17 }}>{t('texte')}</p>
+          <h1 id="t-cx" className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>{t('titre')}</h1>
+          <p className="doux" style={{ fontSize: 'var(--t-texte)' }}>{t('texte')}</p>
           <ConnexionPage textes={await textesConnexion()} suite={suite} />
         </section>
       </div>

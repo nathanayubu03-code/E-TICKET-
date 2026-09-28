@@ -18,11 +18,11 @@ export default async function LayoutEvenement({ children, params }: { children: 
       <Link href="/admin/evenements" className="lien-bouton">Tous les événements</Link>
       <div className="rangee entre envelopper">
         <div className="pile" style={{ ['--gap' as string]: '6px' }}>
-          <h1 className="affiche" style={{ fontSize: 40 }}>{e.titre}</h1>
+          <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>{e.titre}</h1>
           <div className="rangee envelopper" style={{ ['--gap' as string]: '10px' }}>
             <span className={`badge ${CLASSES_STATUT[e.statut]}`}>{LIBELLES_STATUT[e.statut]}</span>
-            <span className="doux" style={{ fontSize: 14 }}>Code {e.code}</span>
-            {e.brouillonSauveLe ? <span className="doux" style={{ fontSize: 14 }}>Dernière modification le {dateLongue(e.brouillonSauveLe)}</span> : null}
+            <span className="doux" style={{ fontSize: 'var(--t-petit)' }}>Code {e.code}</span>
+            {e.brouillonSauveLe ? <span className="doux" style={{ fontSize: 'var(--t-petit)' }}>Dernière modification le {dateLongue(e.brouillonSauveLe)}</span> : null}
           </div>
         </div>
         {e.statut === 'PUBLIE' || e.statut === 'COMPLET' ? <Link className="btn" href={`/evenements/${e.slug}`} target="_blank">Voir la page publique</Link> : null}

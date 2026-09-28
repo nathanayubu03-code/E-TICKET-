@@ -60,7 +60,7 @@ export function MesBillets({ serveur, passes, connecte, textes }: { serveur: Bil
   if (avenir.length === 0 && passes.length === 0) {
     return (
       <section className="panneau pile" style={ecart(14, { alignItems: 'center', textAlign: 'center', maxWidth: 640, marginInline: 'auto' })}>
-        <h1 className="affiche" style={{ fontSize: 'clamp(40px,6vw,60px)' }}>{textes.titre}</h1>
+        <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>{textes.titre}</h1>
         <h2 className="titre-section">{textes.videTitre}</h2>
         <p className="doux">{connecte ? textes.videTexte : textes.connecter}</p>
         <div className="rangee envelopper" style={{ justifyContent: 'center' }}>
@@ -74,7 +74,7 @@ export function MesBillets({ serveur, passes, connecte, textes }: { serveur: Bil
   return (
     <div className="mb-grille">
       <section className="panneau pile" style={ecart(16)} aria-labelledby="t-mb">
-        <h1 id="t-mb" className="affiche" style={{ fontSize: 'clamp(40px,6vw,60px)' }}>{textes.titre}</h1>
+        <h1 id="t-mb" className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>{textes.titre}</h1>
         <div className="note note-info"><Icone nom="download" taille={20} epaisseur={2.2} /><span><b>{textes.horsLigneTitre}</b> {textes.horsLigneTexte}</span></div>
         <div className="onglets" role="tablist" aria-label={textes.periode}>
           <button role="tab" aria-selected={onglet === 'avenir'} type="button" onClick={() => setOnglet('avenir')}>{remplir(textes.aVenir, { n: avenir.length })}</button>
@@ -87,9 +87,9 @@ export function MesBillets({ serveur, passes, connecte, textes }: { serveur: Bil
             <button key={b.publicId} className="ligne-billet" type="button" aria-pressed={b.publicId === ouvert?.publicId} onClick={() => { setChoisi(b.publicId); if (!surTelephone.has(b.publicId) && serveur) void enregistrer(b); }}>
               <span className="mini" dangerouslySetInnerHTML={{ __html: motifSVGInline(b.publicId, { cols: 4, rows: 6, trou: false }) }} />
               <span className="pile" style={ecart(4, { flex: 1, minWidth: 0 })}>
-                <b className="affiche" style={{ fontSize: 24, fontStretch: '80%' }}>{b.evenement.titre}</b>
-                <span className="doux" style={{ fontSize: 14 }}>{b.evenement.quand} · {b.evenement.lieu}</span>
-                <span style={{ fontSize: 14, fontWeight: 700 }}>{remplir(textes.unBillet, { categorie: b.categorie })}</span>
+                <b className="affiche" style={{ fontSize: 'var(--t-titre-carte)', fontStretch: 'var(--titre-largeur)' }}>{b.evenement.titre}</b>
+                <span className="doux" style={{ fontSize: 'var(--t-petit)' }}>{b.evenement.quand} · {b.evenement.lieu}</span>
+                <span style={{ fontSize: 'var(--t-petit)', fontWeight: 700 }}>{remplir(textes.unBillet, { categorie: b.categorie })}</span>
                 <span>{surTelephone.has(b.publicId)
                   ? <span className="badge badge-info"><Icone nom="check" taille={14} epaisseur={3} />{textes.surTelephone}</span>
                   : <span className="badge badge-attention"><Icone nom="download" taille={14} epaisseur={3} />{textes.aTelecharger}</span>}</span>
@@ -109,7 +109,7 @@ export function MesBillets({ serveur, passes, connecte, textes }: { serveur: Bil
           />
         ) : null}
         {ouvert && !surTelephone.has(ouvert.publicId) ? <button className="btn btn-grand" type="button" onClick={() => void enregistrer(ouvert)}>{textes.enregistrer}</button> : null}
-        <p className="panneau doux" style={{ padding: '14px 16px', fontSize: 15, boxShadow: 'none' }}>{textes.conseil}</p>
+        <p className="panneau doux" style={{ padding: '14px 16px', fontSize: 'var(--t-texte)', boxShadow: 'none' }}>{textes.conseil}</p>
       </aside>
     </div>
   );

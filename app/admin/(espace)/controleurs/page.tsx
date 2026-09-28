@@ -28,9 +28,9 @@ export default async function Controleurs() {
   return (
     <div className="pile" style={{ ['--gap' as string]: '18px' }}>
       <Rafraichir secondes={10} />
-      <h1 className="affiche" style={{ fontSize: 44 }}>Contrôleurs</h1>
+      <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>Contrôleurs</h1>
       <section className="admin-panneau pile" aria-labelledby="t-aff">
-        <h2 id="t-aff" className="titre-section" style={{ fontSize: 26 }}>Affecter un contrôleur</h2>
+        <h2 id="t-aff" className="titre-section">Affecter un contrôleur</h2>
         {evts.length === 0 ? <p>Aucun événement publié à venir.</p> : (
           <FormAuto action={creerControleur} auto={false} libelle="Affecter">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -51,7 +51,7 @@ export default async function Controleurs() {
         return (
           <section key={e.id} className="admin-panneau pile" aria-label={e.titre}>
             <div className="rangee entre envelopper">
-              <h2 className="titre-section" style={{ fontSize: 26 }}>{e.titre}</h2>
+              <h2 className="titre-section">{e.titre}</h2>
               <span className="doux">{e.debutLe ? dateCourte(e.debutLe, fuseau) : ''}</span>
             </div>
             <div className="kpis">

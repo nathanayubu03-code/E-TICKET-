@@ -24,7 +24,7 @@ export function Reservation({ connecte, slug, lignes, textes, textesConnexion }:
   });
   return (
     <section className="panneau pile" style={ecart(18)} aria-labelledby="t-tel">
-      <h1 id="t-tel" className="affiche" style={{ fontSize: 'clamp(36px,6vw,52px)' }}>{textes.titre}</h1>
+      <h1 id="t-tel" className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>{textes.titre}</h1>
       {connecte ? (
         <>
           <div className="champ">
@@ -35,7 +35,7 @@ export function Reservation({ connecte, slug, lignes, textes, textesConnexion }:
         </>
       ) : (
         <>
-          <p className="doux" style={{ fontSize: 17 }}>{textes.texte}</p>
+          <p className="doux" style={{ fontSize: 'var(--t-texte)' }}>{textes.texte}</p>
           <ConnexionOtp textes={textesConnexion} onConnecte={lancer} />
         </>
       )}

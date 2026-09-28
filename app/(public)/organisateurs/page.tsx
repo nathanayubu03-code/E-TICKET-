@@ -14,8 +14,8 @@ export default async function PageOrganisateurs() {
     <main className="conteneur">
       <section className="panneau bande-orga" aria-labelledby="titre-orga">
         <div className="pile" style={ecart(14)}>
-          <h1 id="titre-orga" className="affiche" style={{ fontSize: 'clamp(40px,6vw,64px)', color: '#FFD21F' }}>{t('orgaTitre')}</h1>
-          <p className="doux" style={{ fontSize: 18 }}>{t('orgaTexte')}</p>
+          <h1 id="titre-orga" className="affiche" style={{ fontSize: 'var(--t-titre-page)', color: '#FFD21F' }}>{t('orgaTitre')}</h1>
+          <p className="doux" style={{ fontSize: 'var(--t-chapo)' }}>{t('orgaTexte')}</p>
           {e.CONTACT_ORGANISATEURS_EMAIL || tel ? (
             <div className="rangee envelopper" style={ecart(10)}>
               {e.CONTACT_ORGANISATEURS_EMAIL ? <a className="btn btn-principal btn-grand" href={`mailto:${e.CONTACT_ORGANISATEURS_EMAIL}`}>{e.CONTACT_ORGANISATEURS_EMAIL}</a> : null}

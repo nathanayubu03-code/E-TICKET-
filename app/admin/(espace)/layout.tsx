@@ -35,7 +35,7 @@ export default async function LayoutAdmin({ children }: { children: React.ReactN
         <nav className="admin-menu" aria-label="Administration">
           <div style={{ padding: '4px 8px 12px' }}><Logo taille={32} rdc={false} /></div>
           <MenuAdmin liens={liens} />
-          <div style={{ marginTop: 'auto', padding: '12px 8px 0', fontSize: 14 }} className="doux">
+          <div style={{ marginTop: 'auto', padding: '12px 8px 0', fontSize: 'var(--t-petit)' }} className="doux">
             {s.user.nom ?? masquerTelephone(s.user.telephone)}<br />{s.user.roles.join(', ')}
           </div>
           <form action={seDeconnecter}><button className="lien-bouton" type="submit">Se déconnecter</button></form>

@@ -47,7 +47,7 @@ export function ChampTelephone({ id, name = 'telephone', label, placeholder, err
           }}
         />
       </div>
-      <div id={aide} className="rangee" style={{ minHeight: 24, fontSize: 15 }}>
+      <div id={aide} className="rangee" style={{ minHeight: 24, fontSize: 'var(--t-texte)' }}>
         {erreur ? <span className="erreur-champ">{erreur}</span>
           : detection && op ? <><span style={{ width: 18, height: 18, borderRadius: 5, background: op.fond }} /><TexteDetection modele={detection.detecte} operateur={op.nom.split(' ')[0] ?? op.nom} prefixe={chiffres.slice(0, 2)} /></>
           : detection && chiffres.length >= 2 ? <span className="doux">{detection.inconnu}</span> : null}

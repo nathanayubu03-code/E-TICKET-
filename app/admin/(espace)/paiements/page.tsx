@@ -20,7 +20,7 @@ export default async function JournalPaiements({ searchParams }: { searchParams:
   return (
     <div className="pile" style={{ ['--gap' as string]: '18px' }}>
       <div className="rangee entre envelopper">
-        <h1 className="affiche" style={{ fontSize: 44 }}>Paiements</h1>
+        <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>Paiements</h1>
         <Link className="btn btn-principal" href="/admin/paiements/manuels">Paiements manuels à valider ({aValider})</Link>
       </div>
       <form className="rangee" style={{ maxWidth: 480 }}><input name="q" className="champ-texte" placeholder="Référence opérateur ou code de commande" defaultValue={q} /><button className="btn" type="submit">Chercher</button></form>
@@ -31,14 +31,14 @@ export default async function JournalPaiements({ searchParams }: { searchParams:
             <tr key={p.id}>
               <td>{dateLongue(p.creeLe)}</td><td><Link href={`/admin/commandes?q=${p.commande.code}`}>{p.commande.code}</Link></td><td>{infoOperateur(p.operateur).nom}</td>
               <td>{masquerTelephone(p.telephone)}</td><td>{cdf(p.montantCdf)}</td>
-              <td><span className={`badge ${CLASSES[p.statut]}`}>{p.statut}</span>{p.statutBrut ? <div className="doux" style={{ fontSize: 12 }}>{p.statutBrut}</div> : null}</td>
-              <td style={{ fontSize: 13 }}>{p.referenceOperateur ?? '·'}</td>
+              <td><span className={`badge ${CLASSES[p.statut]}`}>{p.statut}</span>{p.statutBrut ? <div className="doux" style={{ fontSize: 'var(--t-mini)' }}>{p.statutBrut}</div> : null}</td>
+              <td style={{ fontSize: 'var(--t-mini)' }}>{p.referenceOperateur ?? '·'}</td>
             </tr>
           ))}</tbody>
         </table></div>
       )}
       <section className="pile" style={{ ['--gap' as string]: '10px' }}>
-        <h2 className="titre-section" style={{ fontSize: 26 }}>Derniers webhooks reçus</h2>
+        <h2 className="titre-section">Derniers webhooks reçus</h2>
         {webhooks.length === 0 ? <p className="doux">Aucun webhook reçu.</p> : (
           <div className="tableau-cadre"><table className="tableau">
             <thead><tr><th>Reçu</th><th>Fournisseur</th><th>Signature</th><th>Traité</th><th>Erreur</th></tr></thead>

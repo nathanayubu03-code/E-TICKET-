@@ -48,17 +48,17 @@ export async function VueEvenement({ e, apercu = false }: { e: EvenementDetail; 
             <div className="corps">
               <span style={{ fontWeight: 700 }}>{[e.categorie?.nom.replace(/s$/, ''), e.genre].filter(Boolean).join(' · ')}</span>
               <h1 className="affiche">{e.titre}</h1>
-              {e.sousTitre ? <p style={{ fontSize: 19, fontWeight: 700 }}>{e.sousTitre}</p> : null}
+              {e.sousTitre ? <p style={{ fontSize: 'var(--t-chapo)', fontWeight: 700 }}>{e.sousTitre}</p> : null}
             </div>
           </article>
 
           <section className="panneau pile" style={ecart(20)} aria-label={t('evenement.infosAria')}>
             <div className="infos">
               {e.debutLe ? (
-                <div className="info"><span className="pic"><Icone nom="cal" taille={22} /></span><div><b style={{ fontSize: 17 }}>{dateCourte(e.debutLe, fuseau)}</b>{e.ouverturePortesLe ? <div className="doux">{t('evenement.portes', { heure: heure(e.ouverturePortesLe, fuseau) })}</div> : null}</div></div>
+                <div className="info"><span className="pic"><Icone nom="cal" taille={22} /></span><div><b style={{ fontSize: 'var(--t-texte)' }}>{dateCourte(e.debutLe, fuseau)}</b>{e.ouverturePortesLe ? <div className="doux">{t('evenement.portes', { heure: heure(e.ouverturePortesLe, fuseau) })}</div> : null}</div></div>
               ) : null}
               {e.lieu ? (
-                <div className="info"><span className="pic"><Icone nom="pin" taille={22} /></span><div><b style={{ fontSize: 17 }}>{e.lieu.nom}</b><div className="doux">{[e.lieu.adresse, e.ville?.nom].filter(Boolean).join(', ')}</div></div></div>
+                <div className="info"><span className="pic"><Icone nom="pin" taille={22} /></span><div><b style={{ fontSize: 'var(--t-texte)' }}>{e.lieu.nom}</b><div className="doux">{[e.lieu.adresse, e.ville?.nom].filter(Boolean).join(', ')}</div></div></div>
               ) : null}
             </div>
             {e.description ? <p style={{ whiteSpace: 'pre-line' }}>{e.description}</p> : null}
@@ -68,7 +68,7 @@ export async function VueEvenement({ e, apercu = false }: { e: EvenementDetail; 
             {e.organisateur ? (
               <div className="rangee" style={{ padding: 12, border: '2px solid var(--trait)', borderRadius: 16 }}>
                 <span className="affiche" style={{ width: 48, height: 48, flex: 'none', borderRadius: 12, background: '#1E8FFF', color: '#14120E', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{initiales(e.organisateur.nom)}</span>
-                <div style={{ flex: 1 }}><div className="doux" style={{ fontSize: 14 }}>{t('evenement.organisePar')}</div><b style={{ fontSize: 17 }}>{e.organisateur.nom}</b></div>
+                <div style={{ flex: 1 }}><div className="doux" style={{ fontSize: 'var(--t-petit)' }}>{t('evenement.organisePar')}</div><b style={{ fontSize: 'var(--t-texte)' }}>{e.organisateur.nom}</b></div>
                 {e.organisateur.verifie ? <span className="badge badge-info"><Icone nom="shieldOk" taille={14} epaisseur={3} />{t('evenement.verifie')}</span> : null}
               </div>
             ) : null}

@@ -14,7 +14,7 @@ export default async function EtapeVisuels({ params }: { params: Promise<{ id: s
   return (
     <div className="pile" style={{ ['--gap' as string]: '16px' }}>
       <section className="admin-panneau pile" aria-labelledby="t-aff">
-        <h2 id="t-aff" className="titre-section" style={{ fontSize: 26 }}>Affiche</h2>
+        <h2 id="t-aff" className="titre-section">Affiche</h2>
         <p className="doux">JPEG, PNG, WebP ou AVIF, 8 Mo maximum, 640 pixels de large minimum. Le serveur la recadre en 4:5 et 16:9 et la compresse en WebP et AVIF. Sans affiche, la page utilise un motif Kuba aux couleurs de la catégorie.</p>
         <FormAuto action={televerserAffiche.bind(null, e.id)} auto={false} libelle={v ? "Remplacer l'affiche" : "Téléverser l'affiche"} multipart>
           <Champ nom="affiche" label="Fichier"><input id="affiche" name="affiche" type="file" accept="image/jpeg,image/png,image/webp,image/avif" className="champ-texte" style={{ paddingTop: 12 }} /></Champ>
@@ -22,7 +22,7 @@ export default async function EtapeVisuels({ params }: { params: Promise<{ id: s
       </section>
       {v ? (
         <section className="admin-panneau pile" aria-labelledby="t-rec">
-          <h2 id="t-rec" className="titre-section" style={{ fontSize: 26 }}>Recadrage</h2>
+          <h2 id="t-rec" className="titre-section">Recadrage</h2>
           <div className="grid gap-4 sm:grid-cols-[200px_1fr]">
             <figure style={{ margin: 0 }}><img src={v['4x5']?.webp} alt="Affiche au format 4:5" style={{ width: '100%', borderRadius: 12, border: '2px solid var(--encre)' }} /><figcaption className="doux">4:5</figcaption></figure>
             <figure style={{ margin: 0 }}><img src={v['16x9']?.webp} alt="Affiche au format 16:9" style={{ width: '100%', borderRadius: 12, border: '2px solid var(--encre)' }} /><figcaption className="doux">16:9</figcaption></figure>

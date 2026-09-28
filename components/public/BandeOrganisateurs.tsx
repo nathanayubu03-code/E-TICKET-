@@ -11,8 +11,8 @@ export async function BandeOrganisateurs() {
     <section id="organisateurs" aria-labelledby="titre-orga">
       <div className="panneau bande-orga">
         <div className="pile" style={ecart(10)}>
-          <h2 id="titre-orga" className="affiche" style={{ fontSize: 'clamp(34px,4vw,48px)', color: '#FFD21F' }}>{t('orgaTitre')}</h2>
-          <p className="doux" style={{ fontSize: 17 }}>{t('orgaTexte')}</p>
+          <h2 id="titre-orga" className="affiche" style={{ fontSize: 'var(--t-titre-section)', color: '#FFD21F' }}>{t('orgaTitre')}</h2>
+          <p className="doux" style={{ fontSize: 'var(--t-texte)' }}>{t('orgaTexte')}</p>
         </div>
         {contact ? <Link className="btn btn-principal btn-grand" href="/organisateurs">{t('orgaBouton')}</Link> : null}
       </div>

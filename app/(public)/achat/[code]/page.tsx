@@ -54,8 +54,8 @@ export default async function PageAchat({ params }: { params: Promise<{ code: st
     const partage = `https://wa.me/?text=${encodeURIComponent(t('achat.partageTexte', { titre: e.titre, date: quand }))}`;
     contenu = (
       <section className="panneau pile" style={ecart(18)} aria-labelledby="t-conf">
-        <span className="badge badge-succes" style={{ alignSelf: 'flex-start', fontSize: 15 }}><Icone nom="check" taille={16} epaisseur={3} />{t('achat.confirme')}</span>
-        <h1 id="t-conf" className="affiche" style={{ fontSize: 'clamp(38px,6vw,56px)' }}>{t('achat.confirmationTitre')}</h1>
+        <span className="badge badge-succes" style={{ alignSelf: 'flex-start', fontSize: 'var(--t-texte)' }}><Icone nom="check" taille={16} epaisseur={3} />{t('achat.confirme')}</span>
+        <h1 id="t-conf" className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>{t('achat.confirmationTitre')}</h1>
         <p className="doux">{t('achat.smsParti', { tel: formaterTelephone(c.telephone) })}</p>
         <EnregistrerBillets billets={await billetsHorsLigne(c.billets.map((b) => b.id))} />
         {await Promise.all(c.billets.map(async (b, i) => (

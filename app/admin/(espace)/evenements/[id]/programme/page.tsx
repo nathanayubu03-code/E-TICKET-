@@ -28,7 +28,7 @@ export default async function EtapeProgramme({ params }: { params: Promise<{ id:
         </section>
       ))}
       <section className="admin-panneau pile" aria-labelledby="t-ligne">
-        <h2 id="t-ligne" className="titre-section" style={{ fontSize: 26 }}>Ajouter une ligne</h2>
+        <h2 id="t-ligne" className="titre-section">Ajouter une ligne</h2>
         <FormAuto action={enregistrerLigneProgramme.bind(null, e.id, null)} auto={false} libelle="Ajouter" key={e.programme.length}>
           <Champs s="nouveau" v={{ heure: '', titre: '', detail: '', ordre: e.programme.length }} />
         </FormAuto>

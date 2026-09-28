@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from 'next';
-import { Anybody, Atkinson_Hyperlegible } from 'next/font/google';
+import { Atkinson_Hyperlegible } from 'next/font/google';
 import { cookies } from 'next/headers';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { environnementApp, lireEnv } from '@/lib/env';
+import { nom as typoTitre, police as policeTitre } from './polices/titre';
 import './globals.css';
 
-const anybody = Anybody({ subsets: ['latin'], axes: ['wdth'], variable: '--font-anybody', display: 'swap' });
 const atkinson = Atkinson_Hyperlegible({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-atkinson', display: 'swap' });
 
 export const metadata: Metadata = {
@@ -28,7 +28,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const staging = environnementApp(lireEnv()) === 'staging';
   const t = await getTranslations('commun');
   return (
-    <html lang={locale} data-theme={theme === 'dark' || theme === 'light' ? theme : undefined} data-app-env={staging ? 'staging' : undefined} className={`${anybody.variable} ${atkinson.variable}`}>
+    <html lang={locale} data-theme={theme === 'dark' || theme === 'light' ? theme : undefined} data-app-env={staging ? 'staging' : undefined} data-typo={typoTitre} className={`${policeTitre.variable} ${atkinson.variable}`}>
       <body>
         {staging ? <div className="bandeau-test" role="note">{t('bandeauTest')}</div> : null}
         {children}

@@ -42,6 +42,8 @@ test('PWA : manifeste, service worker, billets ouverts serveur coupé, page de s
   const c = await creerCommande({ telephone: '+243971004004', userId: null, evenementId: e.id, lignes: [{ typeId: e.typesBillet[0]!.id, quantite: 1 }] });
   const b = await db.ticket.findFirstOrThrow({ where: { commandeId: c.id } });
 
+  // APP_ENV=production : la page de comparaison des polices n'existe pas.
+  expect((await page.goto('/test-typo'))?.status()).toBe(404);
   await page.goto('/');
   await page.evaluate(async () => { await navigator.serviceWorker.ready; });
   await page.goto(`/b/${b.code}`);

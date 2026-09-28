@@ -11,7 +11,7 @@ export default async function ListeOrganisateurs() {
   return (
     <div className="pile" style={{ ['--gap' as string]: '18px' }}>
       <div className="rangee entre envelopper">
-        <h1 className="affiche" style={{ fontSize: 44 }}>Organisateurs</h1>
+        <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>Organisateurs</h1>
         <Link className="btn btn-principal" href="/admin/organisateurs/nouveau">Ajouter un organisateur</Link>
       </div>
       {orgas.length === 0 ? <div className="admin-panneau"><p>Aucun organisateur pour le moment.</p></div> : (

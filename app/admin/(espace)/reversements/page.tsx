@@ -18,12 +18,12 @@ export default async function Reversements() {
   const historique = await db.payout.findMany({ where: edition ? {} : { organisateurId: s.user.organisateurId ?? '__aucun__' }, orderBy: { effectueLe: 'desc' }, take: 50, include: { evenement: { select: { titre: true } }, organisateur: { select: { nom: true } } } });
   return (
     <div className="pile" style={{ ['--gap' as string]: '18px' }}>
-      <h1 className="affiche" style={{ fontSize: 44 }}>Reversements</h1>
+      <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>Reversements</h1>
       <p className="doux">Tout l&apos;argent arrive sur le compte marchand d&apos;e-Ticket. Le net dû à l&apos;organisateur est la somme des commandes payées moins la commission figée sur chaque commande.</p>
       {lignes.length === 0 ? <div className="admin-panneau"><p>Aucune vente, donc aucun reversement dû.</p></div> : lignes.map((l) => (
         <section key={l.id} className="admin-panneau pile" aria-label={l.titre}>
           <div className="rangee entre envelopper">
-            <div><h2 className="titre-section" style={{ fontSize: 24 }}>{l.titre}</h2><span className="doux">{l.organisateur?.nom}{l.debutLe ? ` · ${dateCourte(l.debutLe, l.fuseau ?? undefined)}` : ''}</span></div>
+            <div><h2 className="titre-section" style={{ fontSize: 'var(--t-titre-carte)' }}>{l.titre}</h2><span className="doux">{l.organisateur?.nom}{l.debutLe ? ` · ${dateCourte(l.debutLe, l.fuseau ?? undefined)}` : ''}</span></div>
             <a className="btn" href={`/api/exports/evenements/${l.id}`}>Exporter en Excel</a>
           </div>
           <div className="kpis">
@@ -47,7 +47,7 @@ export default async function Reversements() {
           ) : null}
         </section>
       ))}
-      <h2 className="titre-section" style={{ fontSize: 26 }}>Historique</h2>
+      <h2 className="titre-section">Historique</h2>
       {historique.length === 0 ? <p className="doux">Aucun reversement enregistré.</p> : (
         <div className="tableau-cadre"><table className="tableau">
           <thead><tr><th>Date</th><th>Organisateur</th><th>Événement</th><th>Montant</th><th>Référence</th></tr></thead>

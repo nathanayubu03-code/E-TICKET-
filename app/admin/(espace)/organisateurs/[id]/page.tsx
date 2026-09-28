@@ -18,7 +18,7 @@ export default async function FicheOrganisateur({ params }: { params: Promise<{ 
   return (
     <div className="pile" style={{ ['--gap' as string]: '18px' }}>
       <Link href="/admin/organisateurs" className="lien-bouton">Tous les organisateurs</Link>
-      <h1 className="affiche" style={{ fontSize: 44 }}>{o.nom}</h1>
+      <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>{o.nom}</h1>
       <section className="admin-panneau">
         <FormAuto action={enregistrerOrganisateur.bind(null, o.id)}>
           <ChampsOrganisateur tauxGlobal={await parametre('commission_bps')} v={{ nom: o.nom, contactNom: o.contactNom ?? '', telephone: o.telephone ?? '', email: o.email ?? '', reversementOperateur: o.reversementOperateur ?? '', reversementFin: o.reversementNumeroFin, commission: o.commissionBps === null ? '' : String(o.commissionBps / 100), verifie: o.verifie }} />
@@ -31,7 +31,7 @@ export default async function FicheOrganisateur({ params }: { params: Promise<{ 
         </section>
       ) : null}
       <section className="admin-panneau pile" aria-labelledby="t-acces">
-        <h2 id="t-acces" className="titre-section" style={{ fontSize: 26 }}>Accès de l&apos;organisateur</h2>
+        <h2 id="t-acces" className="titre-section">Accès de l&apos;organisateur</h2>
         <p className="doux">Lecture seule au lancement : ventes et reversements de ses événements. Connexion par mot de passe et code SMS.</p>
         {o.membres.length ? <ul>{o.membres.map((m) => <li key={m.id}>{masquerTelephone(m.telephone)}</li>)}</ul> : null}
         <FormAuto action={creerAccesOrganisateur.bind(null, o.id)} auto={false} libelle="Créer l'accès">
@@ -42,7 +42,7 @@ export default async function FicheOrganisateur({ params }: { params: Promise<{ 
         </FormAuto>
       </section>
       <section className="admin-panneau pile">
-        <h2 className="titre-section" style={{ fontSize: 26 }}>Événements</h2>
+        <h2 className="titre-section">Événements</h2>
         {o.evenements.length ? <ul>{o.evenements.map((e) => <li key={e.id}><Link href={`/admin/evenements/${e.id}/infos`}>{e.titre}</Link></li>)}</ul> : <p>Aucun événement.</p>}
         <BoutonAction classe="lien-bouton" libelle="Archiver l'organisateur" confirmation="Archiver cet organisateur ?" action={archiverOrganisateur.bind(null, o.id)} />
       </section>

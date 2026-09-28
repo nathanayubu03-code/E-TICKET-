@@ -14,8 +14,8 @@ export default async function PageAlertes() {
     <main className="conteneur">
       <div className="achat pile" style={ecart(24)}>
         <section className="panneau pile" style={ecart(14)} aria-labelledby="t-alerte">
-          <h1 id="t-alerte" className="affiche" style={{ fontSize: 'clamp(36px,6vw,52px)' }}>{t('alertes.titre')}</h1>
-          <p className="doux" style={{ fontSize: 17 }}>{t('alertes.texte')}</p>
+          <h1 id="t-alerte" className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>{t('alertes.titre')}</h1>
+          <p className="doux" style={{ fontSize: 'var(--t-texte)' }}>{t('alertes.texte')}</p>
           <FormAlerteSms villes={villes} textes={{ titre: t('alertes.titre'), texte: t('alertes.texte'), numero: t('alertes.numero'), placeholder: t('telephone.placeholder'), ville: t('alertes.ville'), toutesVilles: t('alertes.toutesVilles'), consentement: t('alertes.consentement'), envoyer: t('alertes.envoyer') }} />
         </section>
         <section className="panneau pile" style={ecart(14)} aria-labelledby="t-desabo">

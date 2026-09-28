@@ -12,7 +12,7 @@ export default async function ConnexionAdmin({ searchParams }: { searchParams: P
       <div className="pile" style={ecart(20)}>
         <Logo />
         <section className="panneau pile" style={ecart(16)} aria-labelledby="t-cx">
-          <h1 id="t-cx" className="affiche" style={{ fontSize: 44 }}>Administration</h1>
+          <h1 id="t-cx" className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>Administration</h1>
           <p className="doux">Mot de passe, puis code reçu par SMS.</p>
           <FormConnexionAdmin suite={suite} />
         </section>

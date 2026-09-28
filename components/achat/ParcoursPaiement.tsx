@@ -98,7 +98,7 @@ export function ParcoursPaiement({ code, total, montant, dollars, lignes, operat
   if (vue === 'paiement') {
     return (
       <section className="panneau pile" style={ecart(18)} aria-labelledby="t-pay">
-        <h1 id="t-pay" ref={titre} tabIndex={-1} className="affiche" style={{ fontSize: 'clamp(36px,6vw,52px)' }}>{textes.payerAvec}</h1>
+        <h1 id="t-pay" ref={titre} tabIndex={-1} className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>{textes.payerAvec}</h1>
         <div className="operateurs" role="group" aria-label={textes.operateurAria}>
           {operateurs.map((o) => (
             <button key={o.k} type="button" className="operateur" aria-pressed={o.k === op.k} style={{ background: o.fond, color: o.texte }} onClick={() => setOp(o)}>
@@ -111,7 +111,7 @@ export function ParcoursPaiement({ code, total, montant, dollars, lignes, operat
         <div className="champ">
           <label htmlFor="num-pay">{remplir(textes.numeroOperateur, { operateur: nomOp })}</label>
           <div className="saisie"><span className="prefixe">+243</span><input id="num-pay" type="tel" inputMode="numeric" value={formaterChiffres(chiffres)} onChange={(e) => setChiffres(e.target.value.replace(/\D/g, '').replace(/^0/, '').slice(0, 9))} /></div>
-          <span className="doux" style={{ fontSize: 14 }}>{textes.demandeArrive}</span>
+          <span className="doux" style={{ fontSize: 'var(--t-petit)' }}>{textes.demandeArrive}</span>
         </div>
         <div className="pile" style={ecart(8, { padding: 18, border: '2px solid var(--encre)', borderRadius: 18, boxShadow: '3px 3px 0 var(--ombre)' })}>
           <span className="doux" style={{ fontWeight: 700 }}>{textes.montantExact}</span>
@@ -140,7 +140,7 @@ export function ParcoursPaiement({ code, total, montant, dollars, lignes, operat
             </svg>
             <div className="temps"><b>{mmss}</b><span className="doux">{textes.pourValider}</span></div>
           </div>
-          <h1 id="t-att" ref={titre} tabIndex={-1} className="affiche" style={{ fontSize: 'clamp(36px,6vw,50px)', textAlign: 'center' }}>{textes.attenteTitre}</h1>
+          <h1 id="t-att" ref={titre} tabIndex={-1} className="affiche" style={{ fontSize: 'var(--t-titre-page)', textAlign: 'center' }}>{textes.attenteTitre}</h1>
           <div className="pile" style={ecart(8)}>
             <span className="doux" style={{ fontWeight: 700 }}>{textes.messageVa}</span>
             <div className="bulle-ussd">{nomOp}<br />{remplir(textes.bulleLigne1, { montant: total })}<br />{textes.bulleLigne2}<br /><u>&nbsp;</u></div>
@@ -152,23 +152,23 @@ export function ParcoursPaiement({ code, total, montant, dollars, lignes, operat
       ) : vue === 'recu' ? (
         <div className="pile" style={ecart(16, { textAlign: 'center' })} role="status">
           <span className="rond-etat" style={{ background: 'var(--succes-plein)', color: 'var(--sur-succes)' }}><Icone nom="check" taille={64} epaisseur={3} /></span>
-          <h1 ref={titre} tabIndex={-1} className="affiche" style={{ fontSize: 44 }}>{textes.recuTitre}</h1>
-          <p style={{ fontSize: 18 }}><Riche gabarit={textes.recuTexte} v={{ operateur: nomOp, montant }} /></p>
+          <h1 ref={titre} tabIndex={-1} className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>{textes.recuTitre}</h1>
+          <p style={{ fontSize: 'var(--t-chapo)' }}><Riche gabarit={textes.recuTexte} v={{ operateur: nomOp, montant }} /></p>
           <div className="barre-indet"><i /></div>
           <p className="doux">{textes.nePasFermer}</p>
         </div>
       ) : vue === 'echec' ? (
         <div className="pile" style={ecart(16, { textAlign: 'center' })} role="alert">
           <span className="rond-etat" style={{ background: '#C8102E', color: '#FFFFFF' }}><Icone nom="x" taille={64} epaisseur={3} /></span>
-          <h1 ref={titre} tabIndex={-1} className="affiche" style={{ fontSize: 44 }}>{textes.echecTitre}</h1>
-          <p style={{ fontSize: 18 }}>{remplir(textes.echecTexte, { operateur: nomOp })}</p>
+          <h1 ref={titre} tabIndex={-1} className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>{textes.echecTitre}</h1>
+          <p style={{ fontSize: 'var(--t-chapo)' }}>{remplir(textes.echecTexte, { operateur: nomOp })}</p>
           <p className="note" style={{ background: 'var(--succes-doux)', color: 'var(--succes)', justifyContent: 'center' }}>{textes.aucunDebit}</p>
         </div>
       ) : (
         <div className="pile" style={ecart(16, { textAlign: 'center' })} role="alert">
           <span className="rond-etat" style={{ background: '#FFD21F', color: '#14120E', border: '3px solid #14120E' }}><Icone nom="clock" taille={64} epaisseur={3} /></span>
-          <h1 ref={titre} tabIndex={-1} className="affiche" style={{ fontSize: 44 }}>{textes.delaiTitre}</h1>
-          <p style={{ fontSize: 18 }}>{textes.delaiTexte}</p>
+          <h1 ref={titre} tabIndex={-1} className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>{textes.delaiTitre}</h1>
+          <p style={{ fontSize: 'var(--t-chapo)' }}>{textes.delaiTexte}</p>
           <p style={{ padding: 14, borderRadius: 14, background: 'var(--attention-doux)', textAlign: 'left', lineHeight: 1.5 }}><Riche gabarit={textes.delaiAide} /></p>
         </div>
       )}
@@ -176,7 +176,7 @@ export function ParcoursPaiement({ code, total, montant, dollars, lignes, operat
       {vue !== 'recu' ? (
         <div className="alerte-secret" role="note">
           <Icone nom="shield" taille={32} epaisseur={2.2} />
-          <div className="pile" style={ecart(4)}><b style={{ fontSize: 18 }}>{textes.secretTitre}</b><span>{remplir(textes.secretTexte, { operateur: nomOp })}</span></div>
+          <div className="pile" style={ecart(4)}><b style={{ fontSize: 'var(--t-chapo)' }}>{textes.secretTitre}</b><span>{remplir(textes.secretTexte, { operateur: nomOp })}</span></div>
         </div>
       ) : null}
 
@@ -215,7 +215,7 @@ export function ParcoursPaiement({ code, total, montant, dollars, lignes, operat
       {vue !== 'recu' && agentHref ? (
         <Link id="agent" className="agent" href={agentHref}>
           <Icone nom="user" taille={26} />
-          <span style={{ flex: 1 }}><b style={{ fontSize: 17, display: 'block' }}>{textes.agentTitre}</b><span className="doux"><Riche gabarit={textes.agentTexte} v={{ code }} /></span></span>
+          <span style={{ flex: 1 }}><b style={{ fontSize: 'var(--t-texte)', display: 'block' }}>{textes.agentTitre}</b><span className="doux"><Riche gabarit={textes.agentTexte} v={{ code }} /></span></span>
         </Link>
       ) : null}
     </section>

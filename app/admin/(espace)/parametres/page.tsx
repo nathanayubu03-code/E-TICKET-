@@ -17,17 +17,17 @@ export default async function Parametres() {
   const aujourdhui = utcVersLocal(new Date(), 'Africa/Kinshasa').jour;
   return (
     <div className="pile" style={{ ['--gap' as string]: '18px' }}>
-      <h1 className="affiche" style={{ fontSize: 44 }}>Paramètres</h1>
+      <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>Paramètres</h1>
       {!superAdmin ? <p className="note note-info">Lecture seule : seul le super-administrateur modifie les paramètres.</p> : null}
       <section className="admin-panneau pile" aria-labelledby="t-gen">
-        <h2 id="t-gen" className="titre-section" style={{ fontSize: 26 }}>Général</h2>
+        <h2 id="t-gen" className="titre-section">Général</h2>
         <fieldset disabled={!superAdmin} style={{ border: 'none', padding: 0, margin: 0 }}>
           <FormAuto action={enregistrerParametres} auto={false}>
             <div className="grid gap-4 sm:grid-cols-2">
               <Champ nom="commission" label="Commission globale (%)" aide="Entre 0 et 30 %. Un organisateur peut avoir son propre taux."><input id="commission" name="commission" inputMode="decimal" className="champ-texte" defaultValue={bps / 100} /></Champ>
               <Champ nom="limite" label="Billets par personne et par événement" aide="Un événement peut avoir sa propre limite."><input id="limite" name="limite" type="number" min={1} max={20} className="champ-texte" defaultValue={limite} /></Champ>
             </div>
-            <h3 style={{ fontSize: 18 }}>Numéros marchands (paiement chez un agent)</h3>
+            <h3 style={{ fontSize: 'var(--t-chapo)' }}>Numéros marchands (paiement chez un agent)</h3>
             <p className="doux">Vide : l&apos;opérateur n&apos;apparaît pas dans « Payer chez un agent ». Sans aucun numéro, l&apos;option est masquée.</p>
             <div className="grid gap-4 sm:grid-cols-2">
               {OPERATEURS.map((o) => <Champ key={o.k} nom={`numero_${o.k}`} label={o.nom}><input id={`numero_${o.k}`} name={`numero_${o.k}`} type="tel" className="champ-texte" defaultValue={numeros[o.k] ?? ''} /></Champ>)}
@@ -36,7 +36,7 @@ export default async function Parametres() {
         </fieldset>
       </section>
       <section className="admin-panneau pile" aria-labelledby="t-taux">
-        <h2 id="t-taux" className="titre-section" style={{ fontSize: 26 }}>Taux CDF / USD indicatif</h2>
+        <h2 id="t-taux" className="titre-section">Taux CDF / USD indicatif</h2>
         <p className="doux">Sert uniquement à afficher l&apos;équivalent en USD (« taux indicatif du JJ/MM »). Tous les paiements restent en CDF. Sans taux, l&apos;USD n&apos;est pas affiché.</p>
         {superAdmin ? (
           <FormAuto action={saisirTaux} auto={false} libelle="Enregistrer le taux">

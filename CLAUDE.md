@@ -5,10 +5,12 @@
 ## Source de vérité visuelle
 
 - La maquette validée est `design/maquette/` (HTML statique : index, evenement, achat, mes-billets, assets). Le canvas `design/project/*.dc.html` couvre les écrans absents de la maquette HTML (scanner, tableau de bord, états).
-- Les variables et classes de `design/maquette/assets/styles.css` sont reprises telles quelles dans `app/styles/tokens.css` et `app/styles/maquette.css`. Ne change aucune couleur, rayon, ombre ou espacement. Les nouveaux écrans vont dans `app/styles/complements.css`, avec les mêmes variables.
+- Les variables et classes de `design/maquette/assets/styles.css` sont reprises dans `app/styles/tokens.css` et `app/styles/maquette.css`. Ne change aucune couleur, rayon, ombre ou espacement. Les nouveaux écrans vont dans `app/styles/complements.css`, avec les mêmes variables.
+- Typographie (décision du 28/09/2026) : toutes les tailles de texte passent par les jetons de `app/styles/typo.css` (`--t-texte` 16 px minimum, `--t-titre-*`, `--t-bouton`, `--h-bouton` 48 px...). Aucune taille en dur dans un composant ni dans une feuille de style : `style={{ fontSize: 'var(--t-petit)' }}` et non `fontSize: 14`. Champs de saisie à 16 px minimum.
+- Police des titres : choisie par la seule ligne d'export de `app/polices/titre.ts` (option 1 Bricolage Grotesque, 2 Unbounded, 3 Anybody adoucie). Comparaison sur `/test-typo` (development et staging uniquement).
 - `tokens/theme.css` n'est pas la référence et ne doit pas être modifié (écarts listés dans `docs/design.md`).
 - Panneaux pleins à bordure de 2 px et ombre décalée posés sur le motif Kuba ; jamais de texte directement sur le motif. Boutons de 52 px minimum, zones tactiles de 48 px minimum. Pas de motif derrière les tableaux de l'administration.
-- Polices : Anybody (affiche) et Atkinson Hyperlegible (texte), via `next/font/google`.
+- Polices : titres selon `app/polices/titre.ts`, texte en Atkinson Hyperlegible, via `next/font/google`.
 - Animations en CSS uniquement, pas de Framer Motion.
 
 ## Aucun contenu inventé

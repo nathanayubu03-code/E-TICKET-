@@ -10,7 +10,7 @@ export default async function NouvelEvenement() {
   const categories = await db.category.findMany({ orderBy: { ordre: 'asc' }, select: { id: true, nom: true } });
   return (
     <div className="pile" style={{ ['--gap' as string]: '18px', maxWidth: 640 }}>
-      <h1 className="affiche" style={{ fontSize: 44 }}>Nouvel événement</h1>
+      <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>Nouvel événement</h1>
       <div className="admin-panneau"><FormNouvel categories={categories} /></div>
     </div>
   );

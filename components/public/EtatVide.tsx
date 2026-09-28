@@ -14,7 +14,7 @@ export function EtatVide({ titre, texte, children }: { titre: string; texte?: st
   return (
     <div className="panneau pile" style={ecart(12, { alignItems: 'center', textAlign: 'center' })}>
       <LosangesVides />
-      <h3 className="affiche" style={{ fontSize: 32 }}>{titre}</h3>
+      <h3 className="affiche" style={{ fontSize: 'var(--t-titre-section)' }}>{titre}</h3>
       {texte ? <p className="doux">{texte}</p> : null}
       {children ? <div className="rangee envelopper" style={{ justifyContent: 'center' }}>{children}</div> : null}
     </div>

@@ -94,7 +94,7 @@ export function ConnexionOtp({ textes, telephoneInitial = '', onConnecte }: { te
             ))}
           </fieldset>
           {codeTest ? <p className="code-test" role="status">{remplir(textes.codeTest, { code: '' })}<b>{codeTest}</b></p> : null}
-          <p className="doux" style={{ fontSize: 14 }}>{textes.autoRemplissage}</p>
+          <p className="doux" style={{ fontSize: 'var(--t-petit)' }}>{textes.autoRemplissage}</p>
           <div className="rangee entre">
             <span className="doux">{textes.rienRecu}</span>
             <button className="lien-bouton" type="button" disabled={reste > 0 || enCours} onClick={envoyer}>

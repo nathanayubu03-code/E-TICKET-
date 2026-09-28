@@ -11,7 +11,7 @@ export default function Confidentialite() {
   return (
     <main className="conteneur">
       <article className="panneau pile" style={ecart(18, { maxWidth: 820, marginInline: 'auto', lineHeight: 1.6 })}>
-        <h1 className="affiche" style={{ fontSize: 'clamp(40px,6vw,56px)' }}>Confidentialité</h1>
+        <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>Confidentialité</h1>
         <p>Cette page explique quelles données e-Ticket RDC utilise, pourquoi, avec qui elles sont partagées et comment exercer vos droits. Elle s&apos;applique au site, à l&apos;application installée sur téléphone et au scanner des contrôleurs.</p>
         <Editeur />
 

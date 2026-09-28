@@ -13,7 +13,7 @@ export default async function HorsLigne() {
     <main className="conteneur">
       <section className="panneau pile" style={ecart(14, { alignItems: 'center', textAlign: 'center', maxWidth: 560, marginInline: 'auto' })}>
         <Icone nom="wifiOff" taille={56} />
-        <h1 className="affiche" style={{ fontSize: 40 }}>{t('reseau.coupe')}</h1>
+        <h1 className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>{t('reseau.coupe')}</h1>
         <p>{t('reseau.verifier')}</p>
         <p className="doux">{t('reseau.billetsDispo')}</p>
         <div className="rangee envelopper" style={{ justifyContent: 'center' }}>

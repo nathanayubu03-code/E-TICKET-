@@ -5,7 +5,7 @@ export function Logo({ taille = 40, rdc = true, label }: { taille?: number; rdc?
   return (
     <Link className="logo" href="/" aria-label={label}>
       <img src="/logo.svg" width={taille} height={taille} alt="" />
-      <span style={taille < 40 ? { fontSize: 24 } : undefined}>e-Ticket</span>
+      <span style={taille < 40 ? { fontSize: 'var(--t-logo-petit)' } : undefined}>e-Ticket</span>
       {rdc ? <span className="rdc">RDC</span> : null}
     </Link>
   );

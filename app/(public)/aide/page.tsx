@@ -12,9 +12,9 @@ export default async function PageAide() {
   return (
     <main className="conteneur">
       <div className="pile" style={ecart(28)}>
-        <h1 className="affiche panneau" style={{ fontSize: 'clamp(40px,6vw,60px)', alignSelf: 'flex-start', padding: '14px 22px' }}>{t('titre')}</h1>
+        <h1 className="affiche panneau" style={{ fontSize: 'var(--t-titre-page)', alignSelf: 'flex-start', padding: '14px 22px' }}>{t('titre')}</h1>
         <EtapesMobileMoney max={max} />
-        <section className="alerte-secret" aria-labelledby="t-secret"><div className="pile" style={ecart(4)}><h2 id="t-secret" style={{ fontSize: 18 }}>{t('secretTitre')}</h2><p>{t('secretTexte')}</p></div></section>
+        <section className="alerte-secret" aria-labelledby="t-secret"><div className="pile" style={ecart(4)}><h2 id="t-secret" style={{ fontSize: 'var(--t-chapo)' }}>{t('secretTitre')}</h2><p>{t('secretTexte')}</p></div></section>
         <section className="panneau pile" aria-labelledby="t-rien">
           <h2 id="t-rien" className="titre-section">{t('rienRecuTitre')}</h2>
           <ul style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>

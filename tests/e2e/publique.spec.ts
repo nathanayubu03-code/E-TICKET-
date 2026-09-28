@@ -96,3 +96,27 @@ test('page événement : panier limité, événement complet avec liste d’atte
   await expect(page.getByRole('button', { name: "Rejoindre la liste d'attente" })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Continuer' })).toHaveCount(0);
 });
+
+test('typographie sobre : texte 16 px, titres et boutons à la nouvelle échelle, zones tactiles de 48 px', async ({ page }) => {
+  await viderEvenements();
+  await creerEvenement({ titre: 'Événement test typo', types: [{ nom: 'Standard', prix: 10000, quota: 100 }] });
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.goto('/');
+  const px = (sel: string, prop: string) => page.locator(sel).first().evaluate((el, p) => parseFloat(getComputedStyle(el).getPropertyValue(p)), prop);
+  expect(await px('body', 'font-size')).toBe(16);
+  const h1 = await px('.une h1', 'font-size');
+  expect(h1).toBeGreaterThanOrEqual(28);
+  expect(h1).toBeLessThanOrEqual(40);
+  expect(await px('.une .btn', 'font-size')).toBe(16);
+  expect(await px('.une .btn', 'height')).toBeGreaterThanOrEqual(48);
+  expect(await px('.une .btn', 'height')).toBeLessThanOrEqual(56);
+  expect(await px('.titre-section', 'font-size')).toBeLessThanOrEqual(26);
+  // Champs : 16 px minimum (sinon iOS zoome la page).
+  for (const size of await page.locator('input:visible').evaluateAll((els) => els.map((e) => parseFloat(getComputedStyle(e).fontSize)))) expect(size).toBeGreaterThanOrEqual(16);
+});
+
+test('page /test-typo : trois options côte à côte en development', async ({ page }) => {
+  await page.goto('/test-typo');
+  for (const n of [1, 2, 3]) await expect(page.getByTestId(`option-${n}`)).toBeVisible();
+  await expect(page.locator('html')).toHaveAttribute('data-typo', 'bricolage');
+});
