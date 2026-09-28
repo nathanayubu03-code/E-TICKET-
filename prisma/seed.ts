@@ -27,12 +27,14 @@ async function main() {
   const telephone = normaliserTelephone(process.env.SUPERADMIN_TELEPHONE ?? '');
   const motDePasse = process.env.SUPERADMIN_MOT_DE_PASSE ?? '';
   if (!telephone) throw new Error('SUPERADMIN_TELEPHONE manquant ou invalide (format +243XXXXXXXXX).');
-  if (!motDePasseFort(motDePasse)) throw new Error('SUPERADMIN_MOT_DE_PASSE trop faible : 12 caractères minimum, avec lettres et chiffres.');
   const existant = await db.user.findUnique({ where: { telephone } });
   if (existant) {
+    // Compte déjà créé : le mot de passe des variables d'environnement n'est plus lu,
+    // donc une valeur faible ou obsolète ne doit pas bloquer le déploiement.
     await db.user.update({ where: { telephone }, data: { roles: Array.from(new Set([...existant.roles, 'SUPERADMIN' as const])) } });
-    console.log('Super-administrateur déjà présent : rôle vérifié, mot de passe inchangé.');
+    console.log('Super-administrateur déjà présent : rôle vérifié, nom et mot de passe inchangés (à modifier dans Mon compte).');
   } else {
+    if (!motDePasseFort(motDePasse)) throw new Error('SUPERADMIN_MOT_DE_PASSE trop faible : 12 caractères minimum, avec lettres et chiffres.');
     await db.user.create({ data: { telephone, nom: process.env.SUPERADMIN_NOM || null, roles: ['SUPERADMIN'], motDePasse: await hacherMotDePasse(motDePasse) } });
     await db.auditLog.create({ data: { action: 'seed.superadmin', entite: 'User', apres: { telephone: telephone.slice(0, 6) + '…' } } });
     console.log('Super-administrateur créé.');
