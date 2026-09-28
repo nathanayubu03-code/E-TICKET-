@@ -1,0 +1,9 @@
+# Déploiement depuis un poste (vercel --prod) : secrets locaux et fichiers de travail exclus.
+.env
+.env.*
+!.env.example
+stockage-local/
+.next-e2e/
+.next-staging/
+test-results/
+playwright-report/
