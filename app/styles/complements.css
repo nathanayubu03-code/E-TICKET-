@@ -1,0 +1,175 @@
+/* Compléments dans le langage de la maquette : écrans que la maquette HTML ne couvre pas
+   (formulaires d'administration, tableaux, scanner). Mêmes variables, mêmes bordures,
+   mêmes ombres dures. */
+
+@layer components {
+  .champ-texte, .champ-select, .champ-zone {
+    width: 100%; min-height: 52px; padding: 0 14px;
+    border: 2px solid var(--encre); border-radius: 14px;
+    background: var(--surface); color: var(--encre); font-size: var(--t-texte);
+  }
+  .champ-zone { min-height: 120px; padding: 12px 14px; line-height: 1.5; resize: vertical; }
+  .champ-texte:focus, .champ-select:focus, .champ-zone:focus { outline: none; border-color: var(--focus); box-shadow: 0 0 0 3px var(--focus-halo); }
+  .champ-texte[aria-invalid="true"], .champ-zone[aria-invalid="true"] { border-color: var(--danger); }
+  .erreur-champ { color: var(--danger); font-size: var(--t-petit); font-weight: 700; }
+  .aide-champ { color: var(--encre-douce); font-size: var(--t-petit); }
+  .case { display: flex; gap: 12px; align-items: flex-start; min-height: 48px; cursor: pointer; }
+  .case input { width: 24px; height: 24px; flex: none; margin-top: 2px; accent-color: var(--encre); }
+  .piege { position: absolute !important; left: -10000px !important; width: 1px; height: 1px; overflow: hidden; }
+
+  .note-danger { background: var(--danger-doux); color: var(--danger); }
+  .note-succes { background: var(--succes-doux); color: var(--succes); }
+
+  /* Administration : pas de motif de fond derrière les tableaux */
+  .admin-corps { background-image: none; }
+  .admin-cadre { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100vh; }
+  @media (max-width: 900px) { .admin-cadre { grid-template-columns: 1fr; } }
+  .admin-menu { border-right: 2px solid var(--encre); background: var(--surface); padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+  @media (max-width: 900px) { .admin-menu { border-right: none; border-bottom: 2px solid var(--encre); flex-direction: row; flex-wrap: wrap; } }
+  .admin-menu a { min-height: 44px; display: flex; align-items: center; padding: 0 12px; border-radius: 10px; color: var(--encre); text-decoration: none; }
+  .admin-menu a[aria-current="page"] { background: var(--soleil); color: #14120E; }
+  .admin-contenu { padding: 24px; min-width: 0; }
+  @media (max-width: 640px) { .admin-contenu { padding: 16px; } }
+  .admin-panneau { background: var(--surface); border: 2px solid var(--encre); border-radius: 16px; padding: 20px; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .kpi { background: var(--surface); border: 2px solid var(--encre); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 4px; }
+  .kpi b { font-family: var(--affiche); font-weight: var(--titre-graisse); font-stretch: var(--titre-largeur); font-size: var(--t-kpi); line-height: 1; }
+  .tableau { width: 100%; border-collapse: collapse; font-size: var(--t-tableau); }
+  .tableau th { text-align: left; font-size: var(--t-mini); letter-spacing: 0.04em; text-transform: uppercase; color: var(--encre-douce); padding: 10px 12px; border-bottom: 2px solid var(--encre); }
+  .tableau td { padding: 12px; border-bottom: 1px solid var(--trait); vertical-align: top; }
+  .tableau-cadre { overflow-x: auto; border: 2px solid var(--encre); border-radius: 16px; background: var(--surface); }
+  .onglets-admin { display: flex; flex-wrap: wrap; gap: 6px; }
+  .onglets-admin a { min-height: 44px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; border: 2px solid var(--trait); background: var(--surface); color: var(--encre); text-decoration: none; }
+  .onglets-admin a[aria-current="page"] { background: var(--encre); border-color: var(--encre); color: var(--fond); }
+  .etapes-assistant { display: flex; flex-wrap: wrap; gap: 6px; counter-reset: pas; }
+  .etapes-assistant a { counter-increment: pas; min-height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 12px; border: 2px solid var(--trait); color: var(--encre); text-decoration: none; background: var(--surface); }
+  .etapes-assistant a::before { content: counter(pas); width: 24px; height: 24px; border-radius: 50%; background: var(--surface-2); display: inline-flex; align-items: center; justify-content: center; font-size: var(--t-mini); }
+  .etapes-assistant a[aria-current="step"] { border-color: var(--encre); box-shadow: 3px 3px 0 var(--ombre); }
+  .etapes-assistant a[aria-current="step"]::before { background: var(--soleil); color: #14120E; }
+
+  /* Scanner : écran plein, couleurs pleines */
+  .scan-ecran { min-height: 100dvh; display: flex; flex-direction: column; background: #14120E; color: #FBF5E6; }
+  .scan-barre { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 10px; background: #14120E; color: #FBF5E6; border-bottom: 2px solid #2E2A21; }
+  .scan-viseur { position: relative; flex: 1; min-height: 320px; overflow: hidden; background: #000; }
+  .scan-viseur video { width: 100%; height: 100%; object-fit: cover; }
+  .scan-cadre { position: absolute; inset: 12% 14%; border: 4px solid #FFD21F; border-radius: 20px; pointer-events: none; }
+  .scan-ligne { position: absolute; left: 16%; right: 16%; height: 4px; border-radius: 2px; background: #FFD21F; animation: scan-ligne 2.4s ease-in-out infinite; }
+  @keyframes scan-ligne { 0% { top: 14%; } 50% { top: 84%; } 100% { top: 14%; } }
+  .scan-resultat { position: fixed; inset: 0; z-index: 40; display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 24px; }
+  .scan-resultat h1 { font-family: var(--affiche); font-weight: var(--titre-graisse); font-stretch: var(--titre-largeur); font-size: var(--t-scan-resultat); line-height: 0.9; letter-spacing: 0.01em; }
+  .scan-valide { background: #0B7A3E; color: #FFFFFF; }
+  .scan-refuse { background: #C8102E; color: #FFFFFF; }
+  .scan-deja { background: #F08A00; color: #14120E; }
+  .signe-carre { width: 18px; height: 18px; border: 2px solid currentColor; display: inline-block; }
+}
+
+/* Filtres en liens (fonctionnent sans JavaScript) : même rendu que les boutons pressés de la maquette. */
+@layer components {
+  a.pastille, a.categorie { color: var(--encre); text-decoration: none; display: inline-flex; align-items: center; }
+  a.categorie { display: flex; }
+  .pastille[aria-current="true"] { background: var(--encre); border-color: var(--encre); color: var(--fond); }
+  .categorie[aria-current="true"] { border-color: var(--encre); box-shadow: 3px 3px 0 var(--ombre); }
+  .une .bandeau picture, .une .bandeau img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .ligne-clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+}
+
+@layer components {
+  .couverture svg { width: 100%; height: 100%; }
+}
+
+@layer components {
+  .billet .tete .rangee .affiche { white-space: nowrap; }
+  .billet .tete .rangee .badge { white-space: normal; text-align: right; }
+}
+
+/* Mes billets : styles repris du <style> de design/maquette/mes-billets.html */
+@layer components {
+  .mb-grille { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 24px; align-items: start; }
+  @media (max-width: 900px) { .mb-grille { grid-template-columns: 1fr; } .mb-grille aside { position: static !important; } }
+  .ligne-billet { display: flex; gap: 14px; padding: 10px; border: 2px solid var(--trait); border-radius: 16px; background: var(--surface); text-align: left; width: 100%; cursor: pointer; color: var(--encre); }
+  .ligne-billet[aria-pressed="true"] { border-color: var(--encre); box-shadow: 3px 3px 0 var(--ombre); }
+  .ligne-billet .mini { width: 64px; height: 96px; flex: none; border-radius: 10px; overflow: hidden; line-height: 0; }
+  .ligne-billet .mini svg { width: 100%; height: 100%; }
+  .onglets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 14px; background: var(--surface-2); }
+  .onglets button { min-height: 48px; border-radius: 10px; border: 2px solid transparent; background: transparent; font-weight: 700; cursor: pointer; color: var(--encre-douce); }
+  .onglets button[aria-selected="true"] { background: var(--surface); border-color: var(--encre); color: var(--encre); }
+}
+
+@layer components {
+  /* L'administration espace ses blocs par piles : pas de marge héritée de « section + section ». */
+  .admin-contenu section + section { margin-top: 0; }
+  .admin-contenu a.kpi-lien { text-decoration: none; color: inherit; font-weight: 400; }
+}
+
+@layer components {
+  /* Catégorie épuisée : la maquette baisse l'opacité (0,7), ce qui fait passer le badge « Épuisé » sous le
+     contraste AA exigé par la maquette elle-même. Même intention, avec la couleur « désactivé » des tokens. */
+  .categorie-billet.epuisee { opacity: 1; }
+  .categorie-billet.epuisee h3, .categorie-billet.epuisee .prix b { color: var(--desactive); }
+}
+
+/* Version de test (APP_ENV=staging) : bandeau rouge fixe en haut de chaque page, codes SMS affichés. */
+@layer components {
+  :root { --h-test: 0px; }
+  html[data-app-env="staging"] { --h-test: 52px; }
+  @media (min-width: 720px) { html[data-app-env="staging"] { --h-test: 36px; } }
+  .bandeau-test {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000; min-height: var(--h-test);
+    display: flex; align-items: center; justify-content: center; padding: 6px 16px; text-align: center;
+    background: #C8102E; color: #FFFFFF; font-weight: 700; font-size: var(--t-petit); line-height: 1.3;
+    border-bottom: 2px solid #14120E;
+  }
+  html[data-app-env="staging"] body { padding-top: var(--h-test); }
+  html[data-app-env="staging"] .entete { top: var(--h-test); }
+  html[data-app-env="staging"] .panier, html[data-app-env="staging"] .mb-grille aside { top: calc(92px + var(--h-test)) !important; }
+  html[data-app-env="staging"] .scan-ecran { min-height: calc(100dvh - var(--h-test)); }
+  html[data-app-env="staging"] .scan-resultat { top: var(--h-test); }
+  .code-test { padding: 10px 14px; border-radius: 12px; border: 2px dashed #C8102E; background: var(--danger-doux); color: var(--danger); font-size: var(--t-texte); }
+  .code-test b { font-family: var(--affiche); font-weight: var(--titre-graisse); font-size: var(--t-otp); letter-spacing: 0.12em; margin-left: 6px; }
+}
+
+/* Accueil vide en 360 px : la colonne unique de .heros (1fr) prenait la largeur minimale du formulaire
+   d'alerte SMS et débordait de 52 px. minmax(0, 1fr) la tient dans l'écran. */
+@layer components {
+  @media (max-width: 900px) { .heros { grid-template-columns: minmax(0, 1fr); } }
+  /* Même défaut sur la page événement : la colonne unique prenait la largeur minimale de son contenu. */
+  @media (max-width: 960px) { .evt-grille { grid-template-columns: minmax(0, 1fr); } }
+}
+
+/* Page /test-typo (development et staging) : trois colonnes de 360 px. */
+@layer components {
+  .test-typo-grille { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+  .test-typo-colonne { width: 360px; max-width: 100%; gap: 16px; }
+}
+@layer components {
+  .test-typo-colonne .operateurs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Choix de la devise, juste avant le choix de l'opérateur : deux gros boutons. */
+@layer components {
+  .choix-devise { border: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .choix-devise legend { font-weight: 700; margin-bottom: 8px; }
+  .choix-devise > span { grid-column: 1 / -1; }
+  .choix-devise .devise { min-height: 72px; padding: 12px; border-radius: 16px; border: 2px solid var(--encre); background: var(--surface); color: var(--encre); display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; cursor: pointer; text-align: left; box-shadow: 3px 3px 0 var(--ombre); }
+  .choix-devise .devise b { font-size: var(--t-bouton); }
+  .choix-devise .devise span { font-family: var(--affiche); font-weight: var(--titre-graisse); font-size: var(--t-prix); white-space: nowrap; }
+  .choix-devise .devise[aria-pressed="true"], .choix-devise .devise[aria-current="true"] { background: var(--soleil); color: #14120E; border-width: 3px; }
+  .choix-devise .devise:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+}
+@layer components {
+  .choix-devise a.devise { text-decoration: none; }
+}
+
+/* Logos des opérateurs : carré blanc arrondi, proportions conservées, nom toujours écrit à côté. */
+@layer components {
+  .logo-op { flex: none; display: inline-flex; align-items: center; justify-content: center; background: #FFFFFF; overflow: hidden; box-shadow: 0 0 0 1px rgba(20, 18, 14, 0.18); }
+  .logo-op img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .logo-op-40 { width: 40px; height: 40px; border-radius: 10px; padding: 3px; }
+  .logo-op-24 { width: 24px; height: 24px; border-radius: 6px; padding: 2px; }
+  .op-choisi { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; align-self: center; }
+  a.op-puce { color: var(--encre); text-decoration: none; min-height: 48px; }
+  a.op-puce:hover { outline: 2px solid var(--encre); }
+}
+@layer components {
+  .insecable { white-space: nowrap; }
+}

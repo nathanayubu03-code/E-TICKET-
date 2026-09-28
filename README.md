@@ -1,33 +1,117 @@
-# e-Ticket RDC · identité visuelle et écrans
+# e-Ticket RDC
 
-Billetterie d'événements pour la RDC, pensée pour des Android d'entrée de gamme en 360 px, la 3G instable, le plein soleil et le paiement Mobile Money.
+Billetterie d'événements pour la République Démocratique du Congo : concerts, matchs, festivals, conférences, spectacles. Paiement Mobile Money (M-Pesa, Airtel Money, Orange Money, Afrimoney), billet vivant avec motif Kuba, billets et scanner qui marchent sans réseau. Conçu pour des Android d'entrée de gamme en 360 px et une 3G instable.
 
-Canvas de design (logos, tokens, motifs, 10 écrans en clair et en sombre, composants) : https://claude.ai/artifact/NcyNXr97TwbdXJ7gAGXTEM
+Le site part en production vide : tout ce qui s'affiche au public est saisi dans l'administration.
 
-## Site web
+## Documents
 
-`site/` est la version web, sans build ni dépendance : ouvrir avec n'importe quel serveur statique (`python3 -m http.server -d site`).
+| Fichier | Contenu |
+|---|---|
+| `PLAN.md` | Architecture, schéma de données, décisions, avancement, résultats des vérifications |
+| `CLAUDE.md` | Règles permanentes du projet |
+| `design/maquette/` | Maquette HTML validée, source de vérité visuelle (`python3 -m http.server -d design/maquette`) |
+| `design/project/` | Canvas de design (écrans hors maquette HTML : scanner, tableau de bord, états) |
+| `docs/deploiement.md` | Mise en ligne sur Vercel et Neon, cron, R2, domaine |
+| `docs/paiement.md` | Fonctionnement du paiement et questions pour l'agrégateur |
+| `docs/billet.md` | Billet, QR code, mesure de lisibilité, hors ligne |
+| `docs/motifs.md` | Algorithme du motif Kuba |
+| `docs/securite.md` | Mesures de sécurité |
+| `docs/design.md` | Tokens et écarts avec `tokens/theme.css` |
+| `docs/logos.md` | Logos des opérateurs : fichiers attendus, remplacement |
+| `docs/traductions/en.md` | Textes anglais à relire |
+| `docs/legal-a-valider.md` | Questions pour un juriste |
+| `docs/reste-a-faire.md` | Ce qui manque pour la production réelle |
+| `docs/captures/` | Captures de chaque étape, face à la maquette |
 
-- `index.html` : accueil, événement à la une, filtres par ville et catégorie, recherche, état vide.
-- `evenement.html?id=…` : détail, plan léger, programme, choix des billets avec limite de 4 par personne.
-- `achat.html` : numéro +243 et code OTP (collage et remplissage SMS gérés), choix de l'opérateur, attente de validation avec compte à rebours de 2 minutes et les états reçu, refusé, délai dépassé, puis billet vivant.
-- `mes-billets.html` : billets à venir et passés, billet vivant ouvert.
-- Fond : `site/assets/motif-fond.svg` (et `-sombre`), tuile répétable de 480 px inspirée des motifs Kuba, générée par `outils/gen_motif_fond.py`.
-- Le panneau « Démonstration » de l'écran d'attente simule la réponse de l'opérateur ; à retirer une fois l'API de paiement branchée.
+## Pile technique
 
-## Contenu
+Next.js 16 (App Router, Server Components, Server Actions, build webpack), TypeScript strict, Tailwind CSS v4 avec les tokens de la maquette, PostgreSQL et Prisma 7, Zod, next-intl, Serwist (PWA), Vitest, Playwright.
 
-- `design/project/` : sources du canvas. Un fichier `.dc.html` par planche, `canvas.json` pour la disposition.
-  - `Main` : trois pistes de logo. `Tokens` : palette, typographie, espacements, rayons, ombres. `Motifs` : système Kuba.
-  - `Accueil`, `Evenement`, `Billets`, `Connexion`, `Paiement`, `Attente` (4 états), `Confirmation`, `MesBillets`, `Etats` (vide, chargement, réseau), `Scanner` (prêt, valide, refusé, déjà scanné), `Dashboard` (1280 px).
-  - Chaque écran prend une propriété `dark`. Les fichiers `*Sombre.dc.html` et les états sont de simples variantes.
-  - Composants réutilisables : `Logo`, `Kuba` (moteur de motif), `Billet` (billet vivant), `Composants` (bibliothèque).
-- `tokens/theme.css` : tokens pour Tailwind v4 (`@theme`), thème clair et sombre par variables.
-- `tokens/tailwind.config.cjs` : les mêmes tokens pour Tailwind v3.
-- `site/assets/kuba.js` : moteur de motif de référence, identique au canvas (réexporté par `src/kuba/kuba.js`). `npm test` lance les tests.
-- `docs/motifs.md` : logique du système de motifs, à lire avant de coder le billet et le scanner.
-- `docs/libelles.md` : libellés clés en français, lingala et swahili, à faire valider.
+## Installation locale
 
-## Règles d'interface
+Prérequis : Node.js 22, PostgreSQL 16 (ou plus récent), `openssl`.
 
-Zones tactiles de 48 px minimum. Contraste AA partout (ratios dans la planche Tokens). Montants toujours avec la devise, CDF d'abord, USD indicatif ensuite. Vert réservé au succès. Pas de photo : aplats, SVG et trame Kuba. Polices : Anybody pour l'affiche, Atkinson Hyperlegible pour le texte, avec repli système.
+```bash
+git clone <dépôt> e-ticket && cd e-ticket
+npm install
+cp .env.example .env
+```
+
+Créez la base et un utilisateur :
+
+```bash
+createuser -P eticket          # choisissez un mot de passe
+createdb -O eticket eticket
+createdb -O eticket eticket_test
+createdb -O eticket eticket_e2e
+```
+
+Remplissez `.env` (chaque variable est commentée dans `.env.example`). Au minimum pour le développement :
+
+```bash
+DATABASE_URL=postgresql://eticket:<mot de passe>@localhost:5432/eticket
+SESSION_SECRET=$(openssl rand -hex 32)
+ENCRYPTION_KEY=$(openssl rand -base64 32)
+CRON_SECRET=$(openssl rand -hex 24)
+PAYMENT_PROVIDER=simulation
+SMS_PROVIDER=simulation
+STORAGE_DRIVER=local
+SUPERADMIN_TELEPHONE=+243XXXXXXXXX
+SUPERADMIN_MOT_DE_PASSE=<12 caractères minimum, lettres et chiffres>
+```
+
+Puis :
+
+```bash
+npx prisma migrate deploy   # crée les tables
+npm run db:seed             # super-administrateur, catégories, villes, paramètres
+npm run dev                 # http://localhost:3000
+```
+
+## Variables d'environnement
+
+Toutes sont décrites dans `.env.example`. Les principales :
+
+| Variable | Rôle |
+|---|---|
+| `DATABASE_URL`, `DIRECT_URL` | PostgreSQL (poolée pour l'application, directe pour les migrations) |
+| `SESSION_SECRET`, `ENCRYPTION_KEY`, `CRON_SECRET` | Secrets, validés au démarrage |
+| `APP_ENV` | `development`, `staging` (version de test en ligne : bandeau rouge, codes SMS affichés à l'écran) ou `production` |
+| `PAYMENT_PROVIDER`, `SMS_PROVIDER` | `simulation` (development et staging, **refusé en production**), `non_configure`, ou un fournisseur réel |
+| `STORAGE_DRIVER`, `S3_*` | Affiches : disque local ou Cloudflare R2 |
+| `NEXT_PUBLIC_SITE_URL` | Adresse publique, pour les liens envoyés par SMS ; obligatoire en production, hors `vercel.app` |
+| `CONTACT_ORGANISATEURS_EMAIL`, `CONTACT_ORGANISATEURS_TELEPHONE`, `CONTACT_EMAIL`, `EDITEUR_*` | Contacts et mentions ; vides, les blocs ne s'affichent pas |
+| `SUPERADMIN_*` | Utilisées seulement par le seed de production |
+
+## Seed de production et super-administrateur
+
+`npm run db:seed` crée, sans rien écraser : le super-administrateur à partir de `SUPERADMIN_TELEPHONE`, `SUPERADMIN_MOT_DE_PASSE` et `SUPERADMIN_NOM` ; les cinq catégories ; les villes de référence avec leur fuseau (Kinshasa UTC+1, Lubumbashi, Goma, Kisangani UTC+2…) ; les paramètres par défaut (commission 10 %, 4 billets par personne). Il est idempotent.
+
+Connexion à l'administration : `/admin/connexion`, numéro et mot de passe, puis code reçu par SMS. En développement, avec `SMS_PROVIDER=simulation`, le code s'affiche dans la console du serveur et dans le journal « SMS envoyés ».
+
+Données de démonstration (développement seulement) : `npm run db:seed-demo`. Tout est préfixé `[DEMO]`, et le script refuse de tourner en production ou sur une base qui n'est pas locale.
+
+## Simulation du paiement (développement)
+
+Avec `PAYMENT_PROVIDER=simulation`, la réponse de l'opérateur dépend de la fin du numéro de paiement : `…0000` refusé, `…9999` sans réponse (délai dépassé au bout de 2 minutes), tout autre numéro reçu après 4 secondes. La réponse arrive par un webhook signé, traité comme en production.
+
+## Tests
+
+```bash
+npm run lint         # ESLint
+npm run typecheck    # TypeScript
+npm test             # Vitest (base eticket_test recréée à chaque lancement)
+npm run test:e2e     # Playwright sur next dev, port 3100 (development) et 3101 (staging), base eticket_e2e recréée
+npm run test:pwa     # build de production puis test hors ligne réel (serveur arrêté)
+```
+
+Ce que couvrent les tests, entre autres : parité exacte du moteur Kuba avec la maquette, aucun contenu inventé dans le code, 20 demandes simultanées sur 3 places donnent exactement 3 succès, webhook reçu trois fois ne crée qu'un lot de billets, double scan orange et QR modifié rouge, scanner en mode avion, base vide propre, achat complet en simulation, création et publication d'un événement en moins de 5 minutes.
+
+Captures face à la maquette : `ETAPE=XX CAPTURES='[{"nom":"accueil","app":"/","maquette":"index.html"}]' npx playwright test --project=captures`.
+
+Playwright est figé en 1.56.1 pour correspondre au Chromium préinstallé de l'environnement de développement ; ailleurs, `npx playwright install chromium` suffit.
+
+## Mise en ligne
+
+Voir `docs/deploiement.md`, section 9 pour une version de test. Avant d'ouvrir la vente, lire `docs/reste-a-faire.md` : l'adaptateur de paiement réel et le fournisseur SMS manquent encore.

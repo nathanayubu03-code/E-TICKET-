@@ -1,0 +1,8 @@
+{
+  "commun": { "reessayer": "Jaribu tena" },
+  "reseau": { "coupe": "Hakuna mtandao" },
+  "entete": { "evenements": "Matukio", "billets": "Tiketi zangu", "orga": "Waandaaji", "connexion": "Ingia" },
+  "achat": { "attenteTitre": "Thibitisha kwenye simu yako", "rienRecu": "Hujapokea chochote ?", "securiteGras": "Hatutakuomba kamwe nambari yako ya siri" },
+  "mesBillets": { "titre": "Tiketi zangu" },
+  "scan": { "valide": "Halali", "refuse": "Imekataliwa" }
+}
