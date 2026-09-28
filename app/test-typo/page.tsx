@@ -67,7 +67,7 @@ export default async function TestTypo() {
                 <div key={t.nom} className={`categorie-billet${i === 0 ? ' choisie' : ''}`}>
                   <div className="rangee entre"><h3>{t.nom}</h3><span className="badge badge-neutre">Disponible</span></div>
                   <div className="rangee entre">
-                    <div className="prix"><b style={{ fontSize: 'var(--t-prix)' }}>{cdf(t.prix)}</b></div>
+                    <div className="prix"><b className="insecable" style={{ fontSize: 'var(--t-prix)' }}>{cdf(t.prix)}</b></div>
                     <div className="compteur"><button type="button" aria-label="Retirer"><Icone nom="minus" taille={22} /></button><output>{i === 0 ? 2 : 0}</output><button type="button" className="plus" aria-label="Ajouter"><Icone nom="plus" taille={22} /></button></div>
                   </div>
                 </div>

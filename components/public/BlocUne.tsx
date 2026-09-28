@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { Icone } from '@/components/ui/Icone';
-import { prixDouble } from '@/lib/argent';
+import { Prix } from '@/components/ui/Prix';
 import { nomCategorie } from '@/lib/categorie';
 import type { EvenementListe } from '@/lib/evenements';
 import { texteEvenement } from '@/lib/langue';
@@ -44,7 +44,7 @@ export async function BlocUne({ e }: { e: EvenementListe }) {
         <div className="rangee entre">
           <div className="prix">
             {plusieursPrix && e.prixMin > 0 ? <span style={{ fontSize: 'var(--t-petit)' }}>{t('commun.des')}</span> : null}
-            <b>{prixDouble(e.prixMin, e.prixMinUsd, langue, t('commun.gratuit'))}</b>
+            <b><Prix cdf={e.prixMin} usd={e.prixMinUsd} langue={langue} gratuit={t('commun.gratuit')} /></b>
           </div>
           <Link className="btn btn-principal btn-grand" href={`/evenements/${e.slug}`}>{t('accueil.reserver')}</Link>
         </div>

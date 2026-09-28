@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { operateurDuNumero, type InfoOperateur } from '@/lib/operateurs';
 import { formaterChiffres } from '@/lib/telephone';
 
@@ -23,6 +23,19 @@ export function ChampTelephone({ id, name = 'telephone', label, placeholder, err
 }) {
   const [chiffres, setChiffres] = useState(defaut.replace(/\D/g, '').replace(/^243/, '').replace(/^0/, '').slice(0, 9));
   const op = operateurDuNumero(chiffres);
+  const champ = useRef<HTMLInputElement>(null);
+  const rappel = useRef(onChange);
+  useEffect(() => { rappel.current = onChange; });
+  // Sur un téléphone lent, on peut taper avant que la page soit interactive : le chiffre s'affiche mais
+  // n'est pas dans l'état, et le bouton reste gris. Au montage, on reprend ce qui est déjà dans le champ.
+  useEffect(() => {
+    const d = (champ.current?.value ?? '').replace(/\D/g, '').replace(/^0/, '').slice(0, 9);
+    if (d && d !== chiffres) {
+      setChiffres(d);
+      rappel.current?.(d, operateurDuNumero(d));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- une seule fois, au montage
+  }, []);
   const aide = `${id}-aide`;
   return (
     <div className="champ">
@@ -30,6 +43,7 @@ export function ChampTelephone({ id, name = 'telephone', label, placeholder, err
       <div className="saisie">
         <span className="prefixe">{drapeau ? <Drapeau /> : null}+243</span>
         <input
+          ref={champ}
           id={id}
           name={name}
           type="tel"

@@ -59,8 +59,10 @@ test('achat complet en simulation : opérateur, attente, confirmation, billet af
 test('paiement en USD : les deux prix, choix de la devise avant l’opérateur, montant et attente en USD, billet payé en USD', async ({ page }) => {
   await viderEvenements();
   const e = await creerEvenement({ titre: 'Achat dollars', types: [{ nom: 'Standard', prix: 25000, prixUsd: 1000, quota: 10 }] });
+  await page.setViewportSize({ width: 360, height: 800 });
   await page.goto(`/evenements/${e.slug}`);
-  await expect(page.getByText('25 000 CDF · 10 USD')).toBeVisible();
+  await expect(page.getByText('25 000 CDF · 10 USD').first()).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(360); // les deux prix tiennent en 360 px
   await acheter(page, '971230007', e.slug);
   const cdf = page.getByRole('button', { name: /Payer en CDF/ });
   const usd = page.getByRole('button', { name: /Payer en USD/ });
@@ -84,6 +86,20 @@ test('paiement en USD : les deux prix, choix de la devise avant l’opérateur, 
   expect(c.billets[0]).toMatchObject({ devise: 'USD', prixPaye: 1000 });
   await expect(page.getByText('10 USD').first()).toBeVisible(); // prix payé sur le billet
   expect((await db.smsLog.findFirstOrThrow({ where: { telephone: '+243971230007', gabarit: 'billets' } })).contenu).toContain('(10 USD)');
+});
+
+test('clic sur un opérateur de l’accueil : il est retenu et présélectionné au paiement ; jamais d’image cassée', async ({ page }) => {
+  await viderEvenements();
+  const e = await creerEvenement({ titre: 'Achat logo', types: [{ nom: 'Standard', prix: 25000, quota: 10 }] });
+  await page.goto('/');
+  // Attendre la réponse de /payer-avec/mpesa : l'adresse de départ est déjà « / », waitForURL ne suffit pas.
+  await Promise.all([page.waitForResponse((r) => r.url().includes('/payer-avec/mpesa')), page.getByRole('link', { name: 'M-Pesa' }).click()]);
+  await expect.poll(async () => (await page.context().cookies()).find((c) => c.name === 'et-operateur')?.value).toBe('MPESA');
+  // Numéro Airtel, mais M-Pesa a été choisi explicitement.
+  await acheter(page, '971230008', e.slug);
+  await expect(page.getByRole('button', { name: /M-Pesa/ })).toHaveAttribute('aria-pressed', 'true');
+  const cassees = await page.locator('img').evaluateAll((imgs) => imgs.filter((i) => (i as HTMLImageElement).complete && (i as HTMLImageElement).naturalWidth === 0).length);
+  expect(cassees).toBe(0);
 });
 
 test('paiement refusé par l’opérateur : écran refusé et nouvel essai possible', async ({ page }) => {

@@ -18,6 +18,8 @@ Le site part en production vide : tout ce qui s'affiche au public est saisi dans
 | `docs/motifs.md` | Algorithme du motif Kuba |
 | `docs/securite.md` | Mesures de sécurité |
 | `docs/design.md` | Tokens et écarts avec `tokens/theme.css` |
+| `docs/logos.md` | Logos des opérateurs : fichiers attendus, remplacement |
+| `docs/traductions/en.md` | Textes anglais à relire |
 | `docs/legal-a-valider.md` | Questions pour un juriste |
 | `docs/reste-a-faire.md` | Ce qui manque pour la production réelle |
 | `docs/captures/` | Captures de chaque étape, face à la maquette |

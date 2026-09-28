@@ -123,7 +123,7 @@ section + section { margin-top: 28px; }
 .meta span { display: inline-flex; align-items: center; gap: 8px; }
 .meta svg { width: 20px; height: 20px; flex: none; }
 .prix { display: flex; flex-direction: column; line-height: 1.15; }
-.prix b { font-size: var(--t-prix); white-space: nowrap; }
+.prix b { font-size: var(--t-prix); }
 .une .rangee.entre { margin-top: auto; padding-top: 8px; flex-wrap: wrap; }
 
 .apercu-billet { display: flex; flex-direction: column; gap: 16px; }

@@ -25,3 +25,14 @@ test('connexion acheteur : numéro, code faux puis bon code collé en une fois',
   const user = await db.user.findUnique({ where: { telephone: tel } });
   expect(user?.roles).toContain('ACHETEUR');
 });
+
+test('téléphone lent : un numéro tapé avant que la page soit interactive est pris en compte', async ({ page }) => {
+  await db.rateLimit.deleteMany({});
+  // Le JavaScript arrive avec 3 secondes de retard, comme en 3G : on tape pendant ce temps.
+  await page.route('**/_next/static/chunks/**', async (route) => { await new Promise((r) => setTimeout(r, 3000)); await route.continue(); });
+  await page.goto('/connexion', { waitUntil: 'domcontentloaded' });
+  await page.locator('#tel').pressSequentially('971230009');
+  const bouton = page.getByRole('button', { name: 'Recevoir le code' });
+  await expect(bouton).toBeEnabled({ timeout: 20_000 });
+  await expect(page.locator('#tel')).toHaveValue('97 123 00 09');
+});

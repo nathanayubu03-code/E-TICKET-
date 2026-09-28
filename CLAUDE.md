@@ -28,6 +28,7 @@
 - Deux devises, CDF et USD (enum `Devise`). Tous les montants sont des entiers dans la plus petite unité : francs pour le CDF, centimes pour l'USD. Chaque commande, paiement, réclamation, billet, remise et reversement porte sa devise. Jamais de conversion ni de taux : le prix USD d'une catégorie est saisi par l'administrateur (facultatif), sinon la catégorie ne se paie qu'en CDF.
 - CDF et USD ne s'additionnent jamais : tableau de bord, reversements et export séparent les devises. Formatage : `montant(n, devise, langue)` et `prixDouble()` de `lib/argent.ts`.
 - Changement de devise d'une commande : uniquement par `choisirDevise()` (`lib/commandes.ts`), refusé pendant un paiement en cours. Devises acceptées par opérateur : `lib/operateurs.ts`.
+- Logos des opérateurs : fichiers officiels dans `public/operateurs/` (noms exacts, 20 ko maximum), manifeste `lib/logos-operateurs.json` régénéré par `npm run logos` (aussi lancé par `vercel-build`). Sans logo, affichage de repli. Procédure : `docs/logos.md`. Ne jamais dessiner ni inventer un logo de marque.
 - Commission en points de base (1000 = 10 %), figée sur la commande à sa création, calculée dans la devise de la commande.
 
 ## Paiement, SMS, stockage

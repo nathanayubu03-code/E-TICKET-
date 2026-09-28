@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getLocale, getTranslations } from 'next-intl/server';
-import { prixDouble } from '@/lib/argent';
+import { Prix } from '@/components/ui/Prix';
 import { nomCategorie } from '@/lib/categorie';
 import type { EvenementListe } from '@/lib/evenements';
 import { texteEvenement } from '@/lib/langue';
@@ -27,7 +27,7 @@ export async function CarteEvenement({ e }: { e: EvenementListe }) {
         <span className="doux" style={{ fontSize: 'var(--t-texte)' }}>{[e.lieu?.nom, e.ville?.nom].filter(Boolean).join(', ')}</span>
         <div className="bas">
           <span>
-            <b style={{ fontSize: 'var(--t-texte)' }}>{plusieursPrix && e.prixMin > 0 ? `${t('commun.des')} ` : ''}{prixDouble(e.prixMin, e.prixMinUsd, langue, t('commun.gratuit'))}</b>{' '}
+            <b style={{ fontSize: 'var(--t-texte)' }}>{plusieursPrix && e.prixMin > 0 ? `${t('commun.des')} ` : ''}<Prix cdf={e.prixMin} usd={e.prixMinUsd} langue={langue} gratuit={t('commun.gratuit')} /></b>{' '}
             
           </span>
           {alerte ? <span className="badge badge-danger">{alerte}</span> : null}

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { payer } from '@/app/(public)/achat/actions';
 import { Icone } from '@/components/ui/Icone';
+import { LogoOperateur } from '@/components/ui/LogoOperateur';
 import type { Devise } from '@/lib/argent';
 import { operateurDuNumero, type InfoOperateur } from '@/lib/operateurs';
 import { formaterChiffres } from '@/lib/telephone';
@@ -125,7 +126,7 @@ export function ParcoursPaiement({ code, offres, deviseInitiale, operateurs, chi
         <div className="operateurs" role="group" aria-label={textes.operateurAria}>
           {proposes.map((o) => (
             <button key={o.k} type="button" className="operateur" aria-pressed={o.k === op.k} style={{ background: o.fond, color: o.texte }} onClick={() => setOp(o)}>
-              <span className="losanges" aria-hidden="true"><i style={{ background: o.texte }} /><i style={{ border: `2px solid ${o.texte}` }} /></span>
+              {o.logo ? <LogoOperateur op={o} taille={40} /> : <span className="losanges" aria-hidden="true"><i style={{ background: o.texte }} /><i style={{ border: `2px solid ${o.texte}` }} /></span>}
               <span><b>{o.nom}</b><br /><small>{operateurDuNumero(chiffres)?.k === o.k ? remplir(textes.detecte, { prefixe: chiffres.slice(0, 2) }) : o.prefixes.slice(0, 3).map((p) => p.slice(1)).join(' · ')}</small></span>
               <span className="coche"><Icone nom="check" taille={18} epaisseur={3} /></span>
             </button>
@@ -155,6 +156,7 @@ export function ParcoursPaiement({ code, offres, deviseInitiale, operateurs, chi
     <section className="panneau pile" style={ecart(18)} aria-labelledby="t-att">
       {vue === 'attente' ? (
         <div className="pile" style={ecart(18)}>
+          <span className="op-choisi"><LogoOperateur op={op} taille={24} />{nomOp}</span>
           <div className="minuteur" role="timer" aria-label={textes.minuteurAria}>
             <svg viewBox="0 0 184 184" aria-hidden="true">
               <circle cx="92" cy="92" r="80" fill="none" stroke="var(--surface-2)" strokeWidth="14" />
@@ -174,6 +176,7 @@ export function ParcoursPaiement({ code, offres, deviseInitiale, operateurs, chi
       ) : vue === 'recu' ? (
         <div className="pile" style={ecart(16, { textAlign: 'center' })} role="status">
           <span className="rond-etat" style={{ background: 'var(--succes-plein)', color: 'var(--sur-succes)' }}><Icone nom="check" taille={64} epaisseur={3} /></span>
+          <span className="op-choisi"><LogoOperateur op={op} taille={24} />{nomOp}</span>
           <h1 ref={titre} tabIndex={-1} className="affiche" style={{ fontSize: 'var(--t-titre-page)' }}>{textes.recuTitre}</h1>
           <p style={{ fontSize: 'var(--t-chapo)' }}><Riche gabarit={textes.recuTexte} v={{ operateur: nomOp, montant }} /></p>
           <div className="barre-indet"><i /></div>

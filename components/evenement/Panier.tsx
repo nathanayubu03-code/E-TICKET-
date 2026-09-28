@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from 'react';
 import { Icone } from '@/components/ui/Icone';
-import { montant as formater, prixDouble } from '@/lib/argent';
+import { Prix } from '@/components/ui/Prix';
+import { montant as formater } from '@/lib/argent';
 import { ecart } from '@/lib/style';
 
 export interface TypePanier { id: string; nom: string; description: string | null; prixCdf: number; prixUsd: number | null; restant: number; limiteParCommande: number | null; etat: 'ouvert' | 'pasEncore' | 'termine'; ouvertureTexte?: string }
@@ -50,7 +51,7 @@ export function Panier({ slug, types, max, langue, textes }: { slug: string; typ
                 {badge}
               </div>
               <div className="rangee entre">
-                <div className="prix"><b style={{ fontSize: 'var(--t-prix)' }}>{prixDouble(c.prixCdf, c.prixUsd, langue, textes.gratuit)}</b></div>
+                <div className="prix"><b style={{ fontSize: 'var(--t-prix)' }}><Prix cdf={c.prixCdf} usd={c.prixUsd} langue={langue} gratuit={textes.gratuit} /></b></div>
                 <div className="compteur">
                   <button type="button" disabled={n === 0} aria-label={remplir(textes.retirer, { nom: c.nom })} onClick={() => change(c.id, -1)}><Icone nom="minus" taille={22} epaisseur={2.6} /></button>
                   <output aria-live="polite" aria-label={remplir(textes.quantite, { nom: c.nom })}>{n}</output>

@@ -18,7 +18,8 @@
     "db:seed-demo": "tsx prisma/seed-demo.ts",
     "postinstall": "prisma generate",
     "test:pwa": "npm run build && playwright test -c playwright.pwa.config.ts",
-    "vercel-build": "prisma generate && prisma migrate deploy && tsx prisma/seed.ts --deploiement && next build --webpack"
+    "vercel-build": "node outils/logos-operateurs.mjs && prisma generate && prisma migrate deploy && tsx prisma/seed.ts --deploiement && next build --webpack",
+    "logos": "node outils/logos-operateurs.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1141.0",

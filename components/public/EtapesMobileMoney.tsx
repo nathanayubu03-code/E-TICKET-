@@ -1,5 +1,7 @@
 import { getTranslations } from 'next-intl/server';
-import { OPERATEURS } from '@/lib/operateurs';
+import Link from 'next/link';
+import { LogoOperateur } from '@/components/ui/LogoOperateur';
+import { FICHIERS_LOGOS, OPERATEURS } from '@/lib/operateurs';
 import { ecart } from '@/lib/style';
 
 export async function EtapesMobileMoney({ max }: { max: number }) {
@@ -19,7 +21,12 @@ export async function EtapesMobileMoney({ max }: { max: number }) {
           ))}
         </div>
         <div className="operateurs-ligne" aria-label={t('operateursAria')}>
-          {OPERATEURS.map((o) => <span className="op-puce" key={o.k}><i style={{ background: o.fond }} />{o.nom}</span>)}
+          {/* Un clic sur un opérateur le retient pour le paiement et mène aux événements, pour acheter tout de suite. */}
+          {OPERATEURS.map((o) => (
+            <Link className="op-puce" key={o.k} href={`/payer-avec/${FICHIERS_LOGOS[o.k]}`} prefetch={false}>
+              {o.logo ? <LogoOperateur op={o} taille={24} /> : <i style={{ background: o.fond }} />}{o.nom}
+            </Link>
+          ))}
           <span className="op-puce">{t('paiementAgent')}</span>
         </div>
       </div>

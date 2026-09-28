@@ -4,7 +4,7 @@ import { FormListeAttente } from '@/components/evenement/FormListeAttente';
 import { Panier, type TypePanier } from '@/components/evenement/Panier';
 import { Couverture } from '@/components/public/Couverture';
 import { Icone } from '@/components/ui/Icone';
-import { prixDouble } from '@/lib/argent';
+import { Prix } from '@/components/ui/Prix';
 import { nomCategorie } from '@/lib/categorie';
 import type { EvenementDetail } from '@/lib/evenements';
 import { texteEvenement } from '@/lib/langue';
@@ -106,7 +106,7 @@ export async function VueEvenement({ e, apercu = false }: { e: EvenementDetail; 
           <aside className="panneau pile panier" style={ecart(14)}>
             <h2 className="titre-section">{t('evenement.vosBillets')}</h2>
             <p className="note note-info">Aperçu : le panier est désactivé.</p>
-            {e.typesBillet.map((tb) => <div key={tb.id} className="categorie-billet"><h3>{tb.nom}</h3><b>{prixDouble(tb.prixCdf, tb.prixUsd, langue)}</b><span className="doux">{tb.restant} / {tb.quota}</span></div>)}
+            {e.typesBillet.map((tb) => <div key={tb.id} className="categorie-billet"><h3>{tb.nom}</h3><b><Prix cdf={tb.prixCdf} usd={tb.prixUsd} langue={langue} /></b><span className="doux">{tb.restant} / {tb.quota}</span></div>)}
           </aside>
         ) : e.statut === 'ANNULE' || e.statut === 'TERMINE' ? (
           <aside className="panneau pile panier" style={ecart(14)}>

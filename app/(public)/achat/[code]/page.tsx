@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
@@ -16,7 +17,7 @@ import { contenuQR, dessinQR } from '@/lib/billets/qr';
 import { montantsPossibles, type MontantsCommande } from '@/lib/commandes';
 import { dateCourte } from '@/lib/fuseaux';
 import { texteEvenement } from '@/lib/langue';
-import { OPERATEURS } from '@/lib/operateurs';
+import { COOKIE_OPERATEUR, OPERATEURS } from '@/lib/operateurs';
 import { parametre } from '@/lib/parametres';
 import { ecart } from '@/lib/style';
 import { chiffresNationaux, formaterTelephone } from '@/lib/telephone';
@@ -120,7 +121,8 @@ export default async function PageAchat({ params }: { params: Promise<{ code: st
         chiffresInitiaux={chiffresNationaux(p?.telephone ?? c.telephone)}
         vueInitiale={p?.statut === 'EN_ATTENTE' || p?.statut === 'INITIE' ? 'attente' : 'paiement'}
         debutPaiement={p && (p.statut === 'EN_ATTENTE' || p.statut === 'INITIE') ? p.creeLe.getTime() : null}
-        operateurInitial={p?.operateur ?? null}
+        // Opérateur de la demande en cours, sinon celui choisi en cliquant sur son logo (accueil), sinon détecté d'après le numéro.
+        operateurInitial={p?.operateur ?? (await cookies()).get(COOKIE_OPERATEUR)?.value ?? null}
         agentHref={Object.keys(numerosCdf).length + Object.keys(numerosUsd).length > 0 ? `/agent/${c.code}` : null}
         textes={textes}
       />
